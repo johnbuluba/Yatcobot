@@ -24,7 +24,7 @@ def UpdateQueue():
         post = post_list[0]
         print("Retweeting: " + str(post))
 
-        #api.request('statuses/retweet/:' + str(post))
+        api.request('statuses/retweet/:' + str(post))
         post_list.pop(0)
 
 
