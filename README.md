@@ -6,6 +6,11 @@ Disclaimer
 
 This bot is written purely for educational purposes. I hold no liability for what you do with this bot or what happens to you by using this bot. Abusing this bot *can* get you banned from Twitter, so make sure to read up on [proper usage](https://support.twitter.com/articles/76915-automation-rules-and-best-practices) of the Twitter API.
 
+License
+------------
+
+You can fork this repository on GitHub as long as it links back to this original repository.
+
 Prerequisites
 ------------
 
