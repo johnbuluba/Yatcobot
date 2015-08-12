@@ -1,5 +1,5 @@
 # twitter-contest-bot
-Will poll for Retweet Contests and retweet them. Inspired by http://www.engadget.com/2015/08/10/twitter-bot-wins-a-thousand-contests/
+Will poll for Retweet Contests and retweet them. Inspired by http://qz.com/476914/i-built-a-twitter-bot-that-entered-and-won-1000-online-contests-for-m/e
 
 Disclaimer
 ------------
