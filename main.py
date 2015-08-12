@@ -37,7 +37,7 @@ def ScanForContests():
 
     print("=== SCANNING FOR NEW CONTESTS ===")
 
-    r = api.request('search/tweets', {'q':'RT to win contest', 'since_id':last_twitter_id})
+    r = api.request('search/tweets', {'q':'RT to win', 'since_id':last_twitter_id})
 
     for item in r:
         if item['retweet_count'] > 0:
