@@ -1,0 +1,7 @@
+{
+	"retweet-update-time": 5,
+	"consumer-key": "YOUR CONSUMER KEY",
+	"consumer-secret": "YOUR SECRET KEY",
+	"access-token-key": "YOUR ACCESS TOKEN KEY",
+	"access-token-secret": "YOUR ACCESS TOKEN SECRET"
+}

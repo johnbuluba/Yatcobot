@@ -1,16 +1,18 @@
 from TwitterAPI import TwitterAPI
 import threading
 import time
+import json
 
-# Fill these in with your Twitter API auth details.
-consumer_key = "YOUR CONSUMER KEY"
-consumer_secret = "YOUR CONSUMER SECRET"
-access_token_key = "YOUR ACCESS TOKEN KEY"
-access_token_secret = "YOUR ACCESS TOKEN SECRET"
+# Load our configuration from the JSON file.
+with open('config.json') as data_file:    
+    data = json.load(data_file)
 
-# How many seconds have to pass for 1 retweet/follow to be made?
-# The higher the number, the less retweets will be made in a day.
-retweet_update_time = 5.0
+# These vars are loaded in from config.
+consumer_key = data["consumer-key"]
+consumer_secret = data["consumer-secret"]
+access_token_key = data["access-token-key"]
+access_token_secret = data["access-token-secret"]
+retweet_update_time = data["retweet-update-time"]
 
 # Don't edit these unless you know what you're doing.
 api = TwitterAPI(consumer_key, consumer_secret, access_token_key, access_token_secret)
@@ -46,23 +48,26 @@ def CheckForFollowRequest(item):
 
 # Scan for new contests, but not too often because of the rate limit.
 def ScanForContests():
-    t = threading.Timer(10.0, ScanForContests)
-    t.daemon = True;
-    t.start()
+	t = threading.Timer(10.0, ScanForContests)
+	t.daemon = True;
+	t.start()
 
-    global last_twitter_id
+	global last_twitter_id
+	
+	print("=== SCANNING FOR NEW CONTESTS ===")
+	
+	try:
+		r = api.request('search/tweets', {'q':'RT to win', 'since_id':last_twitter_id})
 
-    print("=== SCANNING FOR NEW CONTESTS ===")
+		for item in r:
+			if item['retweet_count'] > 0:
+				if (item['id'] > last_twitter_id):
+					last_twitter_id = item['id']
 
-    r = api.request('search/tweets', {'q':'RT to win', 'since_id':last_twitter_id})
-
-    for item in r:
-        if item['retweet_count'] > 0:
-            if (item['id'] > last_twitter_id):
-                last_twitter_id = item['id']
-
-            post_list.append(item)
-            print(item)
+				post_list.append(item)
+				print(item)
+	except Exception as e:
+		print("Could not connect to TwitterAPI - are your credentials correct?")
 
 
 ScanForContests()

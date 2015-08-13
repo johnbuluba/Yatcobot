@@ -18,6 +18,11 @@ Prerequisites
 
   * TwitterAPI
   * Python 2.7
+  
+Configuration
+------------
+
+Open up `config.json` and make the values correspond to your Twitter API credentials.
 
 Installation
 ------------
