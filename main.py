@@ -27,6 +27,13 @@ def UpdateQueue():
         api.request('statuses/retweet/:' + str(post))
         post_list.pop(0)
 
+def CheckForFollowRequest(item):
+    text = item['text']
+    if "Follow" in text:
+        user = item['user']
+        screen_name = user['screen_name']
+        api.request('friendships/create', {'screen_name': screen_name})
+
 
 def ScanForContests():
     t = threading.Timer(10.0, ScanForContests)
@@ -45,7 +52,7 @@ def ScanForContests():
                 last_twitter_id = item['id']
 
             post_list.append(item['id'])
-
+            CheckForFollowRequest(item)
             print(item)
 
 
