@@ -29,7 +29,7 @@ def UpdateQueue():
 
 def CheckForFollowRequest(item):
     text = item['text']
-    if "Follow" in text:
+    if "follow" in text.lower():
         user = item['user']
         screen_name = user['screen_name']
         api.request('friendships/create', {'screen_name': screen_name})
