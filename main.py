@@ -42,11 +42,11 @@ def CheckForFollowRequest(item):
     text = item['text']
     if "follow" in text.lower():
     	try:
-    	    api.request('friendships/create', {'screen_name': item['retweeted_status']['user']['screen_name']
+    	    api.request('friendships/create', {'screen_name': item['retweeted_status']['user']['screen_name']})
     	except:
 	    user = item['user']
-            screen_name = user['screen_name']
-            api.request('friendships/create', {'screen_name': screen_name})
+	    screen_name = user['screen_name']
+	    api.request('friendships/create', {'screen_name': screen_name})
 
 
 # Scan for new contests, but not too often because of the rate limit.
