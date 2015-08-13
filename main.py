@@ -32,12 +32,14 @@ def UpdateQueue():
         print("Retweeting: " + str(post['id']))
         
         CheckForFollowRequest(post)
+        CheckForFavoriteRequest(post)
         
         api.request('statuses/retweet/:' + str(post['id']))
         post_list.pop(0)
 
 
 # Check if a post requires you to follow the user.
+#Be careful with this function! Twitter may write ban your application for following too aggressively
 def CheckForFollowRequest(item):
     text = item['text']
     if "follow" in text.lower():
@@ -47,6 +49,16 @@ def CheckForFollowRequest(item):
 	    user = item['user']
 	    screen_name = user['screen_name']
 	    api.request('friendships/create', {'screen_name': screen_name})
+	    
+#Check if a post requires you to favorite the tweet.
+#Be careful with this function! Twitter may write ban your application for favoriting too aggressively
+def CheckForFavoriteRequest(item)
+    text = item['text']
+    if "favorite" in text.lower():
+            try:
+                api.request('favorites/create', {'id': item['retweeted_status']['user']['id']})
+            except:
+                api.request('favorites/create', {'id': item['id']})
 
 
 # Scan for new contests, but not too often because of the rate limit.
