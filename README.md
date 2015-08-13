@@ -26,3 +26,10 @@ From the command line:
 Then run:
 
 	python main.py
+
+Alternatives
+-------------
+
+If you're looking for similar projects in alternative languages, check these out:
+
+* *(JavaScript)* https://github.com/raulrene/Twitter-ContestJS-bot
