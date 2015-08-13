@@ -1,6 +1,8 @@
 # twitter-contest-bot
 Will poll for Retweet Contests and retweet them. Inspired by http://www.hscott.net/twitter-contest-winning-as-a-service/
 
+[![Build Status](https://travis-ci.org/kurozael/twitter-contest-bot.svg?branch=master)](https://travis-ci.org/kurozael/twitter-contest-bot)
+
 Disclaimer
 ------------
 
