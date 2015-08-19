@@ -13,6 +13,8 @@ consumer_secret = data["consumer-secret"]
 access_token_key = data["access-token-key"]
 access_token_secret = data["access-token-secret"]
 retweet_update_time = data["retweet-update-time"]
+scan_update_time = data["scan-update-time"]
+search_query = data["search-query"]
 
 # Don't edit these unless you know what you're doing.
 api = TwitterAPI(consumer_key, consumer_secret, access_token_key, access_token_secret)
@@ -63,7 +65,7 @@ def CheckForFavoriteRequest(item):
 
 # Scan for new contests, but not too often because of the rate limit.
 def ScanForContests():
-	t = threading.Timer(10.0, ScanForContests)
+	t = threading.Timer(scan_update_time, ScanForContests)
 	t.daemon = True;
 	t.start()
 
@@ -72,7 +74,7 @@ def ScanForContests():
 	print("=== SCANNING FOR NEW CONTESTS ===")
 	
 	try:
-		r = api.request('search/tweets', {'q':'RT to win', 'since_id':last_twitter_id})
+		r = api.request('search/tweets', {'q':search_query, 'since_id':last_twitter_id})
 
 		for item in r:
 			if item['retweet_count'] > 0:
