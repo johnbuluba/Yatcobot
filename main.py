@@ -77,14 +77,35 @@ def ScanForContests():
 		r = api.request('search/tweets', {'q':search_query, 'since_id':last_twitter_id})
 
 		for item in r:
+
+			user_item = item['user']
+			screen_name = user_item['screen_name']
+			text = item['text']
+			id = str(item['id'])
+			is_retweet = 0
+
+			if 'retweeted_status' in item:
+
+				is_retweet = 1
+				original_item = item['retweeted_status']
+				original_id = str(original_item['id'])
+				original_user_item = original_item['user']
+				original_screen_name = original_user_item['screen_name']
+				
 			if item['retweet_count'] > 0:
 				if (item['id'] > last_twitter_id):
 					last_twitter_id = item['id']
 
 				post_list.append(item)
-				print(item)
+
+				if is_retweet:
+					print(id + " - " + screen_name + " retweeting " + original_id + " - " + original_screen_name + ": " + text)
+				else:
+					print(id + " - " + screen_name + ": " + text)
+				
 	except Exception as e:
 		print("Could not connect to TwitterAPI - are your credentials correct?")
+		print("Exception: " + e)
 
 
 ScanForContests()
