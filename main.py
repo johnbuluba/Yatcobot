@@ -2,6 +2,7 @@ from TwitterAPI import TwitterAPI
 import threading
 import time
 import json
+import os.path
 
 # Load our configuration from the JSON file.
 with open('config.json') as data_file:    
@@ -22,9 +23,11 @@ post_list = list()
 ignore_list = list()
 last_twitter_id = 0
 
-with open('ignorelist') as f:
-    ignore_list = f.read().splitlines()
-f.close()
+if os.path.isfile('ignorelist'):
+	with open('ignorelist') as f:
+		ignore_list = f.read().splitlines()
+	f.close()
+
 print("Ignore list loaded")
 print ignore_list
 time.sleep(1)
@@ -41,6 +44,9 @@ def UpdateQueue():
     if len(post_list) > 0:
         post = post_list[0]
         print("Retweeting: " + str(post['id']))
+	f_log = open('log', 'a')
+	f_log.write("Retweeting: " + str(post['id']) + " " + str(post['text'].encode('utf8')) + "\n")
+	f_log.close()
         
         CheckForFollowRequest(post)
         CheckForFavoriteRequest(post)
