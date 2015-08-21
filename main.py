@@ -16,6 +16,8 @@ access_token_secret = data["access-token-secret"]
 retweet_update_time = data["retweet-update-time"]
 scan_update_time = data["scan-update-time"]
 search_query = data["search-query"]
+follow_keywords = data["follow-keywords"]
+fav_keywords = data["fav-keywords"]
 
 # Don't edit these unless you know what you're doing.
 api = TwitterAPI(consumer_key, consumer_secret, access_token_key, access_token_secret)
@@ -31,7 +33,6 @@ if os.path.isfile('ignorelist'):
 print("Ignore list loaded")
 print ignore_list
 time.sleep(1)
-
 
 # Update the Retweet queue (this prevents too many retweets happening at once.)
 def UpdateQueue():
@@ -59,23 +60,27 @@ def UpdateQueue():
 # Be careful with this function! Twitter may write ban your application for following too aggressively
 def CheckForFollowRequest(item):
     text = item['text']
-    if "follow" in text.lower():
+    if any(x in text.lower() for x in follow_keywords):
     	try:
     	    api.request('friendships/create', {'screen_name': item['retweeted_status']['user']['screen_name']})
+	    print("Follow: " + item['retweeted_status']['user']['screen_name'])
     	except:
 	    user = item['user']
 	    screen_name = user['screen_name']
 	    api.request('friendships/create', {'screen_name': screen_name})
+	    print("Follow: " + screen_name)
 	    
 # Check if a post requires you to favorite the tweet.
 # Be careful with this function! Twitter may write ban your application for favoriting too aggressively
 def CheckForFavoriteRequest(item):
     text = item['text']
-    if "favorite" in text.lower():
+    if any(x in text.lower() for x in fav_keywords):
 	try:
     	    api.request('favorites/create', {'id': item['retweeted_status']['user']['id']})
+	    print("Favorite: " + item['retweeted_status']['user']['id'])
 	except:
     	    api.request('favorites/create', {'id': item['id']})
+	    print("Favorite: item['id']")
 
 
 # Scan for new contests, but not too often because of the rate limit.
