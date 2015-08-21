@@ -26,13 +26,13 @@ ignore_list = list()
 last_twitter_id = 0
 
 if os.path.isfile('ignorelist'):
+	print("Loading ignore list")
 	with open('ignorelist') as f:
 		ignore_list = f.read().splitlines()
 	f.close()
+	print ignore_list
+	time.sleep(1)
 
-print("Ignore list loaded")
-print ignore_list
-time.sleep(1)
 
 # Print and log the text
 def LogAndPrint( text ):
@@ -40,7 +40,6 @@ def LogAndPrint( text ):
 	f_log = open('log', 'a')
 	f_log.write(text + "\n")
 	f_log.close()
-
 
 # Update the Retweet queue (this prevents too many retweets happening at once.)
 def UpdateQueue():
@@ -133,9 +132,11 @@ def ScanForContests():
 					if is_retweet:
 						print(id + " - " + screen_name + " retweeting " + original_id + " - " + original_screen_name + ": " + text)
 						ignore_list.append(original_id)
+						f_ign.write(original_id + "\n")
 					else:
 						print(id + " - " + screen_name + ": " + text)
 						ignore_list.append(id)
+						f_ign.write(id + "\n")
 
 			else:
 
