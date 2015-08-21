@@ -6,7 +6,7 @@ import os.path
 
 # Load our configuration from the JSON file.
 with open('config.json') as data_file:    
-    data = json.load(data_file)
+	data = json.load(data_file)
 
 # These vars are loaded in from config.
 consumer_key = data["consumer-key"]
@@ -34,56 +34,59 @@ print("Ignore list loaded")
 print ignore_list
 time.sleep(1)
 
+# Print and log the text
 def LogAndPrint( text ):
 	print(text)
 	f_log = open('log', 'a')
 	f_log.write(text + "\n")
 	f_log.close()
 
+
 # Update the Retweet queue (this prevents too many retweets happening at once.)
 def UpdateQueue():
-    u = threading.Timer(retweet_update_time, UpdateQueue)
-    u.daemon = True;
-    u.start()
+	u = threading.Timer(retweet_update_time, UpdateQueue)
+	u.daemon = True;
+	u.start()
 
-    print("=== CHECKING RETWEET QUEUE ===")
+	print("=== CHECKING RETWEET QUEUE ===")
 
-    if len(post_list) > 0:
-        post = post_list[0]
-        LogAndPrint("Retweeting: " + str(post['id']) + " " + str(post['text'].encode('utf8')))
-        
-        CheckForFollowRequest(post)
-        CheckForFavoriteRequest(post)
-        
-        api.request('statuses/retweet/:' + str(post['id']))
-        post_list.pop(0)
+	if len(post_list) > 0:
+		post = post_list[0]
+		LogAndPrint("Retweeting: " + str(post['id']) + " " + str(post['text'].encode('utf8')))
+
+		CheckForFollowRequest(post)
+		CheckForFavoriteRequest(post)
+
+		api.request('statuses/retweet/:' + str(post['id']))
+		post_list.pop(0)
 
 
 # Check if a post requires you to follow the user.
 # Be careful with this function! Twitter may write ban your application for following too aggressively
 def CheckForFollowRequest(item):
-    text = item['text']
-    if any(x in text.lower() for x in follow_keywords):
-    	try:
-    	    api.request('friendships/create', {'screen_name': item['retweeted_status']['user']['screen_name']})
-	    LogAndPrint("Follow: " + item['retweeted_status']['user']['screen_name'])
-    	except:
-	    user = item['user']
-	    screen_name = user['screen_name']
-	    api.request('friendships/create', {'screen_name': screen_name})
-	    LogAndPrint("Follow: " + screen_name)
-	    
+	text = item['text']
+	if any(x in text.lower() for x in follow_keywords):
+		try:
+			api.request('friendships/create', {'screen_name': item['retweeted_status']['user']['screen_name']})
+			LogAndPrint("Follow: " + item['retweeted_status']['user']['screen_name'])
+		except:
+			user = item['user']
+			screen_name = user['screen_name']
+			api.request('friendships/create', {'screen_name': screen_name})
+			LogAndPrint("Follow: " + screen_name)
+
+
 # Check if a post requires you to favorite the tweet.
 # Be careful with this function! Twitter may write ban your application for favoriting too aggressively
 def CheckForFavoriteRequest(item):
-    text = item['text']
-    if any(x in text.lower() for x in fav_keywords):
-	try:
-    	    api.request('favorites/create', {'id': item['retweeted_status']['user']['id']})
-	    LogAndPrint("Favorite: " + item['retweeted_status']['user']['id'])
-	except:
-    	    api.request('favorites/create', {'id': item['id']})
-	    LogAndPrint("Favorite: item['id']")
+	text = item['text']
+	if any(x in text.lower() for x in fav_keywords):
+		try:
+			api.request('favorites/create', {'id': item['retweeted_status']['user']['id']})
+			LogAndPrint("Favorite: " + item['retweeted_status']['user']['id'])
+		except:
+			api.request('favorites/create', {'id': item['id']})
+			LogAndPrint("Favorite: item['id']")
 
 
 # Scan for new contests, but not too often because of the rate limit.
