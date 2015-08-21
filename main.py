@@ -19,7 +19,16 @@ search_query = data["search-query"]
 # Don't edit these unless you know what you're doing.
 api = TwitterAPI(consumer_key, consumer_secret, access_token_key, access_token_secret)
 post_list = list()
+ignore_list = list()
 last_twitter_id = 0
+
+with open('ignorelist') as f:
+    ignore_list = f.read().splitlines()
+f.close()
+print("Ignore list loaded")
+print ignore_list
+time.sleep(1)
+
 
 # Update the Retweet queue (this prevents too many retweets happening at once.)
 def UpdateQueue():
@@ -72,17 +81,21 @@ def ScanForContests():
 	global last_twitter_id
 	
 	print("=== SCANNING FOR NEW CONTESTS ===")
+
+	f_ign = open('ignorelist', 'a')
 	
 	try:
 		r = api.request('search/tweets', {'q':search_query, 'since_id':last_twitter_id})
 
 		for item in r:
-
+			
 			user_item = item['user']
 			screen_name = user_item['screen_name']
 			text = item['text']
 			id = str(item['id'])
+			original_id=id
 			is_retweet = 0
+		
 
 			if 'retweeted_status' in item:
 
@@ -91,22 +104,34 @@ def ScanForContests():
 				original_id = str(original_item['id'])
 				original_user_item = original_item['user']
 				original_screen_name = original_user_item['screen_name']
-				
-			if item['retweet_count'] > 0:
-				if (item['id'] > last_twitter_id):
-					last_twitter_id = item['id']
+					
+			if not original_id in ignore_list:
 
-				post_list.append(item)
+				if item['retweet_count'] > 0:
+					if (item['id'] > last_twitter_id):
+						last_twitter_id = item['id']
+
+					post_list.append(item)
+
+					if is_retweet:
+						print(id + " - " + screen_name + " retweeting " + original_id + " - " + original_screen_name + ": " + text)
+						ignore_list.append(original_id)
+					else:
+						print(id + " - " + screen_name + ": " + text)
+						ignore_list.append(id)
+
+			else:
 
 				if is_retweet:
-					print(id + " - " + screen_name + " retweeting " + original_id + " - " + original_screen_name + ": " + text)
+					print(id + " ignored: " + original_id + " on ignore list")
 				else:
-					print(id + " - " + screen_name + ": " + text)
-				
+					print(id + " in ignore list")
+
 	except Exception as e:
 		print("Could not connect to TwitterAPI - are your credentials correct?")
 		print("Exception: " + e)
 
+	f_ign.close()
 
 ScanForContests()
 UpdateQueue()
