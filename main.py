@@ -34,6 +34,12 @@ print("Ignore list loaded")
 print ignore_list
 time.sleep(1)
 
+def LogAndPrint( text ):
+	print(text)
+	f_log = open('log', 'a')
+	f_log.write(text + "\n")
+	f_log.close()
+
 # Update the Retweet queue (this prevents too many retweets happening at once.)
 def UpdateQueue():
     u = threading.Timer(retweet_update_time, UpdateQueue)
@@ -44,10 +50,7 @@ def UpdateQueue():
 
     if len(post_list) > 0:
         post = post_list[0]
-        print("Retweeting: " + str(post['id']))
-	f_log = open('log', 'a')
-	f_log.write("Retweeting: " + str(post['id']) + " " + str(post['text'].encode('utf8')) + "\n")
-	f_log.close()
+        LogAndPrint("Retweeting: " + str(post['id']) + " " + str(post['text'].encode('utf8')))
         
         CheckForFollowRequest(post)
         CheckForFavoriteRequest(post)
@@ -63,12 +66,12 @@ def CheckForFollowRequest(item):
     if any(x in text.lower() for x in follow_keywords):
     	try:
     	    api.request('friendships/create', {'screen_name': item['retweeted_status']['user']['screen_name']})
-	    print("Follow: " + item['retweeted_status']['user']['screen_name'])
+	    LogAndPrint("Follow: " + item['retweeted_status']['user']['screen_name'])
     	except:
 	    user = item['user']
 	    screen_name = user['screen_name']
 	    api.request('friendships/create', {'screen_name': screen_name})
-	    print("Follow: " + screen_name)
+	    LogAndPrint("Follow: " + screen_name)
 	    
 # Check if a post requires you to favorite the tweet.
 # Be careful with this function! Twitter may write ban your application for favoriting too aggressively
@@ -77,10 +80,10 @@ def CheckForFavoriteRequest(item):
     if any(x in text.lower() for x in fav_keywords):
 	try:
     	    api.request('favorites/create', {'id': item['retweeted_status']['user']['id']})
-	    print("Favorite: " + item['retweeted_status']['user']['id'])
+	    LogAndPrint("Favorite: " + item['retweeted_status']['user']['id'])
 	except:
     	    api.request('favorites/create', {'id': item['id']})
-	    print("Favorite: item['id']")
+	    LogAndPrint("Favorite: item['id']")
 
 
 # Scan for new contests, but not too often because of the rate limit.
