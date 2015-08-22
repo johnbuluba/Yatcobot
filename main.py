@@ -23,7 +23,7 @@ fav_keywords = data["fav-keywords"]
 api = TwitterAPI(consumer_key, consumer_secret, access_token_key, access_token_secret)
 post_list = list()
 ignore_list = list()
-last_twitter_id = 0
+#last_twitter_id = 0
 
 if os.path.isfile('ignorelist'):
 	print("Loading ignore list")
@@ -42,6 +42,7 @@ def LogAndPrint( text ):
 	f_log.write(tmp + "\n")
 	f_log.close()
 
+
 # Update the Retweet queue (this prevents too many retweets happening at once.)
 def UpdateQueue():
 	u = threading.Timer(retweet_update_time, UpdateQueue)
@@ -49,6 +50,8 @@ def UpdateQueue():
 	u.start()
 
 	print("=== CHECKING RETWEET QUEUE ===")
+
+	print("Queue length: " + str(len(post_list)))
 
 	if len(post_list) > 0:
 		post = post_list[0]
@@ -59,9 +62,6 @@ def UpdateQueue():
 
 		api.request('statuses/retweet/:' + str(post['id']))
 		post_list.pop(0)
-
-	print("Remaining queue:")
-	print(post_list)
 
 
 # Check if a post requires you to follow the user.
@@ -98,7 +98,7 @@ def ScanForContests():
 	t.daemon = True;
 	t.start()
 
-	global last_twitter_id
+#	global last_twitter_id
 	
 	print("=== SCANNING FOR NEW CONTESTS ===")
 
@@ -108,7 +108,8 @@ def ScanForContests():
 		print("Getting new results for: " + search_query)
 	
 		try:
-			r = api.request('search/tweets', {'q':search_query, 'since_id':last_twitter_id})
+#			r = api.request('search/tweets', {'q':search_query, 'since_id':last_twitter_id})
+			r = api.request('search/tweets', {'q':search_query, 'result_type':"mixed", 'count':100})
 			c=0
 				
 			for item in r:
@@ -117,12 +118,13 @@ def ScanForContests():
 				user_item = item['user']
 				screen_name = user_item['screen_name']
 				text = item['text']
+				text = text.replace("\n","")
 				id = str(item['id'])
 				original_id=id
 				is_retweet = 0
 
-				if (item['id'] > last_twitter_id):
-					last_twitter_id = item['id']
+#				if (item['id'] > last_twitter_id):
+#					last_twitter_id = item['id']
 
 				if 'retweeted_status' in item:
 
@@ -167,7 +169,7 @@ def ScanForContests():
 						print(id + " in ignore list")
 			
 			print("Got " + str(c) + " results")
-			print("Last ID: " + str(last_twitter_id))
+#			print("Last ID: " + str(last_twitter_id))
 
 		except Exception as e:
 			print("Could not connect to TwitterAPI - are your credentials correct?")
