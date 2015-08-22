@@ -15,7 +15,7 @@ access_token_key = data["access-token-key"]
 access_token_secret = data["access-token-secret"]
 retweet_update_time = data["retweet-update-time"]
 scan_update_time = data["scan-update-time"]
-search_query = data["search-query"]
+search_queries = data["search-queries"]
 follow_keywords = data["follow-keywords"]
 fav_keywords = data["fav-keywords"]
 
@@ -36,9 +36,10 @@ if os.path.isfile('ignorelist'):
 
 # Print and log the text
 def LogAndPrint( text ):
-	print(text)
+	tmp = text.replace("\n","")
+	print(tmp)
 	f_log = open('log', 'a')
-	f_log.write(text + "\n")
+	f_log.write(tmp + "\n")
 	f_log.close()
 
 # Update the Retweet queue (this prevents too many retweets happening at once.)
@@ -58,6 +59,9 @@ def UpdateQueue():
 
 		api.request('statuses/retweet/:' + str(post['id']))
 		post_list.pop(0)
+
+	print("Remaining queue:")
+	print(post_list)
 
 
 # Check if a post requires you to follow the user.
@@ -98,67 +102,77 @@ def ScanForContests():
 	
 	print("=== SCANNING FOR NEW CONTESTS ===")
 
-	f_ign = open('ignorelist', 'a')
+
+	for search_query in search_queries:
+
+		print("Getting new results for: " + search_query)
 	
-	try:
-		r = api.request('search/tweets', {'q':search_query, 'since_id':last_twitter_id})
+		try:
+			r = api.request('search/tweets', {'q':search_query, 'since_id':last_twitter_id})
+			c=0
+				
+			for item in r:
+				
+				c=c+1
+				user_item = item['user']
+				screen_name = user_item['screen_name']
+				text = item['text']
+				id = str(item['id'])
+				original_id=id
+				is_retweet = 0
 
-		for item in r:
-			
-			user_item = item['user']
-			screen_name = user_item['screen_name']
-			text = item['text']
-			id = str(item['id'])
-			original_id=id
-			is_retweet = 0
-		
+				if (item['id'] > last_twitter_id):
+					last_twitter_id = item['id']
 
-			if 'retweeted_status' in item:
+				if 'retweeted_status' in item:
 
-				is_retweet = 1
-				original_item = item['retweeted_status']
-				original_id = str(original_item['id'])
-				original_user_item = original_item['user']
-				original_screen_name = original_user_item['screen_name']
+					is_retweet = 1
+					original_item = item['retweeted_status']
+					original_id = str(original_item['id'])
+					original_user_item = original_item['user']
+					original_screen_name = original_user_item['screen_name']
 
-			if not original_id in ignore_list:
+				if not original_id in ignore_list:
 
-				if not original_screen_name in ignore_list:
-			
-					if item['retweet_count'] > 0:
-						if (item['id'] > last_twitter_id):
-							last_twitter_id = item['id']
+					if not original_screen_name in ignore_list:
+				
+						if item['retweet_count'] > 0:
 
-						post_list.append(item)
+							post_list.append(item)
+							f_ign = open('ignorelist', 'a')
 
-						if is_retweet:
-							print(id + " - " + screen_name + " retweeting " + original_id + " - " + original_screen_name + ": " + text)
-							ignore_list.append(original_id)
-							f_ign.write(original_id + "\n")
-						else:
-							print(id + " - " + screen_name + ": " + text)
-							ignore_list.append(id)
-							f_ign.write(id + "\n")
+							if is_retweet:
+								print(id + " - " + screen_name + " retweeting " + original_id + " - " + original_screen_name + ": " + text)
+								ignore_list.append(original_id)
+								f_ign.write(original_id + "\n")
+							else:
+								print(id + " - " + screen_name + ": " + text)
+								ignore_list.append(id)
+								f_ign.write(id + "\n")
 
-				else:
-	
-					if is_retweet:
-						print(id + " ignored: " + original_screen_name + " on ignore list")
+							f_ign.close()
+
 					else:
-						print(original_screen_name + " in ignore list")
+		
+						if is_retweet:
+							print(id + " ignored: " + original_screen_name + " on ignore list")
+						else:
+							print(original_screen_name + " in ignore list")
 
-			else:
-
-				if is_retweet:
-					print(id + " ignored: " + original_id + " on ignore list")
 				else:
-					print(id + " in ignore list")
 
-	except Exception as e:
-		print("Could not connect to TwitterAPI - are your credentials correct?")
-		print("Exception: " + e)
+					if is_retweet:
+						print(id + " ignored: " + original_id + " on ignore list")
+					else:
+						print(id + " in ignore list")
+			
+			print("Got " + str(c) + " results")
+			print("Last ID: " + str(last_twitter_id))
 
-	f_ign.close()
+		except Exception as e:
+			print("Could not connect to TwitterAPI - are your credentials correct?")
+			print("Exception: " + e)
+
 
 ScanForContests()
 UpdateQueue()
