@@ -1,7 +1,9 @@
 {
-	"search-query": "RT to win",
-	"scan-update-time": 10,
-	"retweet-update-time": 5,
+        "search-queries": ["RT to win", "Retweet and win"],
+        "follow-keywords": [" follow ", " follower "],
+        "fav-keywords": [" fav ", " favorite "],
+	"scan-update-time": 1800,
+	"retweet-update-time": 600,
 	"consumer-key": "YOUR CONSUMER KEY",
 	"consumer-secret": "YOUR SECRET KEY",
 	"access-token-key": "YOUR ACCESS TOKEN KEY",
