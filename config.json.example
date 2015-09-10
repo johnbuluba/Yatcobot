@@ -1,5 +1,5 @@
 {
-        "search-queries": ["RT to win", "Retweet and win", "RT to enter", "Retweet to enter", "Retweet to win"],
+        "search-queries": ["RT to win", "Retweet and win"],
         "follow-keywords": [" follow ", " follower "],
         "fav-keywords": [" fav ", " favorite "],
         "scan-update-time": 1800,
