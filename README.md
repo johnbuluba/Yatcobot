@@ -1,6 +1,8 @@
 # twitter-contest-bot
 Will poll for Retweet Contests and retweet them. Inspired by http://www.hscott.net/twitter-contest-winning-as-a-service/
 
+A more acceptable use of this kind of app may involve using to search for philanthropic causes requesting retweets, and retweet less often so as not to seem spammy.
+
 [![Build Status](https://travis-ci.org/kurozael/twitter-contest-bot.svg?branch=master)](https://travis-ci.org/kurozael/twitter-contest-bot)
 
 Disclaimer
