@@ -265,7 +265,7 @@ def ScanForContests():
 
 		 print("Search skipped! Queue: " + str(len(post_list)) + " Ratelimit: " + str(ratelimit_search[1]) + "/" + str(ratelimit_search[0]) + " (" + str(ratelimit_search[2]) + "%)")
 
-
+CheckRateLimit()
 ScanForContests()
 UpdateQueue()
 
