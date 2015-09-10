@@ -1,11 +1,15 @@
 {
-        "search-queries": ["RT to win", "Retweet and win"],
+        "search-queries": ["RT to win", "Retweet and win", "RT to enter", "Retweet to enter", "Retweet to win"],
         "follow-keywords": [" follow ", " follower "],
         "fav-keywords": [" fav ", " favorite "],
-	"scan-update-time": 1800,
-	"retweet-update-time": 600,
-	"consumer-key": "YOUR CONSUMER KEY",
-	"consumer-secret": "YOUR SECRET KEY",
-	"access-token-key": "YOUR ACCESS TOKEN KEY",
-	"access-token-secret": "YOUR ACCESS TOKEN SECRET"
+        "scan-update-time": 1800,
+        "retweet-update-time": 200,
+        "rate-limit-update-time": 10,
+        "min-ratelimit":10,
+        "min-ratelimit-retweet":20,
+        "min-ratelimit-search":40,
+	"consumer-key": "dW7kh6uE8TDGySa6Y1HaoWWZ5",
+	"consumer-secret": "H4iwBajzBziDSkvS6pgPwaX6Ou8bg7OSfyeB17eUSySexbkNgq",
+	"access-token-key": "282375854-uzwhYiReWTmNNjhnOoN5G5cg0flqyXPeroajqHbM",
+	"access-token-secret": "BInSl6Nu08MoDIFq0wxTqNUmSUHFqWskTbJrfVI7DxRU1"
 }
