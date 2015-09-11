@@ -3,7 +3,7 @@
         "follow-keywords": [" follow ", " follower "],
         "fav-keywords": [" fav ", " favorite "],
         "scan-update-time": 1800,
-        "retweet-update-time": 20,
+        "retweet-update-time": 40,
         "rate-limit-update-time": 10,
         "min-ratelimit":10,
         "min-ratelimit-retweet":20,
