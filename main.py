@@ -16,6 +16,7 @@ access_token_key = data["access-token-key"]
 access_token_secret = data["access-token-secret"]
 retweet_update_time = data["retweet-update-time"]
 scan_update_time = data["scan-update-time"]
+clear_queue_time = data["clear-queue-time"]
 rate_limit_update_time = data["rate-limit-update-time"]
 min_ratelimit = data["min-ratelimit"]
 min_ratelimit_retweet = data["min-ratelimit-retweet"]
@@ -150,6 +151,13 @@ def CheckForFavoriteRequest(item):
 			CheckError(r)
 			LogAndPrint("Favorite: " + str(item['id']))
 
+def DeleteOldPosts():
+	d = threading.Timer(clear_queue_time, DeleteOldPosts)
+	d.daemon = True;
+	d.start()
+
+	del post_list[:]
+	print "===THE QUEUE HAS BEEN CLEARED==="
 
 # Scan for new contests, but not too often because of the rate limit.
 def ScanForContests():
@@ -169,7 +177,7 @@ def ScanForContests():
 			print("Getting new results for: " + search_query)
 		
 			try:
-				r = api.request('search/tweets', {'q':search_query, 'result_type':"mixed", 'count':100})
+				r = api.request('search/tweets', {'q':search_query, 'result_type':"mixed", 'count':50})
 				CheckError(r)
 				c=0
 					
@@ -265,6 +273,7 @@ def ScanForContests():
 
 		 print("Search skipped! Queue: " + str(len(post_list)) + " Ratelimit: " + str(ratelimit_search[1]) + "/" + str(ratelimit_search[0]) + " (" + str(ratelimit_search[2]) + "%)")
 
+DeleteOldPosts()
 CheckRateLimit()
 ScanForContests()
 UpdateQueue()
