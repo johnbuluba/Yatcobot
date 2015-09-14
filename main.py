@@ -135,6 +135,24 @@ def CheckForFollowRequest(item):
 			CheckError(r)
 			LogAndPrint("Follow: " + screen_name)
 
+		RemoveOldestFollow()
+
+# FIFO - Every new follow should result in the oldest follow being removed.
+def RemoveOldestFollow():
+	friends = list()
+	for id in api.request('friends/ids'):
+		friends.append(id)
+
+	oldest_friend = friends[-1]
+
+	r = api.request('friendships/destroy', {'user_id': oldest_friend})
+
+	if r.status_code == 200:
+		status = r.json()
+		print 'unfollowed %s' % status['screen_name']
+
+	del friends[:]
+	del oldest_friend
 
 # Check if a post requires you to favorite the tweet.
 # Be careful with this function! Twitter may write ban your application for favoriting too aggressively
@@ -151,8 +169,9 @@ def CheckForFavoriteRequest(item):
 			CheckError(r)
 			LogAndPrint("Favorite: " + str(item['id']))
 
-def DeleteOldPosts():
-	d = threading.Timer(clear_queue_time, DeleteOldPosts)
+# Clear the post list queue regularly so as to avoid a build up of out-dated posts
+def ClearQueue():
+	d = threading.Timer(clear_queue_time, ClearQueue)
 	d.daemon = True;
 	d.start()
 
@@ -273,7 +292,7 @@ def ScanForContests():
 
 		 print("Search skipped! Queue: " + str(len(post_list)) + " Ratelimit: " + str(ratelimit_search[1]) + "/" + str(ratelimit_search[0]) + " (" + str(ratelimit_search[2]) + "%)")
 
-DeleteOldPosts()
+ClearQueue()
 CheckRateLimit()
 ScanForContests()
 UpdateQueue()
