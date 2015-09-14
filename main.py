@@ -191,6 +191,13 @@ def ScanForContests():
 	global ratelimit_search
 	
 	if not ratelimit_search[2] < min_ratelimit_search:
+
+		for id in api.request('blocks/ids'):
+			if not id in ignore_list:
+				f_ign = open('ignorelist', 'a')
+				f_ign.write(str(id) + "\n")
+				LogAndPrint("Blocked user " + str(id) + "added to ignore list")
+				f_ign.close()
 	
 		LogAndPrint("=== SCANNING FOR NEW CONTESTS ===")
 
@@ -225,7 +232,7 @@ def ScanForContests():
 
 						if not original_id in ignore_list:
 
-							if not original_screen_name in ignore_list:
+							if not original_user_item['id'] in ignore_list:
 	
 								if item['retweet_count'] > 0:
 
@@ -246,14 +253,14 @@ def ScanForContests():
 							else:
 			
 								if is_retweet:
-									print(id + " ignored: " + original_screen_name + " on ignore list")
+									print(str(id) + " ignored: " + original_screen_name + " blocked and in ignore list")
 								else:
-									print(original_screen_name + " in ignore list")
+									print(screen_name + "blocked and in ignore list")
 
 						else:
 	
 							if is_retweet:
-								print(id + " ignored: " + original_id + " on ignore list")
+								print(id + " ignored: " + original_id + " in ignore list")
 							else:
 								print(id + " in ignore list")
 				
@@ -261,7 +268,7 @@ def ScanForContests():
 
 						if not id in ignore_list:
 
-							if not screen_name in ignore_list:
+							if not user_item['id'] in ignore_list:
 
 									post_list.append(item)
 									f_ign = open('ignorelist', 'a')
@@ -275,9 +282,9 @@ def ScanForContests():
 							else:
 			
 								if is_retweet:
-									print(id + " ignored: " + original_screen_name + " on ignore list")
+									print(original_id + " ignored: " + original_screen_name + " blocked user in ignore list")
 								else:
-									print(original_screen_name + " in ignore list")
+									print(str(id) + " ignored: " + screen_name + " blocked user in ignore list")
 
 						else:
 	
