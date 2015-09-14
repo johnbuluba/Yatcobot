@@ -96,9 +96,9 @@ def UpdateQueue():
 	u.daemon = True;
 	u.start()
 
-	print("=== CHECKING RETWEET QUEUE ===")
+	LogAndPrint("=== CHECKING RETWEET QUEUE ===")
 
-	print("Queue length: " + str(len(post_list)))
+	LogAndPrint("Queue length: " + str(len(post_list)))
 
 	if len(post_list) > 0:
 
@@ -149,7 +149,7 @@ def RemoveOldestFollow():
 
 	if r.status_code == 200:
 		status = r.json()
-		print 'unfollowed %s' % status['screen_name']
+		LogAndPrint('unfollowed %s' % status['screen_name'])
 
 	del friends[:]
 	del oldest_friend
@@ -169,14 +169,13 @@ def CheckForFavoriteRequest(item):
 			CheckError(r)
 			LogAndPrint("Favorite: " + str(item['id']))
 
-# Clear the post list queue regularly so as to avoid a build up of out-dated posts
 def ClearQueue():
 	d = threading.Timer(clear_queue_time, ClearQueue)
 	d.daemon = True;
 	d.start()
 
 	del post_list[:]
-	print "===THE QUEUE HAS BEEN CLEARED==="
+	LogAndPrint("===THE QUEUE HAS BEEN CLEARED===")
 
 # Scan for new contests, but not too often because of the rate limit.
 def ScanForContests():
@@ -188,7 +187,7 @@ def ScanForContests():
 	
 	if not ratelimit_search[2] < min_ratelimit_search:
 	
-		print("=== SCANNING FOR NEW CONTESTS ===")
+		LogAndPrint("=== SCANNING FOR NEW CONTESTS ===")
 
 
 		for search_query in search_queries:
@@ -286,11 +285,11 @@ def ScanForContests():
 
 			except Exception as e:
 				print("Could not connect to TwitterAPI - are your credentials correct?")
-				print("Exception: " + str(e))
+				LogAndPrint("Exception: " + str(e))
 
 	else:
 
-		 print("Search skipped! Queue: " + str(len(post_list)) + " Ratelimit: " + str(ratelimit_search[1]) + "/" + str(ratelimit_search[0]) + " (" + str(ratelimit_search[2]) + "%)")
+		 LogAndPrint("Search skipped! Queue: " + str(len(post_list)) + " Ratelimit: " + str(ratelimit_search[1]) + "/" + str(ratelimit_search[0]) + " (" + str(ratelimit_search[2]) + "%)")
 
 ClearQueue()
 CheckRateLimit()
