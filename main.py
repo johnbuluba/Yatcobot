@@ -55,9 +55,9 @@ def CheckError( r ):
 		#sys.exit(r['errors'][0]['code'])
 
 def CheckRateLimit():
-        c = threading.Timer(rate_limit_update_time, CheckRateLimit)
-        c.daemon = True;
-        c.start()
+	c = threading.Timer(rate_limit_update_time, CheckRateLimit)
+	c.daemon = True;
+	c.start()
 
 	global ratelimit
 	global ratelimit_search
@@ -82,12 +82,12 @@ def CheckRateLimit():
 
 			#print(res_family + " -> " + res + ": " + str(percent))
 			if percent < 5.0:
-				LogAndPrint(res_family + " -> " + res + ": " + str(percent) + "  !!! <5% Emergency exit !!!")				
-				sys.exit(res_family + " -> " + res + ": " + str(percent) + "  !!! <5% Emergency exit !!!")
+				LogAndPrint(res_family + " Rate Limit -> " + res + ": " + str(percent) + "  !!! <5% Emergency exit !!!")				
+				sys.exit(res_family + " Rate Limit -> " + res + ": " + str(percent) + "  !!! <5% Emergency exit !!!")
 			elif percent < 30.0:
-				LogAndPrint(res_family + " -> " + res + ": " + str(percent) + "  !!! <30% alert !!!")				
+				LogAndPrint(res_family + " Rate Limit -> " + res + ": " + str(percent) + "  !!! <30% alert !!!")				
 			elif percent < 70.0:
-				print(res_family + " -> " + res + ": " + str(percent))
+				print(res_family + " Rate Limit -> " + res + ": " + str(percent))
 
 
 # Update the Retweet queue (this prevents too many retweets happening at once.)
