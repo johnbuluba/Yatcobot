@@ -9,8 +9,8 @@
         "min-ratelimit-retweet":20,
         "min-ratelimit-search":40,
         "clear-queue-time":43200,
-	"consumer-key": "cdWhzHf1DaSq3JPyEWm9gk1sk",
-	"consumer-secret": "tWsvF96AZ73Fr2RrFxUIveoirc4M1YNHEWLNmAWmhUfl2yC2wU",
-	"access-token-key": "282375854-5GgNswU8DB9VbOppxFFc8YI61Z8LmQ4aqGLMshLe",
-	"access-token-secret": "eVlS8CJe7A3039QIj2rSCRQj2BTKuGYIQ7DSiy2iVJhjc"
+	"consumer-key": "",
+	"consumer-secret": "",
+	"access-token-key": "",
+	"access-token-secret": ""
 }
