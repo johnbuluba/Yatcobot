@@ -145,11 +145,16 @@ def RemoveOldestFollow():
 
 	oldest_friend = friends[-1]
 
-	r = api.request('friendships/destroy', {'user_id': oldest_friend})
+	if len(friends) > 1500:
 
-	if r.status_code == 200:
-		status = r.json()
-		LogAndPrint('unfollowed %s' % status['screen_name'])
+		r = api.request('friendships/destroy', {'user_id': oldest_friend})
+
+		if r.status_code == 200:
+			status = r.json()
+			LogAndPrint('unfollowed %s' % status['screen_name'])
+
+	else:
+		print("No friends unfollowed")
 
 	del friends[:]
 	del oldest_friend
