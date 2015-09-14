@@ -196,7 +196,7 @@ def ScanForContests():
 			if not id in ignore_list:
 				f_ign = open('ignorelist', 'a')
 				f_ign.write(str(id) + "\n")
-				LogAndPrint("Blocked user " + str(id) + "added to ignore list")
+				LogAndPrint("Blocked user " + str(id) + " added to ignore list")
 				f_ign.close()
 	
 		LogAndPrint("=== SCANNING FOR NEW CONTESTS ===")
