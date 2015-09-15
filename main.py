@@ -18,6 +18,7 @@ retweet_update_time = data["retweet-update-time"]
 scan_update_time = data["scan-update-time"]
 clear_queue_time = data["clear-queue-time"]
 rate_limit_update_time = data["rate-limit-update-time"]
+blocked_users_update_time = data["blocked-users-update-time"]
 min_ratelimit = data["min-ratelimit"]
 min_ratelimit_retweet = data["min-ratelimit-retweet"]
 min_ratelimit_search = data["min-ratelimit-search"]
@@ -89,7 +90,6 @@ def CheckRateLimit():
 			elif percent < 70.0:
 				print(res_family + " Rate Limit -> " + res + ": " + str(percent))
 
-
 # Update the Retweet queue (this prevents too many retweets happening at once.)
 def UpdateQueue():
 	u = threading.Timer(retweet_update_time, UpdateQueue)
@@ -107,12 +107,18 @@ def UpdateQueue():
 			post = post_list[0]
 			LogAndPrint("Retweeting: " + str(post['id']) + " " + str(post['text'].encode('utf8')))
 
-			CheckForFollowRequest(post)
-			CheckForFavoriteRequest(post)
+			if not str(api.request('statuses/show/:%d' % post['user']['id'])) in ignore_list:
 
-			r = api.request('statuses/retweet/:' + str(post['id']))
-			CheckError(r)
-			post_list.pop(0)
+				CheckForFollowRequest(post)
+				CheckForFavoriteRequest(post)
+
+				r = api.request('statuses/retweet/:' + str(post['id']))
+				CheckError(r)
+				post_list.pop(0)
+
+			else:
+				post_list.pop(0)
+				print("Blocked user's tweet skipped")
 		
 		else:
 	
@@ -174,6 +180,7 @@ def CheckForFavoriteRequest(item):
 			CheckError(r)
 			LogAndPrint("Favorite: " + str(item['id']))
 
+# Clear the post list queue in order to avoid a buildup of old posts
 def ClearQueue():
 	d = threading.Timer(clear_queue_time, ClearQueue)
 	d.daemon = True;
@@ -181,6 +188,25 @@ def ClearQueue():
 
 	del post_list[:]
 	LogAndPrint("===THE QUEUE HAS BEEN CLEARED===")
+
+# Check list of blocked users and add to ignore list
+def CheckBlockedUsers():
+	c = threading.Timer(blocked_users_update_time, CheckBlockedUsers)
+	c.daemon = True;
+	c.start()
+
+	if not ratelimit_search[2] < min_ratelimit_search:
+
+		for b in api.request('blocks/ids'):
+			if not str(b) in ignore_list:
+				f_ign = open('ignorelist', 'a')
+				f_ign.write(str(b) + "\n")
+				LogAndPrint("Blocked user " + str(b) + " added to ignore list")
+				f_ign.close()
+
+	else:
+
+		 LogAndPrint("Update blocked users skipped! Queue: " + str(len(post_list)) + " Ratelimit: " + str(ratelimit_search[1]) + "/" + str(ratelimit_search[0]) + " (" + str(ratelimit_search[2]) + "%)")
 
 # Scan for new contests, but not too often because of the rate limit.
 def ScanForContests():
@@ -192,15 +218,7 @@ def ScanForContests():
 	
 	if not ratelimit_search[2] < min_ratelimit_search:
 
-		for b in api.request('blocks/ids'):
-			if not str(b) in ignore_list:
-				f_ign = open('ignorelist', 'a')
-				f_ign.write(str(b) + "\n")
-				LogAndPrint("Blocked user " + str(b) + " added to ignore list")
-				f_ign.close()
-	
 		LogAndPrint("=== SCANNING FOR NEW CONTESTS ===")
-
 
 		for search_query in search_queries:
 
