@@ -9,6 +9,7 @@
         "min-ratelimit-retweet":20,
         "min-ratelimit-search":40,
         "clear-queue-time":43200,
+        "blocked-users-update-time": 300,
 	"consumer-key": "",
 	"consumer-secret": "",
 	"access-token-key": "",
