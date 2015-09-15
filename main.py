@@ -323,6 +323,7 @@ def ScanForContests():
 
 ClearQueue()
 CheckRateLimit()
+CheckBlockedUsers()
 ScanForContests()
 UpdateQueue()
 
