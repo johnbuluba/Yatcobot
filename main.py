@@ -200,6 +200,7 @@ def CheckBlockedUsers():
 		for b in api.request('blocks/ids'):
 			if not str(b) in ignore_list:
 				f_ign = open('ignorelist', 'a')
+				ignore_list.append(str(b))
 				f_ign.write(str(b) + "\n")
 				LogAndPrint("Blocked user " + str(b) + " added to ignore list")
 				f_ign.close()
