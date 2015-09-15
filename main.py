@@ -192,11 +192,11 @@ def ScanForContests():
 	
 	if not ratelimit_search[2] < min_ratelimit_search:
 
-		for id in api.request('blocks/ids'):
-			if not id in ignore_list:
+		for b in api.request('blocks/ids'):
+			if not str(b) in ignore_list:
 				f_ign = open('ignorelist', 'a')
-				f_ign.write(str(id) + "\n")
-				LogAndPrint("Blocked user " + str(id) + " added to ignore list")
+				f_ign.write(str(b) + "\n")
+				LogAndPrint("Blocked user " + str(b) + " added to ignore list")
 				f_ign.close()
 	
 		LogAndPrint("=== SCANNING FOR NEW CONTESTS ===")
@@ -232,7 +232,7 @@ def ScanForContests():
 
 						if not original_id in ignore_list:
 
-							if not original_user_item['id'] in ignore_list:
+							if not str(original_user_item['id']) in ignore_list:
 	
 								if item['retweet_count'] > 0:
 
@@ -268,7 +268,7 @@ def ScanForContests():
 
 						if not id in ignore_list:
 
-							if not user_item['id'] in ignore_list:
+							if not str(user_item['id']) in ignore_list:
 
 									post_list.append(item)
 									f_ign = open('ignorelist', 'a')
