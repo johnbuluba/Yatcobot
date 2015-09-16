@@ -107,7 +107,12 @@ def UpdateQueue():
 			post = post_list[0]
 			LogAndPrint("Retweeting: " + str(post['id']) + " " + str(post['text'].encode('utf8')))
 
-			if not str(api.request('statuses/show/:%d' % post['user']['id'])) in ignore_list:
+			r = api.request('statuses/show/:%d' % post['id'])
+			for item in r:
+				user = item['user']
+				user_id = str(user['id'])
+
+			if not user_id in ignore_list:
 
 				CheckForFollowRequest(post)
 				CheckForFavoriteRequest(post)
@@ -255,7 +260,7 @@ def ScanForContests():
 	
 								if item['retweet_count'] > 0:
 
-									post_list.append(item)
+									post_list.append(original_item)
 									f_ign = open('ignorelist', 'a')
 
 									if is_retweet:
