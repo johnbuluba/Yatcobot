@@ -108,6 +108,7 @@ def UpdateQueue():
 			LogAndPrint("Retweeting: " + str(post['id']) + " " + str(post['text'].encode('utf8')))
 
 			r = api.request('statuses/show/:%d' % post['id'])
+			CheckError(r)
 			for item in r:
 				user = item['user']
 				user_id = str(user['id'])
