@@ -105,25 +105,32 @@ def UpdateQueue():
 		if not ratelimit[2] < min_ratelimit_retweet:
 
 			post = post_list[0]
-			LogAndPrint("Retweeting: " + str(post['id']) + " " + str(post['text'].encode('utf8')))
+			if not 'errors' in post:
+				LogAndPrint("Retweeting: " + str(post['id']) + " " + str(post['text'].encode('utf8')))
 
-			r = api.request('statuses/show/:%d' % post['id']).json()
-			user_item = r['user']
-			user_id = user_item['id']
+				r = api.request('statuses/show/:%d' % post['id']).json()
+				if 'errors' in r:
+					LogAndPrint("We got an error message: " + r['errors'][0]['message'] + " Code: " + str(r['errors'][0]['code']) )
+					post_list.pop(0)
+				else:
+					user_item = r['user']
+					user_id = user_item['id']
 
-			if not user_id in ignore_list:
+					if not user_id in ignore_list:
 
-				CheckForFollowRequest(post)
-				CheckForFavoriteRequest(post)
+						CheckForFollowRequest(post)
+						CheckForFavoriteRequest(post)
 
-				r = api.request('statuses/retweet/:' + str(post['id']))
-				CheckError(r)
-				post_list.pop(0)
+						r = api.request('statuses/retweet/:' + str(post['id']))
+						CheckError(r)
+						post_list.pop(0)
 
+					else:
+						post_list.pop(0)
+						print("Blocked user's tweet skipped")
 			else:
 				post_list.pop(0)
-				print("Blocked user's tweet skipped")
-		
+				LogAndPrint("We got an error message: " + post['errors'][0]['message'] + " Code: " + str(post['errors'][0]['code']) )
 		else:
 	
 			print("Ratelimit at " + str(ratelimit[2]) + "% -> pausing retweets")
