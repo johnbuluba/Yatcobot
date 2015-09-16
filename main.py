@@ -107,11 +107,9 @@ def UpdateQueue():
 			post = post_list[0]
 			LogAndPrint("Retweeting: " + str(post['id']) + " " + str(post['text'].encode('utf8')))
 
-			r = api.request('statuses/show/:%d' % post['id'])
-			CheckError(r)
-			for item in r:
-				user = item['user']
-				user_id = str(user['id'])
+			r = api.request('statuses/show/:%d' % post['id']).json()
+			user_item = r['user']
+			user_id = user_item['id']
 
 			if not user_id in ignore_list:
 
