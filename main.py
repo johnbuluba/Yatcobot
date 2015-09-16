@@ -258,22 +258,20 @@ def ScanForContests():
 						if not original_id in ignore_list:
 
 							if not str(original_user_item['id']) in ignore_list:
-	
-								if item['retweet_count'] > 0:
 
-									post_list.append(original_item)
-									f_ign = open('ignorelist', 'a')
+								post_list.append(original_item)
+								f_ign = open('ignorelist', 'a')
 
-									if is_retweet:
-										print(id + " - " + screen_name + " retweeting " + original_id + " - " + original_screen_name + ": " + text)
-										ignore_list.append(original_id)
-										f_ign.write(original_id + "\n")
-									else:
-										print(id + " - " + screen_name + ": " + text)
-										ignore_list.append(id)
-										f_ign.write(id + "\n")
+								if is_retweet:
+									print(id + " - " + screen_name + " retweeting " + original_id + " - " + original_screen_name + ": " + text)
+									ignore_list.append(original_id)
+									f_ign.write(original_id + "\n")
+								else:
+									print(id + " - " + screen_name + ": " + text)
+									ignore_list.append(id)
+									f_ign.write(id + "\n")
 
-									f_ign.close()
+								f_ign.close()
 
 							else:
 			
