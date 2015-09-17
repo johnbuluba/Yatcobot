@@ -64,7 +64,7 @@ def CheckRateLimit():
 	global ratelimit_search
 
 	if ratelimit[2] < min_ratelimit:
-		print("Ratelimit too low -> Cooldown (" + str(ratelimit[2]) + "%)")
+		print(("Ratelimit too low -> Cooldown (" + str(ratelimit[2]) + "%)"))
 		time.sleep(30)
 	
 	r = api.request('application/rate_limit_status').json()
@@ -88,7 +88,7 @@ def CheckRateLimit():
 			elif percent < 30.0:
 				LogAndPrint(res_family + " Rate Limit -> " + res + ": " + str(percent) + "  !!! <30% alert !!!")				
 			elif percent < 70.0:
-				print(res_family + " Rate Limit -> " + res + ": " + str(percent))
+				print((res_family + " Rate Limit -> " + res + ": " + str(percent)))
 
 # Update the Retweet queue (this prevents too many retweets happening at once.)
 def UpdateQueue():
@@ -133,7 +133,7 @@ def UpdateQueue():
 				LogAndPrint("We got an error message: " + post['errors'][0]['message'] + " Code: " + str(post['errors'][0]['code']) )
 		else:
 	
-			print("Ratelimit at " + str(ratelimit[2]) + "% -> pausing retweets")
+			print(("Ratelimit at " + str(ratelimit[2]) + "% -> pausing retweets"))
 
 
 # Check if a post requires you to follow the user.
@@ -234,7 +234,7 @@ def ScanForContests():
 
 		for search_query in search_queries:
 
-			print("Getting new results for: " + search_query)
+			print(("Getting new results for: " + search_query))
 		
 			try:
 				r = api.request('search/tweets', {'q':search_query, 'result_type':"mixed", 'count':50})
@@ -268,11 +268,11 @@ def ScanForContests():
 								f_ign = open('ignorelist', 'a')
 
 								if is_retweet:
-									print(id + " - " + screen_name + " retweeting " + original_id + " - " + original_screen_name + ": " + text)
+									print((id + " - " + screen_name + " retweeting " + original_id + " - " + original_screen_name + ": " + text))
 									ignore_list.append(original_id)
 									f_ign.write(original_id + "\n")
 								else:
-									print(id + " - " + screen_name + ": " + text)
+									print((id + " - " + screen_name + ": " + text))
 									ignore_list.append(id)
 									f_ign.write(id + "\n")
 
@@ -281,16 +281,16 @@ def ScanForContests():
 							else:
 			
 								if is_retweet:
-									print(str(id) + " ignored: " + original_screen_name + " blocked and in ignore list")
+									print((str(id) + " ignored: " + original_screen_name + " blocked and in ignore list"))
 								else:
-									print(screen_name + "blocked and in ignore list")
+									print((screen_name + "blocked and in ignore list"))
 
 						else:
 	
 							if is_retweet:
-								print(id + " ignored: " + original_id + " in ignore list")
+								print((id + " ignored: " + original_id + " in ignore list"))
 							else:
-								print(id + " in ignore list")
+								print((id + " in ignore list"))
 				
 					else:
 
@@ -301,7 +301,7 @@ def ScanForContests():
 									post_list.append(item)
 									f_ign = open('ignorelist', 'a')
 
-									print(id + " - " + screen_name + ": " + text)
+									print((id + " - " + screen_name + ": " + text))
 									ignore_list.append(id)
 									f_ign.write(id + "\n")
 
@@ -310,18 +310,18 @@ def ScanForContests():
 							else:
 			
 								if is_retweet:
-									print(original_id + " ignored: " + original_screen_name + " blocked user in ignore list")
+									print((original_id + " ignored: " + original_screen_name + " blocked user in ignore list"))
 								else:
-									print(str(id) + " ignored: " + screen_name + " blocked user in ignore list")
+									print((str(id) + " ignored: " + screen_name + " blocked user in ignore list"))
 
 						else:
 	
 							if is_retweet:
-								print(id + " ignored: " + original_id + " on ignore list")
+								print((id + " ignored: " + original_id + " on ignore list"))
 							else:
-								print(id + " in ignore list")					
+								print((id + " in ignore list"))					
 
-				print("Got " + str(c) + " results")
+				print(("Got " + str(c) + " results"))
 
 			except Exception as e:
 				print("Could not connect to TwitterAPI - are your credentials correct?")
