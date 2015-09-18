@@ -10,6 +10,7 @@
         "min-ratelimit-search":40,
         "clear-queue-time":43200,
         "blocked-users-update-time": 300,
+        "max-follows": 1950,
 	"consumer-key": "",
 	"consumer-secret": "",
 	"access-token-key": "",

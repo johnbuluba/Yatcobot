@@ -22,6 +22,7 @@ blocked_users_update_time = data["blocked-users-update-time"]
 min_ratelimit = data["min-ratelimit"]
 min_ratelimit_retweet = data["min-ratelimit-retweet"]
 min_ratelimit_search = data["min-ratelimit-search"]
+max_follows = data["max-follows"]
 search_queries = data["search-queries"]
 follow_keywords = data["follow-keywords"]
 fav_keywords = data["fav-keywords"]
@@ -162,13 +163,13 @@ def RemoveOldestFollow():
 
 	oldest_friend = friends[-1]
 
-	if len(friends) > 1500:
+	if len(friends) > max_follows:
 
 		r = api.request('friendships/destroy', {'user_id': oldest_friend})
 
 		if r.status_code == 200:
 			status = r.json()
-			LogAndPrint('unfollowed %s' % status['screen_name'])
+			LogAndPrint('Unfollowed: %s' % status['screen_name'])
 
 	else:
 		print("No friends unfollowed")
