@@ -30,11 +30,11 @@ Installation
 ------------
 From the command line:
 
-	pip install TwitterAPI
+	pip3 install TwitterAPI
 	
 Then run:
 
-	python main.py
+	python3 main.py
 
 Alternatives
 -------------
