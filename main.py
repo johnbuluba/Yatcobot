@@ -1,9 +1,15 @@
 from TwitterAPI import TwitterAPI
 import threading
+import logging
 import time
 import json
 import os.path
 import sys
+
+#default logger object
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+logger.addHandler(logging.StreamHandler())
 
 # Load our configuration from the JSON file.
 with open('config.json') as data_file:
@@ -39,26 +45,16 @@ ratelimit = [999, 999, 100]
 ratelimit_search = [999, 999, 100]
 
 if os.path.isfile('ignorelist'):
-    print("Loading ignore list")
+    logger.info("Loading ignore list")
     with open('ignorelist') as f:
         ignore_list = f.read().splitlines()
     f.close()
 
 
-# Print and log the text
-def LogAndPrint(text):
-    tmp = str(text)
-    tmp = text.replace("\n", "")
-    print(tmp)
-    f_log = open('log', 'a')
-    f_log.write(tmp + "\n")
-    f_log.close()
-
-
 def CheckError(r):
     r = r.json()
     if 'errors' in r:
-        LogAndPrint("We got an error message: " + r['errors'][0]['message'] + " Code: " + str(r['errors'][0]['code']))
+        logger.error("We got an error message: " + r['errors'][0]['message'] + " Code: " + str(r['errors'][0]['code']))
         # sys.exit(r['errors'][0]['code'])
 
 
@@ -71,7 +67,7 @@ def CheckRateLimit():
     global ratelimit_search
 
     if ratelimit[2] < min_ratelimit:
-        print("Ratelimit too low -> Cooldown (" + str(ratelimit[2]) + "%)")
+        logger.warn("Ratelimit too low -> Cooldown (" + str(ratelimit[2]) + "%)")
         time.sleep(30)
 
     r = api.request('application/rate_limit_status').json()
@@ -90,13 +86,13 @@ def CheckRateLimit():
 
             #print(res_family + " -> " + res + ": " + str(percent))
             if percent < 5.0:
-                LogAndPrint( res_family + " Rate Limit -> " + res + ": " +  str(percent)
+                logger.critical( res_family + " Rate Limit -> " + res + ": " +  str(percent)
                              + "  !!! <5% Emergency exit !!!")
                 sys.exit( res_family + " Rate Limit -> " + res + ": " + str(percent) + "  !!! <5% Emergency exit !!!")
             elif percent < 30.0:
-                LogAndPrint( res_family + " Rate Limit -> " + res + ": " + str(percent) + "  !!! <30% alert !!!")
+                logger.warn( res_family + " Rate Limit -> " + res + ": " + str(percent) + "  !!! <30% alert !!!")
             elif percent < 70.0:
-                print( res_family + " Rate Limit -> " + res + ": " + str(percent))
+                logger.info( res_family + " Rate Limit -> " + res + ": " + str(percent))
 
 # Update the Retweet queue (this prevents too many retweets happening at once.)
 
@@ -106,9 +102,9 @@ def UpdateQueue():
     u.daemon = True
     u.start()
 
-    LogAndPrint("=== CHECKING RETWEET QUEUE ===")
+    logger.info("=== CHECKING RETWEET QUEUE ===")
 
-    LogAndPrint("Queue length: " + str(len(post_list)))
+    logger.info("Queue length: " + str(len(post_list)))
 
     if len(post_list) > 0:
 
@@ -116,11 +112,11 @@ def UpdateQueue():
 
             post = post_list[0]
             if not 'errors' in post:
-                LogAndPrint("Retweeting: " + str(post['id']) + " " + str(post['text'].encode('utf8')))
+                logger.info("Retweeting: " + str(post['id']) + " " + str(post['text'].encode('utf8')))
 
                 r = api.request('statuses/show/:%d' % post['id']).json()
                 if 'errors' in r:
-                    LogAndPrint("We got an error message: " + r['errors'][0]['message'] + " Code: " +
+                    logger.error("We got an error message: " + r['errors'][0]['message'] + " Code: " +
                                 str(r['errors'][0]['code']))
                     post_list.pop(0)
                 else:
@@ -138,13 +134,13 @@ def UpdateQueue():
 
                     else:
                         post_list.pop(0)
-                        print("Blocked user's tweet skipped")
+                        logger.info("Blocked user's tweet skipped")
             else:
                 post_list.pop(0)
-                LogAndPrint("We got an error message: " + post['errors'][0]['message'] + " Code: " +
+                logger.error("We got an error message: " + post['errors'][0]['message'] + " Code: " +
                             str(post['errors'][0]['code']))
         else:
-            print("Ratelimit at " + str(ratelimit[2]) + "% -> pausing retweets")
+            logger.info("Ratelimit at " + str(ratelimit[2]) + "% -> pausing retweets")
 
 
 # Check if a post requires you to follow the user.
@@ -156,13 +152,13 @@ def CheckForFollowRequest(item):
         try:
             r = api.request('friendships/create', {'screen_name': item['retweeted_status']['user']['screen_name']})
             CheckError(r)
-            LogAndPrint("Follow: " + item['retweeted_status']['user']['screen_name'])
+            logger.info("Follow: " + item['retweeted_status']['user']['screen_name'])
         except:
             user = item['user']
             screen_name = user['screen_name']
             r = api.request('friendships/create', {'screen_name': screen_name})
             CheckError(r)
-            LogAndPrint("Follow: " + screen_name)
+            logger.info("Follow: " + screen_name)
 
         RemoveOldestFollow()
 
@@ -182,10 +178,10 @@ def RemoveOldestFollow():
 
         if r.status_code == 200:
             status = r.json()
-            LogAndPrint('Unfollowed: %s' % status['screen_name'])
+            logger.info('Unfollowed: %s' % status['screen_name'])
 
     else:
-        print("No friends unfollowed")
+        logger.info("No friends unfollowed")
 
     del friends[:]
     del oldest_friend
@@ -202,11 +198,11 @@ def CheckForFavoriteRequest(item):
         try:
             r = api.request('favorites/create', {'id': item['retweeted_status']['id']})
             CheckError(r)
-            LogAndPrint("Favorite: " + str(item['retweeted_status']['id']))
+            logger.info("Favorite: " + str(item['retweeted_status']['id']))
         except:
             r = api.request('favorites/create', {'id': item['id']})
             CheckError(r)
-            LogAndPrint("Favorite: " + str(item['id']))
+            logger.info("Favorite: " + str(item['id']))
 
 # Clear the post list queue in order to avoid a buildup of old posts
 
@@ -217,7 +213,7 @@ def ClearQueue():
     d.start()
 
     del post_list[:]
-    LogAndPrint("===THE QUEUE HAS BEEN CLEARED===")
+    logger.info("===THE QUEUE HAS BEEN CLEARED===")
 
 # Check list of blocked users and add to ignore list
 
@@ -234,12 +230,12 @@ def CheckBlockedUsers():
                 f_ign = open('ignorelist', 'a')
                 ignore_list.append(str(b))
                 f_ign.write(str(b) + "\n")
-                LogAndPrint("Blocked user " + str(b) + " added to ignore list")
+                logger.info("Blocked user " + str(b) + " added to ignore list")
                 f_ign.close()
 
     else:
 
-        LogAndPrint("Update blocked users skipped! Queue: " + str(len(post_list)) + " Ratelimit: " +
+        logger.warn("Update blocked users skipped! Queue: " + str(len(post_list)) + " Ratelimit: " +
                     str(ratelimit_search[1]) + "/" + str(ratelimit_search[0]) + " (" + str(ratelimit_search[2]) + "%)")
 
 # Scan for new contests, but not too often because of the rate limit.
@@ -254,11 +250,11 @@ def ScanForContests():
 
     if not ratelimit_search[2] < min_ratelimit_search:
 
-        LogAndPrint("=== SCANNING FOR NEW CONTESTS ===")
+        logger.info("=== SCANNING FOR NEW CONTESTS ===")
 
         for search_query in search_queries:
 
-            print("Getting new results for: " + search_query)
+            logger.info("Getting new results for: " + search_query)
 
             try:
                 r = api.request( 'search/tweets', {'q': search_query, 'result_type': "mixed", 'count': 50})
@@ -289,7 +285,7 @@ def ScanForContests():
                                 post_list.append(original_item)
                                 f_ign = open( 'ignorelist', 'a')
 
-                                print(id + " - " + screen_name + " retweeting " + original_id + " - " +
+                                logger.info(id + " - " + screen_name + " retweeting " + original_id + " - " +
                                       original_screen_name + ": " + text)
                                 ignore_list.append(original_id)
                                 f_ign.write(original_id + "\n")
@@ -298,11 +294,11 @@ def ScanForContests():
 
                             else:
 
-                                print(str(id) + " ignored: " + original_screen_name + " blocked and in ignore list")
+                                logger.info(str(id) + " ignored: " + original_screen_name + " blocked and in ignore list")
 
                         else:
 
-                            print( id + " ignored: " + original_id + " in ignore list")
+                            logger.debug( id + " ignored: " + original_id + " in ignore list")
 
                     else:
 
@@ -313,7 +309,7 @@ def ScanForContests():
                                 post_list.append(item)
                                 f_ign = open('ignorelist', 'a')
 
-                                print(id + " - " + screen_name + ": " + text)
+                                logger.debug(id + " - " + screen_name + ": " + text)
                                 ignore_list.append(id)
                                 f_ign.write(id + "\n")
 
@@ -321,22 +317,19 @@ def ScanForContests():
 
                             else:
 
-                                print(
-                                    str(id) + " ignored: " + screen_name + " blocked user in ignore list")
-
+                                logger.info(str(id) + " ignored: " + screen_name + " blocked user in ignore list")
                         else:
 
-                            print(id + " in ignore list")
+                            logger.debug(id + " in ignore list")
 
-                print("Got " + str(c) + " results")
+                logger.info("Got " + str(c) + " results")
 
             except Exception as e:
-                print("Could not connect to TwitterAPI - are your credentials correct?")
-                LogAndPrint("Exception: " + str(e))
+                logger.exception("Could not connect to TwitterAPI - are your credentials correct?")
 
     else:
 
-        LogAndPrint("Search skipped! Queue: " + str(len(post_list)) + " Ratelimit: " + str(ratelimit_search[1]) +
+        logger.warn("Search skipped! Queue: " + str(len(post_list)) + " Ratelimit: " + str(ratelimit_search[1]) +
                     "/" + str(ratelimit_search[0]) + " (" + str(ratelimit_search[2]) + "%)")
 
 ClearQueue()
