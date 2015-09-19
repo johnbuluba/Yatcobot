@@ -251,11 +251,9 @@ def ScanForContests():
 					text = text.replace("\n","")
 					id = str(item['id'])
 					original_id=id
-					is_retweet = 0
 
 					if 'retweeted_status' in item:
 
-						is_retweet = 1
 						original_item = item['retweeted_status']
 						original_id = str(original_item['id'])
 						original_user_item = original_item['user']
@@ -268,30 +266,19 @@ def ScanForContests():
 								post_list.append(original_item)
 								f_ign = open('ignorelist', 'a')
 
-								if is_retweet:
-									print((id + " - " + screen_name + " retweeting " + original_id + " - " + original_screen_name + ": " + text))
-									ignore_list.append(original_id)
-									f_ign.write(original_id + "\n")
-								else:
-									print((id + " - " + screen_name + ": " + text))
-									ignore_list.append(id)
-									f_ign.write(id + "\n")
+								print((id + " - " + screen_name + " retweeting " + original_id + " - " + original_screen_name + ": " + text))
+								ignore_list.append(original_id)
+								f_ign.write(original_id + "\n")
 
 								f_ign.close()
 
 							else:
 			
-								if is_retweet:
-									print((str(id) + " ignored: " + original_screen_name + " blocked and in ignore list"))
-								else:
-									print((screen_name + "blocked and in ignore list"))
+								print((str(id) + " ignored: " + original_screen_name + " blocked and in ignore list"))
 
 						else:
 	
-							if is_retweet:
-								print((id + " ignored: " + original_id + " in ignore list"))
-							else:
-								print((id + " in ignore list"))
+							print((id + " ignored: " + original_id + " in ignore list"))
 				
 					else:
 
@@ -309,18 +296,12 @@ def ScanForContests():
 									f_ign.close()
 
 							else:
-			
-								if is_retweet:
-									print((original_id + " ignored: " + original_screen_name + " blocked user in ignore list"))
-								else:
-									print((str(id) + " ignored: " + screen_name + " blocked user in ignore list"))
+
+								print((str(id) + " ignored: " + screen_name + " blocked user in ignore list"))
 
 						else:
 	
-							if is_retweet:
-								print((id + " ignored: " + original_id + " on ignore list"))
-							else:
-								print((id + " in ignore list"))					
+							print((id + " in ignore list"))					
 
 				print(("Got " + str(c) + " results"))
 
