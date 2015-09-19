@@ -6,10 +6,6 @@ import json
 import os.path
 import sys
 
-#default logger object
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-logger.addHandler(logging.StreamHandler())
 
 # Load our configuration from the JSON file.
 with open('config.json') as data_file:
@@ -32,6 +28,37 @@ max_follows = data["max-follows"]
 search_queries = data["search-queries"]
 follow_keywords = data["follow-keywords"]
 fav_keywords = data["fav-keywords"]
+
+
+def get_logger():
+    #Creates the logger object that is used for logging in the file
+
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.DEBUG)
+
+    #Create log outputs
+    fh = logging.FileHandler('log')
+    ch = logging.StreamHandler()
+
+    #Log format
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+
+    #Set logging format
+    fh.setFormatter(formatter)
+    ch.setFormatter(formatter)
+
+    #Set level per output
+    fh.setLevel(logging.DEBUG)
+    ch.setLevel(logging.INFO)
+
+    logger.addHandler(fh)
+    logger.addHandler(ch)
+    return logger
+
+
+#The logger object
+logger = get_logger()
+
 
 # Don't edit these unless you know what you're doing.
 api = TwitterAPI(
