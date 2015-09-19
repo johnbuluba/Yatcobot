@@ -58,14 +58,14 @@ def CheckError( r ):
 
 def CheckRateLimit():
 	c = threading.Timer(rate_limit_update_time, CheckRateLimit)
-	c.daemon = True;
+	c.daemon = True
 	c.start()
 
 	global ratelimit
 	global ratelimit_search
 
 	if ratelimit[2] < min_ratelimit:
-		print(("Ratelimit too low -> Cooldown (" + str(ratelimit[2]) + "%)"))
+		print("Ratelimit too low -> Cooldown (" + str(ratelimit[2]) + "%)")
 		time.sleep(30)
 	
 	r = api.request('application/rate_limit_status').json()
@@ -89,12 +89,12 @@ def CheckRateLimit():
 			elif percent < 30.0:
 				LogAndPrint(res_family + " Rate Limit -> " + res + ": " + str(percent) + "  !!! <30% alert !!!")				
 			elif percent < 70.0:
-				print((res_family + " Rate Limit -> " + res + ": " + str(percent)))
+				print(res_family + " Rate Limit -> " + res + ": " + str(percent))
 
 # Update the Retweet queue (this prevents too many retweets happening at once.)
 def UpdateQueue():
 	u = threading.Timer(retweet_update_time, UpdateQueue)
-	u.daemon = True;
+	u.daemon = True
 	u.start()
 
 	LogAndPrint("=== CHECKING RETWEET QUEUE ===")
@@ -134,7 +134,7 @@ def UpdateQueue():
 				LogAndPrint("We got an error message: " + post['errors'][0]['message'] + " Code: " + str(post['errors'][0]['code']) )
 		else:
 	
-			print(("Ratelimit at " + str(ratelimit[2]) + "% -> pausing retweets"))
+			print("Ratelimit at " + str(ratelimit[2]) + "% -> pausing retweets")
 
 
 # Check if a post requires you to follow the user.
@@ -195,7 +195,7 @@ def CheckForFavoriteRequest(item):
 # Clear the post list queue in order to avoid a buildup of old posts
 def ClearQueue():
 	d = threading.Timer(clear_queue_time, ClearQueue)
-	d.daemon = True;
+	d.daemon = True
 	d.start()
 
 	del post_list[:]
@@ -204,7 +204,7 @@ def ClearQueue():
 # Check list of blocked users and add to ignore list
 def CheckBlockedUsers():
 	c = threading.Timer(blocked_users_update_time, CheckBlockedUsers)
-	c.daemon = True;
+	c.daemon = True
 	c.start()
 
 	if not ratelimit_search[2] < min_ratelimit_search:
@@ -224,7 +224,7 @@ def CheckBlockedUsers():
 # Scan for new contests, but not too often because of the rate limit.
 def ScanForContests():
 	t = threading.Timer(scan_update_time, ScanForContests)
-	t.daemon = True;
+	t.daemon = True
 	t.start()
 	
 	global ratelimit_search
@@ -235,7 +235,7 @@ def ScanForContests():
 
 		for search_query in search_queries:
 
-			print(("Getting new results for: " + search_query))
+			print("Getting new results for: " + search_query)
 		
 			try:
 				r = api.request('search/tweets', {'q':search_query, 'result_type':"mixed", 'count':50})
@@ -266,7 +266,7 @@ def ScanForContests():
 								post_list.append(original_item)
 								f_ign = open('ignorelist', 'a')
 
-								print((id + " - " + screen_name + " retweeting " + original_id + " - " + original_screen_name + ": " + text))
+								print(id + " - " + screen_name + " retweeting " + original_id + " - " + original_screen_name + ": " + text)
 								ignore_list.append(original_id)
 								f_ign.write(original_id + "\n")
 
@@ -274,11 +274,11 @@ def ScanForContests():
 
 							else:
 			
-								print((str(id) + " ignored: " + original_screen_name + " blocked and in ignore list"))
+								print(str(id) + " ignored: " + original_screen_name + " blocked and in ignore list")
 
 						else:
 	
-							print((id + " ignored: " + original_id + " in ignore list"))
+							print(id + " ignored: " + original_id + " in ignore list")
 				
 					else:
 
@@ -289,7 +289,7 @@ def ScanForContests():
 									post_list.append(item)
 									f_ign = open('ignorelist', 'a')
 
-									print((id + " - " + screen_name + ": " + text))
+									print(id + " - " + screen_name + ": " + text)
 									ignore_list.append(id)
 									f_ign.write(id + "\n")
 
@@ -297,13 +297,13 @@ def ScanForContests():
 
 							else:
 
-								print((str(id) + " ignored: " + screen_name + " blocked user in ignore list"))
+								print(str(id) + " ignored: " + screen_name + " blocked user in ignore list")
 
 						else:
 	
-							print((id + " in ignore list"))					
+							print(id + " in ignore list")	
 
-				print(("Got " + str(c) + " results"))
+				print("Got " + str(c) + " results")
 
 			except Exception as e:
 				print("Could not connect to TwitterAPI - are your credentials correct?")
