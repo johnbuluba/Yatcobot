@@ -3,7 +3,6 @@ import threading
 import logging
 import time
 import json
-import os.path
 import sys
 
 
@@ -67,15 +66,35 @@ api = TwitterAPI(
     access_token_key,
     access_token_secret)
 post_list = list()
-ignore_list = list()
 ratelimit = [999, 999, 100]
 ratelimit_search = [999, 999, 100]
 
-if os.path.isfile('ignorelist'):
-    logger.info("Loading ignore list")
-    with open('ignorelist') as f:
-        ignore_list = f.read().splitlines()
-    f.close()
+
+class IgnoreList(list):
+    """
+    A list like object that loads contents from a file and everything that is appended here gets also
+    appended in the file
+    """
+
+    def __init__(self, filename):
+        self.filename = filename
+        self.load_file()
+
+    def append(self, p_object):
+        self.append_file(p_object)
+        super().append(p_object)
+
+    def load_file(self):
+        with open(self.filename, 'a+') as f:
+            f.seek(0)
+            self.extend(int(x) for x in f.read().splitlines())
+
+    def append_file(self, p_object):
+        with open(self.filename, 'a+') as f:
+            f.write(str(p_object) + '\n')
+
+
+ignore_list = IgnoreList("ignorelist")
 
 
 def CheckError(r):
@@ -254,13 +273,9 @@ def CheckBlockedUsers():
     if not ratelimit_search[2] < min_ratelimit_search:
 
         for b in api.request('blocks/ids'):
-            if not str(b) in ignore_list:
-                f_ign = open('ignorelist', 'a')
-                ignore_list.append(str(b))
-                f_ign.write(str(b) + "\n")
+            if not b in ignore_list:
+                ignore_list.append(b)
                 logger.info("Blocked user {0} added to ignore list".format(b))
-                f_ign.close()
-
     else:
 
         logger.warn("Update blocked users skipped! Queue: {0} Ratelimit: {1}/{2} ({3}%)".format(len(post_list),
@@ -298,29 +313,26 @@ def ScanForContests():
                     screen_name = user_item['screen_name']
                     text = item['text']
                     text = text.replace("\n", "")
-                    id = str(item['id'])
+                    id = item['id']
                     original_id = id
 
                     if 'retweeted_status' in item:
 
                         original_item = item['retweeted_status']
-                        original_id = str(original_item['id'])
+                        original_id = original_item['id']
                         original_user_item = original_item['user']
                         original_screen_name = original_user_item['screen_name']
 
                         if not original_id in ignore_list:
 
-                            if not str(original_user_item['id']) in ignore_list:
+                            if not original_user_item['id'] in ignore_list:
 
                                 post_list.append(original_item)
-                                f_ign = open( 'ignorelist', 'a')
 
                                 logger.info("{0} - {1} retweeting {2} - {3} : {4}".format(id, screen_name, original_id,
                                                                                           original_screen_name,text))
-                                ignore_list.append(original_id)
-                                f_ign.write(original_id + "\n")
 
-                                f_ign.close()
+                                ignore_list.append(original_id)
 
                             else:
 
@@ -334,16 +346,12 @@ def ScanForContests():
 
                         if not id in ignore_list:
 
-                            if not str(user_item['id']) in ignore_list:
+                            if not user_item['id'] in ignore_list:
 
                                 post_list.append(item)
-                                f_ign = open('ignorelist', 'a')
 
                                 logger.debug("{0} - {1} : {2}".format(id, screen_name, text))
                                 ignore_list.append(id)
-                                f_ign.write(id + "\n")
-
-                                f_ign.close()
 
                             else:
 
