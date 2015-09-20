@@ -81,7 +81,8 @@ if os.path.isfile('ignorelist'):
 def CheckError(r):
     r = r.json()
     if 'errors' in r:
-        logger.error("We got an error message: " + r['errors'][0]['message'] + " Code: " + str(r['errors'][0]['code']))
+        logger.error("We got an error message: {0} Code: {1})".format(r['errors'][0]['message'],
+                                                                      r['errors'][0]['code']))
         # sys.exit(r['errors'][0]['code'])
 
 
@@ -94,7 +95,7 @@ def CheckRateLimit():
     global ratelimit_search
 
     if ratelimit[2] < min_ratelimit:
-        logger.warn("Ratelimit too low -> Cooldown (" + str(ratelimit[2]) + "%)")
+        logger.warn("Ratelimit too low -> Cooldown ({}%)".format(ratelimit[2]))
         time.sleep(30)
 
     r = api.request('application/rate_limit_status').json()
@@ -113,13 +114,13 @@ def CheckRateLimit():
 
             #print(res_family + " -> " + res + ": " + str(percent))
             if percent < 5.0:
-                logger.critical( res_family + " Rate Limit -> " + res + ": " +  str(percent)
-                             + "  !!! <5% Emergency exit !!!")
-                sys.exit( res_family + " Rate Limit -> " + res + ": " + str(percent) + "  !!! <5% Emergency exit !!!")
+                message = "{0} Rate Limit-> {1}: {2} !!! <5% Emergency exit !!!".format(res_family, res, percent)
+                logger.critical(message)
+                sys.exit(message)
             elif percent < 30.0:
-                logger.warn( res_family + " Rate Limit -> " + res + ": " + str(percent) + "  !!! <30% alert !!!")
+                logger.warn("{0} Rate Limit-> {1}: {2} !!! <30% alert !!!".format(res_family, res, percent))
             elif percent < 70.0:
-                logger.info( res_family + " Rate Limit -> " + res + ": " + str(percent))
+                logger.info("{0} Rate Limit-> {1}: {2}".format(res_family, res, percent))
 
 # Update the Retweet queue (this prevents too many retweets happening at once.)
 
@@ -131,7 +132,7 @@ def UpdateQueue():
 
     logger.info("=== CHECKING RETWEET QUEUE ===")
 
-    logger.info("Queue length: " + str(len(post_list)))
+    logger.info("Queue length: {}".format(len(post_list)))
 
     if len(post_list) > 0:
 
@@ -139,12 +140,12 @@ def UpdateQueue():
 
             post = post_list[0]
             if not 'errors' in post:
-                logger.info("Retweeting: " + str(post['id']) + " " + str(post['text'].encode('utf8')))
+                logger.info("Retweeting: {0} {1}".format(post['id'], post['text'].encode('utf8')))
 
                 r = api.request('statuses/show/:%d' % post['id']).json()
                 if 'errors' in r:
-                    logger.error("We got an error message: " + r['errors'][0]['message'] + " Code: " +
-                                str(r['errors'][0]['code']))
+                    logger.error("We got an error message: {0} Code: {1}".format(r['errors'][0]['message'],
+                                                                                 r['errors'][0]['code']))
                     post_list.pop(0)
                 else:
                     user_item = r['user']
@@ -155,7 +156,7 @@ def UpdateQueue():
                         CheckForFollowRequest(post)
                         CheckForFavoriteRequest(post)
 
-                        r = api.request('statuses/retweet/:' + str(post['id']))
+                        r = api.request('statuses/retweet/:{0}'.format(post['id']))
                         CheckError(r)
                         post_list.pop(0)
 
@@ -164,10 +165,10 @@ def UpdateQueue():
                         logger.info("Blocked user's tweet skipped")
             else:
                 post_list.pop(0)
-                logger.error("We got an error message: " + post['errors'][0]['message'] + " Code: " +
-                            str(post['errors'][0]['code']))
+                logger.error("We got an error message: {0} Code: {1}".format(post['errors'][0]['message'],
+                                                                             post['errors'][0]['code']))
         else:
-            logger.info("Ratelimit at " + str(ratelimit[2]) + "% -> pausing retweets")
+            logger.info("Ratelimit at {0}% -> pausing retweets".format(ratelimit[2]))
 
 
 # Check if a post requires you to follow the user.
@@ -179,13 +180,13 @@ def CheckForFollowRequest(item):
         try:
             r = api.request('friendships/create', {'screen_name': item['retweeted_status']['user']['screen_name']})
             CheckError(r)
-            logger.info("Follow: " + item['retweeted_status']['user']['screen_name'])
+            logger.info("Follow: {0}".format(item['retweeted_status']['user']['screen_name']))
         except:
             user = item['user']
             screen_name = user['screen_name']
             r = api.request('friendships/create', {'screen_name': screen_name})
             CheckError(r)
-            logger.info("Follow: " + screen_name)
+            logger.info("Follow: {0}".format(screen_name))
 
         RemoveOldestFollow()
 
@@ -205,7 +206,7 @@ def RemoveOldestFollow():
 
         if r.status_code == 200:
             status = r.json()
-            logger.info('Unfollowed: %s' % status['screen_name'])
+            logger.info('Unfollowed: {0}'.format(status['screen_name']))
 
     else:
         logger.info("No friends unfollowed")
@@ -225,11 +226,11 @@ def CheckForFavoriteRequest(item):
         try:
             r = api.request('favorites/create', {'id': item['retweeted_status']['id']})
             CheckError(r)
-            logger.info("Favorite: " + str(item['retweeted_status']['id']))
+            logger.info("Favorite: {0}".format(item['retweeted_status']['id']))
         except:
             r = api.request('favorites/create', {'id': item['id']})
             CheckError(r)
-            logger.info("Favorite: " + str(item['id']))
+            logger.info("Favorite: {0}".format(item['id']))
 
 # Clear the post list queue in order to avoid a buildup of old posts
 
@@ -257,13 +258,15 @@ def CheckBlockedUsers():
                 f_ign = open('ignorelist', 'a')
                 ignore_list.append(str(b))
                 f_ign.write(str(b) + "\n")
-                logger.info("Blocked user " + str(b) + " added to ignore list")
+                logger.info("Blocked user {0} added to ignore list".format(b))
                 f_ign.close()
 
     else:
 
-        logger.warn("Update blocked users skipped! Queue: " + str(len(post_list)) + " Ratelimit: " +
-                    str(ratelimit_search[1]) + "/" + str(ratelimit_search[0]) + " (" + str(ratelimit_search[2]) + "%)")
+        logger.warn("Update blocked users skipped! Queue: {0} Ratelimit: {1}/{2} ({3}%)".format(len(post_list),
+                                                                                                ratelimit_search[1],
+                                                                                                ratelimit_search[0],
+                                                                                                ratelimit_search[2]))
 
 # Scan for new contests, but not too often because of the rate limit.
 
@@ -281,7 +284,7 @@ def ScanForContests():
 
         for search_query in search_queries:
 
-            logger.info("Getting new results for: " + search_query)
+            logger.info("Getting new results for: {0}".format(search_query))
 
             try:
                 r = api.request( 'search/tweets', {'q': search_query, 'result_type': "mixed", 'count': 50})
@@ -312,8 +315,8 @@ def ScanForContests():
                                 post_list.append(original_item)
                                 f_ign = open( 'ignorelist', 'a')
 
-                                logger.info(id + " - " + screen_name + " retweeting " + original_id + " - " +
-                                      original_screen_name + ": " + text)
+                                logger.info("{0} - {1} retweeting {2} - {3} : {4}".format(id, screen_name, original_id,
+                                                                                          original_screen_name,text))
                                 ignore_list.append(original_id)
                                 f_ign.write(original_id + "\n")
 
@@ -321,11 +324,11 @@ def ScanForContests():
 
                             else:
 
-                                logger.info(str(id) + " ignored: " + original_screen_name + " blocked and in ignore list")
-
+                                logger.info("{0} ignored {1} clocked and in ignore list".format(id,
+                                                                                                original_screen_name))
                         else:
 
-                            logger.debug( id + " ignored: " + original_id + " in ignore list")
+                            logger.debug("{0} ignored {1} in ignore list".format(id, original_id))
 
                     else:
 
@@ -336,7 +339,7 @@ def ScanForContests():
                                 post_list.append(item)
                                 f_ign = open('ignorelist', 'a')
 
-                                logger.debug(id + " - " + screen_name + ": " + text)
+                                logger.debug("{0} - {1} : {2}".format(id, screen_name, text))
                                 ignore_list.append(id)
                                 f_ign.write(id + "\n")
 
@@ -344,20 +347,22 @@ def ScanForContests():
 
                             else:
 
-                                logger.info(str(id) + " ignored: " + screen_name + " blocked user in ignore list")
+                                logger.info("{0} ignored {1} blocked user in ignore list".format(id, screen_name))
                         else:
 
-                            logger.debug(id + " in ignore list")
+                            logger.debug("{0} in ignore list".format(id))
 
-                logger.info("Got " + str(c) + " results")
+                logger.info("Got {0} results".format(c))
 
             except Exception as e:
                 logger.exception("Could not connect to TwitterAPI - are your credentials correct?")
 
     else:
 
-        logger.warn("Search skipped! Queue: " + str(len(post_list)) + " Ratelimit: " + str(ratelimit_search[1]) +
-                    "/" + str(ratelimit_search[0]) + " (" + str(ratelimit_search[2]) + "%)")
+        logger.warn("Search skipped! Queue: {0} Ratelimit: {1}/{2} ({3}%)".format(len(post_list),
+                                                                                  ratelimit_search[1],
+                                                                                  ratelimit_search[0],
+                                                                                  ratelimit_search[2]))
 
 ClearQueue()
 CheckRateLimit()
