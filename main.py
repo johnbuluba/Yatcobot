@@ -166,12 +166,14 @@ def UpdateQueue():
 
                     if not user_id in ignore_list:
 
-                        CheckForFollowRequest(post)
-                        CheckForFavoriteRequest(post)
-
                         r = api.request('statuses/retweet/:{0}'.format(post['id']))
                         CheckError(r)
                         post_list.pop(0)
+
+                        if not 'errors' in r.json():
+
+                        	CheckForFollowRequest(post)
+                        	CheckForFavoriteRequest(post)
 
                     else:
                         post_list.pop(0)
@@ -190,6 +192,7 @@ def UpdateQueue():
 def CheckForFollowRequest(item):
     text = item['text']
     if any(x in text.lower() for x in follow_keywords):
+        RemoveOldestFollow()
         try:
             r = api.request('friendships/create', {'screen_name': item['retweeted_status']['user']['screen_name']})
             CheckError(r)
@@ -200,8 +203,6 @@ def CheckForFollowRequest(item):
             r = api.request('friendships/create', {'screen_name': screen_name})
             CheckError(r)
             logger.info("Follow: {0}".format(screen_name))
-
-        RemoveOldestFollow()
 
 # FIFO - Every new follow should result in the oldest follow being removed.
 
