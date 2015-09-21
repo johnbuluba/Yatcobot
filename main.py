@@ -1,5 +1,5 @@
 from TwitterAPI import TwitterAPI
-import threading
+import sched
 import logging
 import time
 import json
@@ -87,9 +87,6 @@ def CheckError(r):
 
 
 def CheckRateLimit():
-    c = threading.Timer(rate_limit_update_time, CheckRateLimit)
-    c.daemon = True
-    c.start()
 
     global ratelimit
     global ratelimit_search
@@ -126,9 +123,6 @@ def CheckRateLimit():
 
 
 def UpdateQueue():
-    u = threading.Timer(retweet_update_time, UpdateQueue)
-    u.daemon = True
-    u.start()
 
     logger.info("=== CHECKING RETWEET QUEUE ===")
 
@@ -236,9 +230,6 @@ def CheckForFavoriteRequest(item):
 
 
 def ClearQueue():
-    d = threading.Timer(clear_queue_time, ClearQueue)
-    d.daemon = True
-    d.start()
 
     del post_list[:]
     logger.info("===THE QUEUE HAS BEEN CLEARED===")
@@ -247,9 +238,6 @@ def ClearQueue():
 
 
 def CheckBlockedUsers():
-    c = threading.Timer(blocked_users_update_time, CheckBlockedUsers)
-    c.daemon = True
-    c.start()
 
     if not ratelimit_search[2] < min_ratelimit_search:
 
@@ -272,9 +260,6 @@ def CheckBlockedUsers():
 
 
 def ScanForContests():
-    t = threading.Timer(scan_update_time, ScanForContests)
-    t.daemon = True
-    t.start()
 
     global ratelimit_search
 
@@ -364,11 +349,37 @@ def ScanForContests():
                                                                                   ratelimit_search[0],
                                                                                   ratelimit_search[2]))
 
-ClearQueue()
-CheckRateLimit()
-CheckBlockedUsers()
-ScanForContests()
-UpdateQueue()
 
-while (True):
-    time.sleep(1)
+class PeriodicScheduler(sched.scheduler):
+
+    def __init__(self, timefunc=time.time, delayfunc=time.sleep):
+        # List of tasks tha will be periodically be called
+        # tasks are stored as tuples: (delay, priority, action)
+        self.tasks = []
+        super().__init__(timefunc, delayfunc)
+
+    def enter(self, delay, priority, action):
+        self.tasks.append((delay, priority, action))
+
+    def run(self, blocking=True):
+        for i in range(len(self.tasks)):
+            self.run_task(i)
+
+        super().run(blocking)
+
+    def enter_task(self, index):
+        super().enter(self.tasks[index][0], self.tasks[index][1], self.run_task, argument=(index,))
+
+    def run_task(self, index):
+        self.enter_task(index)
+        self.tasks[index][2]()
+
+s = PeriodicScheduler()
+
+s.enter(clear_queue_time, 1, ClearQueue)
+s.enter(rate_limit_update_time, 2, CheckRateLimit)
+s.enter(blocked_users_update_time, 3, CheckBlockedUsers)
+s.enter(scan_update_time, 4, ScanForContests)
+s.enter(retweet_update_time, 5, UpdateQueue)
+
+s.run()
