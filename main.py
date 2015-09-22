@@ -18,6 +18,7 @@ access_token_secret = data["access-token-secret"]
 retweet_update_time = data["retweet-update-time"]
 scan_update_time = data["scan-update-time"]
 clear_queue_time = data["clear-queue-time"]
+min_posts_queue = data["min-posts-queue"]
 rate_limit_update_time = data["rate-limit-update-time"]
 blocked_users_update_time = data["blocked-users-update-time"]
 min_ratelimit = data["min-ratelimit"]
@@ -250,9 +251,11 @@ def CheckForFavoriteRequest(item):
 
 
 def ClearQueue():
+    post_list_length = len(post_list)
 
-    del post_list[:]
-    logger.info("===THE QUEUE HAS BEEN CLEARED===")
+    if post_list_length > min_posts_queue:
+        del post_list[:post_list_length - min_posts_queue]
+        logger.info("===THE QUEUE HAS BEEN CLEARED===")
 
 # Check list of blocked users and add to ignore list
 
