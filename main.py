@@ -4,7 +4,7 @@ import logging
 import time
 import json
 import sys
-
+import threading
 
 # Load our configuration from the JSON file.
 with open('config.json') as data_file:
@@ -381,7 +381,13 @@ class PeriodicScheduler(sched.scheduler):
 
     def run_task(self, index):
         self.enter_task(index)
-        self.tasks[index][2]()
+        t = threading.Thread(target=self.tasks[index][2])
+        t.daemon = True
+        try:
+            t.run()
+        except Exception:
+            logger.exception("Exception in thread")
+
 
 s = PeriodicScheduler()
 
