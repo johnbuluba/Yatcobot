@@ -226,7 +226,7 @@ def RemoveOldestFollow():
     else:
         logger.info("No friends unfollowed")
 
-    del friends[:]
+    del friends
     del oldest_friend
 
 # Check if a post requires you to favorite the tweet.
