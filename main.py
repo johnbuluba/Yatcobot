@@ -71,20 +71,9 @@ class Config:
             key = key.replace('-', '_')
             setattr(Config, key, value)
 
-        # Check if api keys are set
-        if not all(x != None for x in (Config.consumer_key, Config.consumer_secret, Config.consumer_secret, Config.access_token_secret)):
-            logger.critical("You must set the api keys in the config file")
-            sys.exit()
-
-Config.load('config.json')
-
 
 # Don't edit these unless you know what you're doing.
-api = TwitterAPI(
-    Config.consumer_key,
-    Config.consumer_secret,
-    Config.access_token_key,
-    Config.access_token_secret)
+api = None #Its initialized if this is main
 post_list = list()
 ratelimit = [999, 999, 100]
 ratelimit_search = [999, 999, 100]
@@ -114,7 +103,7 @@ class IgnoreList(list):
             f.write(str(p_object) + '\n')
 
 
-ignore_list = IgnoreList("ignorelist")
+ignore_list = None
 
 
 def CheckError(r):
@@ -410,14 +399,28 @@ class PeriodicScheduler(sched.scheduler):
         except Exception:
             logger.exception("Exception in thread")
 
-
-s = PeriodicScheduler()
-
-s.enter(Config.clear_queue_time, 1, ClearQueue)
-s.enter(Config.rate_limit_update_time, 2, CheckRateLimit)
-s.enter(Config.blocked_users_update_time, 3, CheckBlockedUsers)
-s.enter(Config.scan_update_time, 4, ScanForContests)
-s.enter(Config.retweet_update_time, 5, UpdateQueue)
-
 if __name__ == '__main__':
+    #Load config
+    Config.load('config.json')
+
+    #Initialize twitter api
+    api = TwitterAPI(
+        Config.consumer_key,
+        Config.consumer_secret,
+        Config.access_token_key,
+        Config.access_token_secret)
+
+    #Initialize ignorelist
+    ignore_list = IgnoreList("ignorelist")
+
+    #Initialize Scheduler
+    s = PeriodicScheduler()
+
+    s.enter(Config.clear_queue_time, 1, ClearQueue)
+    s.enter(Config.rate_limit_update_time, 2, CheckRateLimit)
+    s.enter(Config.blocked_users_update_time, 3, CheckBlockedUsers)
+    s.enter(Config.scan_update_time, 4, ScanForContests)
+    s.enter(Config.retweet_update_time, 5, UpdateQueue)
+
+    #Init the program
     s.run()
