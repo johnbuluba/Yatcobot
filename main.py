@@ -333,7 +333,7 @@ def ScanForContests():
 
                             else:
 
-                                logger.info("{0} ignored {1} clocked and in ignore list".format(id,
+                                logger.info("{0} ignored {1} blocked and in ignore list".format(id,
                                                                                                 original_screen_name))
                         else:
 
