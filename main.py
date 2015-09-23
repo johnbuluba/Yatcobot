@@ -395,7 +395,8 @@ class PeriodicScheduler(sched.scheduler):
         t = threading.Thread(target=self.tasks[index][2])
         t.daemon = True
         try:
-            t.run()
+            logger.debug("Scheduler is calling: {}".format(self.tasks[index][2].__name__))
+            t.start()
         except Exception:
             logger.exception("Exception in thread")
 
