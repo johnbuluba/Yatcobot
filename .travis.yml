@@ -2,5 +2,4 @@ language: python
 python:
   - "3.4"
 install: "pip3 install TwitterAPI"
-script: python3 -m py_compile main.py
-script: python3 tests.py
+script: python3 -m py_compile main.py && python3 tests.py
