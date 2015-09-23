@@ -6,29 +6,6 @@ import json
 import sys
 import threading
 
-# Load our configuration from the JSON file.
-with open('config.json') as data_file:
-    data = json.load(data_file)
-
-# These vars are loaded in from config.
-consumer_key = data["consumer-key"]
-consumer_secret = data["consumer-secret"]
-access_token_key = data["access-token-key"]
-access_token_secret = data["access-token-secret"]
-retweet_update_time = data["retweet-update-time"]
-scan_update_time = data["scan-update-time"]
-clear_queue_time = data["clear-queue-time"]
-min_posts_queue = data["min-posts-queue"]
-rate_limit_update_time = data["rate-limit-update-time"]
-blocked_users_update_time = data["blocked-users-update-time"]
-min_ratelimit = data["min-ratelimit"]
-min_ratelimit_retweet = data["min-ratelimit-retweet"]
-min_ratelimit_search = data["min-ratelimit-search"]
-max_follows = data["max-follows"]
-search_queries = data["search-queries"]
-follow_keywords = data["follow-keywords"]
-fav_keywords = data["fav-keywords"]
-
 
 def get_logger():
     #Creates the logger object that is used for logging in the file
@@ -60,12 +37,54 @@ def get_logger():
 logger = get_logger()
 
 
+class Config:
+    """Class that contains all  config variables. It loads user values from a json file """
+
+    # Default values
+    consumer_key = None
+    consumer_secret = None
+    access_token_key = None
+    access_token_secret = None
+    retweet_update_time = 60
+    scan_update_time = 5400
+    clear_queue_time = 43200
+    min_posts_queue = 60
+    rate_limit_update_time = 60
+    blocked_users_update_time = 300
+    min_ratelimit = 10
+    min_ratelimit_retweet = 20
+    min_ratelimit_search = 40
+    max_follows = 1950
+    search_queries = ["RT to win", "Retweet and win"]
+    follow_keywords = [" follow ", " follower "]
+    fav_keywords = [" fav ", " favorite "]
+
+    @staticmethod
+    def load(filename):
+        # Load our configuration from the JSON file.
+        with open(filename) as data_file:
+            data = json.load(data_file)
+
+        for key, value in data.items():
+            #!Fixme:
+            #Hacky code because the corresponding keys in config file use - instead of _
+            key = key.replace('-', '_')
+            setattr(Config, key, value)
+
+        # Check if api keys are set
+        if not all(x != None for x in (Config.consumer_key, Config.consumer_secret, Config.consumer_secret, Config.access_token_secret)):
+            logger.critical("You must set the api keys in the config file")
+            sys.exit()
+
+Config.load('config.json')
+
+
 # Don't edit these unless you know what you're doing.
 api = TwitterAPI(
-    consumer_key,
-    consumer_secret,
-    access_token_key,
-    access_token_secret)
+    Config.consumer_key,
+    Config.consumer_secret,
+    Config.access_token_key,
+    Config.access_token_secret)
 post_list = list()
 ratelimit = [999, 999, 100]
 ratelimit_search = [999, 999, 100]
@@ -111,7 +130,7 @@ def CheckRateLimit():
     global ratelimit
     global ratelimit_search
 
-    if ratelimit[2] < min_ratelimit:
+    if ratelimit[2] < Config.min_ratelimit:
         logger.warn("Ratelimit too low -> Cooldown ({}%)".format(ratelimit[2]))
         time.sleep(30)
 
@@ -150,7 +169,7 @@ def UpdateQueue():
 
     if len(post_list) > 0:
 
-        if not ratelimit[2] < min_ratelimit_retweet:
+        if not ratelimit[2] < Config.min_ratelimit_retweet:
 
             post = post_list[0]
             if not 'errors' in post:
@@ -192,7 +211,7 @@ def UpdateQueue():
 # for following too aggressively
 def CheckForFollowRequest(item):
     text = item['text']
-    if any(x in text.lower() for x in follow_keywords):
+    if any(x in text.lower() for x in Config.follow_keywords):
         RemoveOldestFollow()
         try:
             r = api.request('friendships/create', {'screen_name': item['retweeted_status']['user']['screen_name']})
@@ -215,7 +234,7 @@ def RemoveOldestFollow():
 
     oldest_friend = friends[-1]
 
-    if len(friends) > max_follows:
+    if len(friends) > Config.max_follows:
 
         r = api.request('friendships/destroy', {'user_id': oldest_friend})
 
@@ -237,7 +256,7 @@ def RemoveOldestFollow():
 def CheckForFavoriteRequest(item):
     text = item['text']
 
-    if any(x in text.lower() for x in fav_keywords):
+    if any(x in text.lower() for x in Config.fav_keywords):
         try:
             r = api.request('favorites/create', {'id': item['retweeted_status']['id']})
             CheckError(r)
@@ -253,8 +272,8 @@ def CheckForFavoriteRequest(item):
 def ClearQueue():
     post_list_length = len(post_list)
 
-    if post_list_length > min_posts_queue:
-        del post_list[:post_list_length - min_posts_queue]
+    if post_list_length > Config.min_posts_queue:
+        del post_list[:post_list_length - Config.min_posts_queue]
         logger.info("===THE QUEUE HAS BEEN CLEARED===")
 
 # Check list of blocked users and add to ignore list
@@ -262,7 +281,7 @@ def ClearQueue():
 
 def CheckBlockedUsers():
 
-    if not ratelimit_search[2] < min_ratelimit_search:
+    if not ratelimit_search[2] < Config.min_ratelimit_search:
 
         for b in api.request('blocks/ids'):
             if not b in ignore_list:
@@ -282,11 +301,11 @@ def ScanForContests():
 
     global ratelimit_search
 
-    if not ratelimit_search[2] < min_ratelimit_search:
+    if not ratelimit_search[2] < Config.min_ratelimit_search:
 
         logger.info("=== SCANNING FOR NEW CONTESTS ===")
 
-        for search_query in search_queries:
+        for search_query in Config.search_queries:
 
             logger.info("Getting new results for: {0}".format(search_query))
 
@@ -394,10 +413,11 @@ class PeriodicScheduler(sched.scheduler):
 
 s = PeriodicScheduler()
 
-s.enter(clear_queue_time, 1, ClearQueue)
-s.enter(rate_limit_update_time, 2, CheckRateLimit)
-s.enter(blocked_users_update_time, 3, CheckBlockedUsers)
-s.enter(scan_update_time, 4, ScanForContests)
-s.enter(retweet_update_time, 5, UpdateQueue)
+s.enter(Config.clear_queue_time, 1, ClearQueue)
+s.enter(Config.rate_limit_update_time, 2, CheckRateLimit)
+s.enter(Config.blocked_users_update_time, 3, CheckBlockedUsers)
+s.enter(Config.scan_update_time, 4, ScanForContests)
+s.enter(Config.retweet_update_time, 5, UpdateQueue)
 
-s.run()
+if __name__ == '__main__':
+    s.run()
