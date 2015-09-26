@@ -4,7 +4,6 @@ import logging
 import time
 import json
 import sys
-import threading
 
 
 def get_logger():
@@ -195,7 +194,6 @@ def UpdateQueue():
             CheckForFavoriteRequest(post)
 
 
-
 def CheckForFollowRequest(item):
     """
     Check if a post requires you to follow the user.
@@ -239,7 +237,6 @@ def RemoveOldestFollow():
 
     del friends
     del oldest_friend
-
 
 
 def CheckForFavoriteRequest(item):
@@ -386,7 +383,7 @@ class PeriodicScheduler(sched.scheduler):
     def run_task(self, index):
         self.enter_task(index)
         try:
-            #logger.debug("Scheduler is calling: {}".format(self.tasks[index][2].__name__))
+            logger.debug("Scheduler is calling: {}".format(self.tasks[index][2].__name__))
             self.tasks[index][2]()
         except Exception as e:
             logger.error("Exception in scheduled task :{}".format(e))
