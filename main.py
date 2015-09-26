@@ -385,13 +385,12 @@ class PeriodicScheduler(sched.scheduler):
 
     def run_task(self, index):
         self.enter_task(index)
-        t = threading.Thread(target=self.tasks[index][2])
-        t.daemon = True
         try:
-            logger.debug("Scheduler is calling: {}".format(self.tasks[index][2].__name__))
-            t.start()
-        except Exception:
-            logger.exception("Exception in thread")
+            #logger.debug("Scheduler is calling: {}".format(self.tasks[index][2].__name__))
+            self.tasks[index][2]()
+        except Exception as e:
+            logger.error("Exception in scheduled task :{}".format(e))
+
 
 if __name__ == '__main__':
     #Load config
