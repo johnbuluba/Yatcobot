@@ -158,41 +158,44 @@ def UpdateQueue():
 
     if len(post_list) > 0:
 
-        if not ratelimit[2] < Config.min_ratelimit_retweet:
-
-            post = post_list[0]
-            if not 'errors' in post:
-                logger.info("Retweeting: {0} {1}".format(post['id'], post['text'].encode('utf8')))
-
-                r = api.request('statuses/show/:%d' % post['id']).json()
-                if 'errors' in r:
-                    logger.error("We got an error message: {0} Code: {1}".format(r['errors'][0]['message'],
-                                                                                 r['errors'][0]['code']))
-                    post_list.pop(0)
-                else:
-                    user_item = r['user']
-                    user_id = user_item['id']
-
-                    if not user_id in ignore_list:
-
-                        r = api.request('statuses/retweet/:{0}'.format(post['id']))
-                        CheckError(r)
-                        post_list.pop(0)
-
-                        if not 'errors' in r.json():
-
-                        	CheckForFollowRequest(post)
-                        	CheckForFavoriteRequest(post)
-
-                    else:
-                        post_list.pop(0)
-                        logger.info("Blocked user's tweet skipped")
-            else:
-                post_list.pop(0)
-                logger.error("We got an error message: {0} Code: {1}".format(post['errors'][0]['message'],
-                                                                             post['errors'][0]['code']))
-        else:
+        if ratelimit[2] < Config.min_ratelimit_retweet:
             logger.info("Ratelimit at {0}% -> pausing retweets".format(ratelimit[2]))
+            return
+
+        post = post_list[0]
+
+        if 'errors' in post:
+            post_list.pop(0)
+            logger.error("We got an error message: {0} Code: {1}".format(post['errors'][0]['message'],
+                                                                         post['errors'][0]['code']))
+            return
+
+        logger.info("Retweeting: {0} {1}".format(post['id'], post['text'].encode('utf8')))
+
+        r = api.request('statuses/show/:%d' % post['id']).json()
+        if 'errors' in r:
+            logger.error("We got an error message: {0} Code: {1}".format(r['errors'][0]['message'],
+                                                                         r['errors'][0]['code']))
+            post_list.pop(0)
+            return
+
+        user_item = r['user']
+        user_id = user_item['id']
+
+        if user_id in ignore_list:
+            post_list.pop(0)
+            logger.info("Blocked user's tweet skipped")
+            return
+
+        r = api.request('statuses/retweet/:{0}'.format(post['id']))
+
+        CheckError(r)
+        post_list.pop(0)
+
+        if not 'errors' in r.json():
+
+            CheckForFollowRequest(post)
+            CheckForFavoriteRequest(post)
 
 
 # Check if a post requires you to follow the user.
