@@ -8,7 +8,7 @@ import threading
 
 
 def get_logger():
-    #Creates the logger object that is used for logging in the file
+    """Creates the logger object that is used for logging in the file"""
 
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.DEBUG)
@@ -111,7 +111,6 @@ def CheckError(r):
     if 'errors' in r:
         logger.error("We got an error message: {0} Code: {1})".format(r['errors'][0]['message'],
                                                                       r['errors'][0]['code']))
-        # sys.exit(r['errors'][0]['code'])
 
 
 def CheckRateLimit():
@@ -137,7 +136,6 @@ def CheckRateLimit():
             if res == "/application/rate_limit_status":
                 ratelimit = [limit, remaining, percent]
 
-            #print(res_family + " -> " + res + ": " + str(percent))
             if percent < 5.0:
                 message = "{0} Rate Limit-> {1}: {2} !!! <5% Emergency exit !!!".format(res_family, res, percent)
                 logger.critical(message)
@@ -147,10 +145,9 @@ def CheckRateLimit():
             elif percent < 70.0:
                 logger.info("{0} Rate Limit-> {1}: {2}".format(res_family, res, percent))
 
-# Update the Retweet queue (this prevents too many retweets happening at once.)
-
 
 def UpdateQueue():
+    """ Update the Retweet queue (this prevents too many retweets happening at once.)"""
 
     logger.info("=== CHECKING RETWEET QUEUE ===")
 
@@ -198,10 +195,13 @@ def UpdateQueue():
             CheckForFavoriteRequest(post)
 
 
-# Check if a post requires you to follow the user.
-# Be careful with this function! Twitter may write ban your application
-# for following too aggressively
+
 def CheckForFollowRequest(item):
+    """
+    Check if a post requires you to follow the user.
+    Be careful with this function! Twitter may write ban your application
+    for following too aggressively
+    """
     text = item['text']
     if any(x in text.lower() for x in Config.follow_keywords):
         RemoveOldestFollow()
@@ -216,10 +216,10 @@ def CheckForFollowRequest(item):
             CheckError(r)
             logger.info("Follow: {0}".format(screen_name))
 
-# FIFO - Every new follow should result in the oldest follow being removed.
-
 
 def RemoveOldestFollow():
+    """FIFO - Every new follow should result in the oldest follow being removed."""
+
     friends = list()
     for id in api.request('friends/ids'):
         friends.append(id)
@@ -240,12 +240,15 @@ def RemoveOldestFollow():
     del friends
     del oldest_friend
 
-# Check if a post requires you to favorite the tweet.
-# Be careful with this function! Twitter may write ban your application
-# for favoriting too aggressively
 
 
 def CheckForFavoriteRequest(item):
+    """
+    Check if a post requires you to favorite the tweet.
+    Be careful with this function! Twitter may write ban your application
+    for favoriting too aggressively
+
+    """
     text = item['text']
 
     if any(x in text.lower() for x in Config.fav_keywords):
@@ -258,38 +261,34 @@ def CheckForFavoriteRequest(item):
             CheckError(r)
             logger.info("Favorite: {0}".format(item['id']))
 
-# Clear the post list queue in order to avoid a buildup of old posts
-
 
 def ClearQueue():
+    """Clear the post list queue in order to avoid a buildup of old posts"""
+
     post_list_length = len(post_list)
 
     if post_list_length > Config.min_posts_queue:
         del post_list[:post_list_length - Config.min_posts_queue]
         logger.info("===THE QUEUE HAS BEEN CLEARED===")
 
-# Check list of blocked users and add to ignore list
-
 
 def CheckBlockedUsers():
-
-    if not ratelimit_search[2] < Config.min_ratelimit_search:
-
-        for b in api.request('blocks/ids'):
-            if not b in ignore_list:
-                ignore_list.append(b)
-                logger.info("Blocked user {0} added to ignore list".format(b))
-    else:
-
+    """Check list of blocked users and add to ignore list"""
+    if ratelimit_search[2] < Config.min_ratelimit_search:
         logger.warn("Update blocked users skipped! Queue: {0} Ratelimit: {1}/{2} ({3}%)".format(len(post_list),
                                                                                                 ratelimit_search[1],
                                                                                                 ratelimit_search[0],
                                                                                                 ratelimit_search[2]))
+        return
 
-# Scan for new contests, but not too often because of the rate limit.
+    for b in api.request('blocks/ids'):
+        if not b in ignore_list:
+            ignore_list.append(b)
+            logger.info("Blocked user {0} added to ignore list".format(b))
 
 
 def ScanForContests():
+    """Scan for new contests, but not too often because of the rate limit."""
 
     global ratelimit_search
 
@@ -339,7 +338,7 @@ def ScanForContests():
                     post_list.append(original_item)
 
                     logger.info("{0} - {1} retweeting {2} - {3} : {4}".format(id, screen_name, original_id,
-                                                                              original_screen_name,text))
+                                                                              original_screen_name, text))
 
                     ignore_list.append(original_id)
 
@@ -364,11 +363,10 @@ def ScanForContests():
             logger.exception("Could not connect to TwitterAPI - are your credentials correct?")
 
 
-
 class PeriodicScheduler(sched.scheduler):
 
     def __init__(self, timefunc=time.time, delayfunc=time.sleep):
-        # List of tasks tha will be periodically be called
+        # List of tasks that will be periodically be called
         # tasks are stored as tuples: (delay, priority, action)
         self.tasks = []
         super().__init__(timefunc, delayfunc)
