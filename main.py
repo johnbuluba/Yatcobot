@@ -4,7 +4,8 @@ import logging
 import time
 import json
 import sys
-
+from collections import namedtuple
+import random
 
 def get_logger():
     """Creates the logger object that is used for logging in the file"""
@@ -44,7 +45,8 @@ class Config:
     consumer_secret = None
     access_token_key = None
     access_token_secret = None
-    retweet_update_time = 60
+    retweet_update_time = 600
+    retweet_random_margin = 60
     scan_update_time = 5400
     clear_queue_time = 43200
     min_posts_queue = 60
@@ -361,15 +363,30 @@ def ScanForContests():
 
 
 class PeriodicScheduler(sched.scheduler):
+    """Schedules tasks to be called periodically"""
+
+    #Task types
+    NormalTask = namedtuple('NormalTask', ['delay', 'priority', 'action'])
+    RandomTask = namedtuple('RandomTask', ['delay', 'delay_margin', 'priority', 'action'])
 
     def __init__(self, timefunc=time.time, delayfunc=time.sleep):
         # List of tasks that will be periodically be called
-        # tasks are stored as tuples: (delay, priority, action)
         self.tasks = []
         super().__init__(timefunc, delayfunc)
 
     def enter(self, delay, priority, action):
-        self.tasks.append((delay, priority, action))
+        """Inserts a new task in the scheduler. Tasks will be called regularly with period delay"""
+
+        task = self.NormalTask(delay, priority, action)
+        self.tasks.append(task)
+
+    def enter_random(self, delay, delay_margin, priority, action):
+        """
+        Inserts a new random task in the scheduler. Tasks will be paused for random time
+        from delay-delay_margin to delay+delay_margin
+        """
+        task = self.RandomTask(delay, delay_margin, priority, action)
+        self.tasks.append(task)
 
     def run(self, blocking=True):
         for i in range(len(self.tasks)):
@@ -378,13 +395,19 @@ class PeriodicScheduler(sched.scheduler):
         super().run(blocking)
 
     def enter_task(self, index):
-        super().enter(self.tasks[index][0], self.tasks[index][1], self.run_task, argument=(index,))
+        task = self.tasks[index]
+        if isinstance(task, self.NormalTask):
+            super().enter(task.delay, task.priority, self.run_task, argument=(index,))
+
+        elif isinstance(task, self.RandomTask):
+            delay = random.randint(task.delay- task.delay_margin, task.delay + task.delay_margin)
+            super().enter(delay, task.priority, self.run_task, argument=(index,))
 
     def run_task(self, index):
         self.enter_task(index)
         try:
             logger.debug("Scheduler is calling: {}".format(self.tasks[index][2].__name__))
-            self.tasks[index][2]()
+            self.tasks[index].action()
         except Exception as e:
             logger.error("Exception in scheduled task :{}".format(e))
 
@@ -410,7 +433,7 @@ if __name__ == '__main__':
     s.enter(Config.rate_limit_update_time, 2, CheckRateLimit)
     s.enter(Config.blocked_users_update_time, 3, CheckBlockedUsers)
     s.enter(Config.scan_update_time, 4, ScanForContests)
-    s.enter(Config.retweet_update_time, 5, UpdateQueue)
+    s.enter_random(Config.retweet_update_time, Config.retweet_random_margin, 5, UpdateQueue)
 
     #Init the program
     s.run()

@@ -70,6 +70,19 @@ class TestPeriodicScheduler(unittest.TestCase):
         self.assertEqual(len(self.sched.queue), 1)
         self.assertEqual(tuple(self.sched.queue[0]), (self.time.current_time+10, 1, self.sched.run_task, (0,), {}))
 
+    def test_enter_task_random(self):
+        target = Mock(name='Test')
+
+        #Add one task
+        self.sched.enter_random(10, 5, 1, target)
+
+        self.sched.enter_task(0)
+
+        self.assertEqual(len(self.sched.queue), 1)
+        self.assertGreaterEqual(self.sched.queue[0].time, self.time.current_time+10-5)
+        self.assertLessEqual(self.sched.queue[0].time, self.time.current_time+10+5)
+        self.assertEqual(self.sched.queue[0].action, self.sched.run_task)
+
     def test_run_task(self):
         target = Mock(name='Test')
         target.__name__ = 'Test'
