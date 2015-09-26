@@ -290,84 +290,76 @@ def ScanForContests():
 
     global ratelimit_search
 
-    if not ratelimit_search[2] < Config.min_ratelimit_search:
-
-        logger.info("=== SCANNING FOR NEW CONTESTS ===")
-
-        for search_query in Config.search_queries:
-
-            logger.info("Getting new results for: {0}".format(search_query))
-
-            try:
-                r = api.request( 'search/tweets', {'q': search_query, 'result_type': "mixed", 'count': 50})
-                CheckError(r)
-                c = 0
-
-                for item in r:
-
-                    c = c + 1
-                    user_item = item['user']
-                    screen_name = user_item['screen_name']
-                    text = item['text']
-                    text = text.replace("\n", "")
-                    id = item['id']
-                    original_id = id
-
-                    if 'retweeted_status' in item:
-
-                        original_item = item['retweeted_status']
-                        original_id = original_item['id']
-                        original_user_item = original_item['user']
-                        original_screen_name = original_user_item['screen_name']
-
-                        if not original_id in ignore_list:
-
-                            if not original_user_item['id'] in ignore_list:
-
-                                post_list.append(original_item)
-
-                                logger.info("{0} - {1} retweeting {2} - {3} : {4}".format(id, screen_name, original_id,
-                                                                                          original_screen_name,text))
-
-                                ignore_list.append(original_id)
-
-                            else:
-
-                                logger.info("{0} ignored {1} blocked and in ignore list".format(id,
-                                                                                                original_screen_name))
-                        else:
-
-                            logger.debug("{0} ignored {1} in ignore list".format(id, original_id))
-
-                    else:
-
-                        if not id in ignore_list:
-
-                            if not user_item['id'] in ignore_list:
-
-                                post_list.append(item)
-
-                                logger.debug("{0} - {1} : {2}".format(id, screen_name, text))
-                                ignore_list.append(id)
-
-                            else:
-
-                                logger.info("{0} ignored {1} blocked user in ignore list".format(id, screen_name))
-                        else:
-
-                            logger.debug("{0} in ignore list".format(id))
-
-                logger.info("Got {0} results".format(c))
-
-            except Exception as e:
-                logger.exception("Could not connect to TwitterAPI - are your credentials correct?")
-
-    else:
+    if ratelimit_search[2] < Config.min_ratelimit_search:
 
         logger.warn("Search skipped! Queue: {0} Ratelimit: {1}/{2} ({3}%)".format(len(post_list),
                                                                                   ratelimit_search[1],
                                                                                   ratelimit_search[0],
                                                                                   ratelimit_search[2]))
+        return
+
+    logger.info("=== SCANNING FOR NEW CONTESTS ===")
+
+    for search_query in Config.search_queries:
+
+        logger.info("Getting new results for: {0}".format(search_query))
+
+        try:
+            r = api.request( 'search/tweets', {'q': search_query, 'result_type': "mixed", 'count': 50})
+            CheckError(r)
+            c = 0
+
+            for item in r:
+                c += 1
+                user_item = item['user']
+                screen_name = user_item['screen_name']
+                text = item['text']
+                text = text.replace("\n", "")
+                id = item['id']
+                original_id = id
+
+                if 'retweeted_status' in item:
+
+                    original_item = item['retweeted_status']
+                    original_id = original_item['id']
+                    original_user_item = original_item['user']
+                    original_screen_name = original_user_item['screen_name']
+
+                    if original_id in ignore_list:
+                        logger.debug("{0} ignored {1} in ignore list".format(id, original_id))
+                        continue
+
+                    if original_user_item['id'] in ignore_list:
+                        logger.info("{0} ignored {1} blocked and in ignore list".format(id, original_screen_name))
+                        continue
+
+                    post_list.append(original_item)
+
+                    logger.info("{0} - {1} retweeting {2} - {3} : {4}".format(id, screen_name, original_id,
+                                                                              original_screen_name,text))
+
+                    ignore_list.append(original_id)
+
+                else:
+
+                    if id in ignore_list:
+                        logger.debug("{0} in ignore list".format(id))
+                        continue
+
+                    if user_item['id'] in ignore_list:
+                        logger.info("{0} ignored {1} blocked user in ignore list".format(id, screen_name))
+                        continue
+
+                    post_list.append(item)
+
+                    logger.debug("{0} - {1} : {2}".format(id, screen_name, text))
+                    ignore_list.append(id)
+
+            logger.info("Got {0} results".format(c))
+
+        except Exception as e:
+            logger.exception("Could not connect to TwitterAPI - are your credentials correct?")
+
 
 
 class PeriodicScheduler(sched.scheduler):
