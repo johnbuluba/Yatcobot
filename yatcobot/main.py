@@ -47,6 +47,22 @@ class Config:
             setattr(Config, key, value)
 
 
+class TwitterClient():
+
+    def __init__(self, consumer_key, consumer_secret, access_token_key, access_token_secret):
+        self.api = TwitterAPI(consumer_key, consumer_secret, access_token_key, access_token_secret)
+
+    def search_tweets(self, query, limit, type='mixed'):
+        r = self.api_call('search/tweets', {'q': query, 'result_type': type, 'count': limit})
+        return r['statuses']
+
+    def api_call(self, request, parameters):
+        r = self.api.request(request, parameters)
+        return r.json()
+
+client = None
+
+
 # Don't edit these unless you know what you're doing.
 api = None #Its initialized if this is main
 post_list = list()
@@ -280,8 +296,7 @@ def ScanForContests():
         logger.info("Getting new results for: {0}".format(search_query))
 
         try:
-            r = api.request( 'search/tweets', {'q': search_query, 'result_type': "mixed", 'count': 50})
-            CheckError(r)
+            r = client.search_tweets(search_query, 50)
             c = 0
 
             for item in r:
@@ -347,6 +362,11 @@ def run():
         Config.consumer_secret,
         Config.access_token_key,
         Config.access_token_secret)
+
+    client = TwitterClient(Config.consumer_key,
+                            Config.consumer_secret,
+                            Config.access_token_key,
+                            Config.access_token_secret)
 
     #Initialize ignorelist
     ignore_list = IgnoreList("ignorelist")
