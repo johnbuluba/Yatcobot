@@ -1,9 +1,9 @@
-# twitter-contest-bot
+# Yatchbot 
 Will poll for Retweet Contests and retweet them. Inspired by http://www.hscott.net/twitter-contest-winning-as-a-service/
 
 A more acceptable use of this kind of app may involve using to search for philanthropic causes requesting retweets, and retweet less often so as not to seem spammy.
 
-[![Build Status](https://travis-ci.org/ModusVivendi/twitter-contest.svg?branch=master)](https://travis-ci.org/ModusVivendi/twitter-contest)
+[![Build Status](https://travis-ci.org/buluba89/Yatcbot?branch=master)](https://travis-ci.org/buluba89/Yatcbot)
 
 Disclaimer!
 ------------
@@ -36,9 +36,11 @@ Then run:
 
 	python3 main.py
 
-Alternatives
--------------
 
-If you're looking for similar projects in alternative languages, check these out:
+Credits
+-----------
+>Forked from [ModusVivendi/twitter-contest](https://github.com/ModusVivendi/twitter-contest)
 
-* *(JavaScript)* https://github.com/raulrene/Twitter-ContestJS-bot
+
+>Original project [kurozael/twitter-contest-bot](https://github.com/kurozael/twitter-contest-bot)
+

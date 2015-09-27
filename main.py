@@ -7,6 +7,7 @@ import sys
 from collections import namedtuple
 import random
 
+
 def get_logger():
     """Creates the logger object that is used for logging in the file"""
 
