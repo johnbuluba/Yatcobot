@@ -30,7 +30,7 @@ Installation
 ------------
 From the command line:
 
-	pip3 install TwitterAPI
+	pip3 install -r requirements.txt 
 	
 Then run:
 
