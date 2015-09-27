@@ -56,7 +56,13 @@ class TwitterClient():
         r = self.api_call('search/tweets', {'q': query, 'result_type': type, 'count': limit})
         return r['statuses']
 
-    def api_call(self, request, parameters):
+    def get_tweet(self, post_id):
+        return self.api_call('statuses/show/:{}'.format(post_id))
+
+    def retweet(self, post_id):
+        return self.api_call('statuses/retweet/:{}'.format(post_id))
+
+    def api_call(self, request, parameters=None):
         r = self.api.request(request, parameters)
         return r.json()
 
@@ -150,37 +156,31 @@ def UpdateQueue():
             logger.info("Ratelimit at {0}% -> pausing retweets".format(ratelimit[2]))
             return
 
-        post = post_list[0]
+        post = post_list.pop(0)
 
         if 'errors' in post:
-            post_list.pop(0)
             logger.error("We got an error message: {0} Code: {1}".format(post['errors'][0]['message'],
                                                                          post['errors'][0]['code']))
             return
 
         logger.info("Retweeting: {0} {1}".format(post['id'], post['text'].encode('utf8')))
 
-        r = api.request('statuses/show/:%d' % post['id']).json()
+        r = client.get_tweet(post['id'])
         if 'errors' in r:
             logger.error("We got an error message: {0} Code: {1}".format(r['errors'][0]['message'],
                                                                          r['errors'][0]['code']))
-            post_list.pop(0)
             return
 
         user_item = r['user']
         user_id = user_item['id']
 
         if user_id in ignore_list:
-            post_list.pop(0)
             logger.info("Blocked user's tweet skipped")
             return
 
-        r = api.request('statuses/retweet/:{0}'.format(post['id']))
+        r = client.retweet(post['id'])
 
-        CheckError(r)
-        post_list.pop(0)
-
-        if not 'errors' in r.json():
+        if not 'errors' in r:
 
             CheckForFollowRequest(post)
             CheckForFavoriteRequest(post)
@@ -226,9 +226,6 @@ def RemoveOldestFollow():
 
     else:
         logger.info("No friends unfollowed")
-
-    del friends
-    del oldest_friend
 
 
 def CheckForFavoriteRequest(item):
