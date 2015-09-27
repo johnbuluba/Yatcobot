@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import Mock
 import logging
 
-from yatcbot.scheduler import PeriodicScheduler
+from yatcobot.scheduler import PeriodicScheduler
 
 
 class TestPeriodicScheduler(unittest.TestCase):
