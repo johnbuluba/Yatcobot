@@ -1,41 +1,14 @@
-from TwitterAPI import TwitterAPI
-import sched
 import logging
 import time
 import json
 import sys
-from collections import namedtuple
-import random
 
+from TwitterAPI import TwitterAPI
 
-def get_logger():
-    """Creates the logger object that is used for logging in the file"""
-
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.DEBUG)
-
-    #Create log outputs
-    fh = logging.FileHandler('log')
-    ch = logging.StreamHandler()
-
-    #Log format
-    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-
-    #Set logging format
-    fh.setFormatter(formatter)
-    ch.setFormatter(formatter)
-
-    #Set level per output
-    fh.setLevel(logging.DEBUG)
-    ch.setLevel(logging.INFO)
-
-    logger.addHandler(fh)
-    logger.addHandler(ch)
-    return logger
-
+from .scheduler import PeriodicScheduler
 
 #The logger object
-logger = get_logger()
+logger = logging.getLogger(__name__)
 
 
 class Config:
@@ -361,56 +334,6 @@ def ScanForContests():
 
         except Exception as e:
             logger.exception("Could not connect to TwitterAPI - are your credentials correct?")
-
-
-class PeriodicScheduler(sched.scheduler):
-    """Schedules tasks to be called periodically"""
-
-    #Task types
-    NormalTask = namedtuple('NormalTask', ['delay', 'priority', 'action'])
-    RandomTask = namedtuple('RandomTask', ['delay', 'delay_margin', 'priority', 'action'])
-
-    def __init__(self, timefunc=time.time, delayfunc=time.sleep):
-        # List of tasks that will be periodically be called
-        self.tasks = []
-        super().__init__(timefunc, delayfunc)
-
-    def enter(self, delay, priority, action):
-        """Inserts a new task in the scheduler. Tasks will be called regularly with period delay"""
-
-        task = self.NormalTask(delay, priority, action)
-        self.tasks.append(task)
-
-    def enter_random(self, delay, delay_margin, priority, action):
-        """
-        Inserts a new random task in the scheduler. Tasks will be paused for random time
-        from delay-delay_margin to delay+delay_margin
-        """
-        task = self.RandomTask(delay, delay_margin, priority, action)
-        self.tasks.append(task)
-
-    def run(self, blocking=True):
-        for i in range(len(self.tasks)):
-            self.run_task(i)
-
-        super().run(blocking)
-
-    def enter_task(self, index):
-        task = self.tasks[index]
-        if isinstance(task, self.NormalTask):
-            super().enter(task.delay, task.priority, self.run_task, argument=(index,))
-
-        elif isinstance(task, self.RandomTask):
-            delay = random.randint(task.delay- task.delay_margin, task.delay + task.delay_margin)
-            super().enter(delay, task.priority, self.run_task, argument=(index,))
-
-    def run_task(self, index):
-        self.enter_task(index)
-        try:
-            logger.debug("Scheduler is calling: {}".format(self.tasks[index].action.__name__))
-            self.tasks[index].action()
-        except Exception as e:
-            logger.error("Exception in scheduled task :{}".format(e))
 
 
 def run():
