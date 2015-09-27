@@ -1,8 +1,12 @@
 import builtins
 import unittest
+import logging
 from unittest.mock import patch, mock_open
 
 from yatcbot.main import Config
+
+
+logging.disable(logging.ERROR)
 
 
 class TestConfig(unittest.TestCase):

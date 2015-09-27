@@ -1,8 +1,8 @@
 import os
 import unittest
 from unittest.mock import Mock
+import logging
 
-import yatcbot
 from yatcbot.scheduler import PeriodicScheduler
 
 
@@ -10,6 +10,7 @@ class TestPeriodicScheduler(unittest.TestCase):
     """Tests for PeriodicScheduler class"""
 
     def setUp(self):
+        logging.disable(logging.ERROR)
 
         def time():
             #time.current_time += 1
