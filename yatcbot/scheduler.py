@@ -7,12 +7,15 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+#Task types
+NormalTask = namedtuple('NormalTask', ['delay', 'priority', 'action'])
+RandomTask = namedtuple('RandomTask', ['delay', 'delay_margin', 'priority', 'action'])
+
+
 class PeriodicScheduler(sched.scheduler):
     """Schedules tasks to be called periodically"""
 
-    #Task types
-    NormalTask = namedtuple('NormalTask', ['delay', 'priority', 'action'])
-    RandomTask = namedtuple('RandomTask', ['delay', 'delay_margin', 'priority', 'action'])
+
 
     def __init__(self, timefunc=time.time, delayfunc=time.sleep):
         # List of tasks that will be periodically be called
@@ -22,7 +25,7 @@ class PeriodicScheduler(sched.scheduler):
     def enter(self, delay, priority, action):
         """Inserts a new task in the scheduler. Tasks will be called regularly with period delay"""
 
-        task = self.NormalTask(delay, priority, action)
+        task = NormalTask(delay, priority, action)
         self.tasks.append(task)
 
     def enter_random(self, delay, delay_margin, priority, action):
@@ -30,7 +33,7 @@ class PeriodicScheduler(sched.scheduler):
         Inserts a new random task in the scheduler. Tasks will be paused for random time
         from delay-delay_margin to delay+delay_margin
         """
-        task = self.RandomTask(delay, delay_margin, priority, action)
+        task = RandomTask(delay, delay_margin, priority, action)
         self.tasks.append(task)
 
     def run(self, blocking=True):
@@ -41,10 +44,10 @@ class PeriodicScheduler(sched.scheduler):
 
     def enter_task(self, index):
         task = self.tasks[index]
-        if isinstance(task, self.NormalTask):
+        if isinstance(task, NormalTask):
             super().enter(task.delay, task.priority, self.run_task, argument=(index,))
 
-        elif isinstance(task, self.RandomTask):
+        elif isinstance(task, RandomTask):
             delay = random.randint(task.delay- task.delay_margin, task.delay + task.delay_margin)
             super().enter(delay, task.priority, self.run_task, argument=(index,))
 
