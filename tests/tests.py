@@ -1,8 +1,9 @@
 import builtins
+import os
 import unittest
 from unittest.mock import patch, mock_open, Mock
 
-from main import Config, PeriodicScheduler
+from yatcbot.main import Config, PeriodicScheduler
 
 
 class TestConfig(unittest.TestCase):
@@ -146,6 +147,8 @@ class TestPeriodicScheduler(unittest.TestCase):
         #Run task
         self.sched.run_task(0)
 
-
-if __name__ == '__main__':
-    unittest.main()
+    def tearDown(self):
+        try:
+            os.remove('./log')
+        except:
+            pass

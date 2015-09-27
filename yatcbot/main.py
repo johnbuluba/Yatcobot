@@ -407,15 +407,16 @@ class PeriodicScheduler(sched.scheduler):
     def run_task(self, index):
         self.enter_task(index)
         try:
-            logger.debug("Scheduler is calling: {}".format(self.tasks[index][2].__name__))
+            logger.debug("Scheduler is calling: {}".format(self.tasks[index].action.__name__))
             self.tasks[index].action()
         except Exception as e:
             logger.error("Exception in scheduled task :{}".format(e))
 
 
-if __name__ == '__main__':
+def run():
     #Load config
     Config.load('config.json')
+    global client, ignore_list, api
 
     #Initialize twitter api
     api = TwitterAPI(
@@ -438,3 +439,6 @@ if __name__ == '__main__':
 
     #Init the program
     s.run()
+
+
+
