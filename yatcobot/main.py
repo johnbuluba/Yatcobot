@@ -3,6 +3,8 @@ import time
 import json
 import sys
 
+from TwitterAPI import TwitterAPI
+
 
 from .scheduler import PeriodicScheduler
 from .client import TwitterClient
@@ -191,18 +193,18 @@ def RemoveOldestFollow():
     """FIFO - Every new follow should result in the oldest follow being removed."""
 
     friends = list()
-    for id in api.request('friends/ids'):
+    for id in client.get_friends():
         friends.append(id)
 
     oldest_friend = friends[-1]
 
     if len(friends) > Config.max_follows:
 
-        r = api.request('friendships/destroy', {'user_id': oldest_friend})
+        r = client.unfollow(oldest_friend)
 
-        if r.status_code == 200:
-            status = r.json()
-            logger.info('Unfollowed: {0}'.format(status['screen_name']))
+        #if r.status_code == 200:
+            #status = r.json()
+        logger.info('Unfollowed: {0}'.format(r['screen_name']))
 
     else:
         logger.info("No friends unfollowed")

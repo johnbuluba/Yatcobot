@@ -22,6 +22,9 @@ class TwitterClient():
     def follow(self, username):
         return self._api_call('friendships/create', {'screen_name': username})
 
+    def unfollow(self, user_id):
+        return self._api_call('friendships/destroy', {'user_id': user_id})
+
     def _api_call(self, request, parameters=None):
         r = self.api.request(request, parameters)
         return r.json()

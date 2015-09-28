@@ -56,7 +56,13 @@ class TestTwitterClient(unittest.TestCase):
         r = self.client.follow(1401881)
         self.assertEqual(r['id'], 1401881)
 
-
+    @requests_mock.mock()
+    def test_unfollow(self, m):
+        with open(self.tests_path + '/fixtures/friendship_create.json') as f:
+            response = f.read()
+        m.post('https://api.twitter.com/1.1/friendships/destroy.json', text=response)
+        r = self.client.unfollow(1401881)
+        self.assertEqual(r['id'], 1401881)
 
 
 
