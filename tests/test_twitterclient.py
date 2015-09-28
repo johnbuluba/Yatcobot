@@ -4,7 +4,7 @@ import logging
 
 import requests_mock
 
-from yatcobot.main import TwitterClient
+from yatcobot.client import TwitterClient
 
 
 class TestTwitterClient(unittest.TestCase):
