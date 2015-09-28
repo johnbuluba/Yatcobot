@@ -249,7 +249,7 @@ def CheckBlockedUsers():
                                                                                                 ratelimit_search[2]))
         return
 
-    for b in api.request('blocks/ids'):
+    for b in client.get_blocks():
         if not b in ignore_list:
             ignore_list.append(b)
             logger.info("Blocked user {0} added to ignore list".format(b))

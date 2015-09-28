@@ -28,6 +28,9 @@ class TwitterClient():
     def favorite(self, post_id):
         return self._api_call('favorites/create', {'id': post_id})
 
+    def get_blocks(self):
+        return self._api_call('blocks/ids')['ids']
+
     def _api_call(self, request, parameters=None):
         r = self.api.request(request, parameters)
         return r.json()

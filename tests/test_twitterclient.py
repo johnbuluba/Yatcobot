@@ -74,6 +74,14 @@ class TestTwitterClient(unittest.TestCase):
         r = self.client.favorite(243138128959913986)
         self.assertEqual(r['id'], 243138128959913986)
 
+    @requests_mock.mock()
+    def test_get_blocks(self, m):
+        with open(self.tests_path + '/fixtures/blocks_ids.json') as f:
+            response = f.read()
+        m.get('https://api.twitter.com/1.1/blocks/ids.json', text=response)
+        r = self.client.get_blocks()
+        self.assertEqual(len(r), 1)
+
 
 
 
