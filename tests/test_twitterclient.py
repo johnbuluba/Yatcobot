@@ -16,6 +16,14 @@ class TestTwitterClient(unittest.TestCase):
         self.client = TwitterClient('Consumer Key', "Consumer Secret", "Access Key", "Access Secret")
 
     @requests_mock.mock()
+    def test_get_tweet(self, m):
+        with open(self.tests_path + '/fixtures/statuses_show.json') as f:
+            response = f.read()
+        m.get('https://api.twitter.com/1.1/statuses/show/210462857140252672.json', text=response)
+        r = self.client.get_tweet("210462857140252672")
+        self.assertEqual(r['id'], 210462857140252672)
+
+    @requests_mock.mock()
     def test_get_friends_ids(self, m):
         with open(self.tests_path + '/fixtures/friends_ids.json') as f:
             response = f.read()
