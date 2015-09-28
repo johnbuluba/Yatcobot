@@ -25,6 +25,14 @@ class TestTwitterClient(unittest.TestCase):
         self.assertEqual(len(r), 4)
 
     @requests_mock.mock()
+    def test_retweet(self, m):
+        with open(self.tests_path + '/fixtures/statuses_retweet.json') as f:
+            response = f.read()
+        m.post('https://api.twitter.com/1.1/statuses/retweet/241259202004267009.json', text=response)
+        r = self.client.retweet("241259202004267009")
+        self.assertEqual(r['retweeted_status']['id'], 241259202004267009)
+
+    @requests_mock.mock()
     def test_get_tweet(self, m):
         with open(self.tests_path + '/fixtures/statuses_show.json') as f:
             response = f.read()
