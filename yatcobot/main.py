@@ -52,8 +52,8 @@ class TwitterClient():
     def __init__(self, consumer_key, consumer_secret, access_token_key, access_token_secret):
         self.api = TwitterAPI(consumer_key, consumer_secret, access_token_key, access_token_secret)
 
-    def search_tweets(self, query, limit, type='mixed'):
-        r = self.api_call('search/tweets', {'q': query, 'result_type': type, 'count': limit})
+    def search_tweets(self, query, limit, result_type='mixed'):
+        r = self.api_call('search/tweets', {'q': query, 'result_type': result_type, 'count': limit})
         return r['statuses']
 
     def get_tweet(self, post_id):
@@ -61,6 +61,9 @@ class TwitterClient():
 
     def retweet(self, post_id):
         return self.api_call('statuses/retweet/:{}'.format(post_id))
+
+    def get_friends_ids(self):
+        return self.api_call('friends/ids')['ids']
 
     def api_call(self, request, parameters=None):
         r = self.api.request(request, parameters)
