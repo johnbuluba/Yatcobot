@@ -13,7 +13,7 @@ This bot is written purely for educational purposes. I hold no liability for wha
 License
 ------------
 
-You can fork this repository on GitHub as long as it links back to this original repository. Do not sell this script as I would like the code to remain free.
+This program is released under GPL v2
 
 Prerequisites
 ------------
