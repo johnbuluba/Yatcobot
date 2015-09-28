@@ -174,6 +174,8 @@ def CheckForFollowRequest(item):
     Be careful with this function! Twitter may write ban your application
     for following too aggressively
     """
+    #!Fixme doesnt find .Follow, #Follow
+
     text = item['text']
     if any(x in text.lower() for x in Config.follow_keywords):
         RemoveOldestFollow()
@@ -193,7 +195,7 @@ def RemoveOldestFollow():
     """FIFO - Every new follow should result in the oldest follow being removed."""
 
     friends = list()
-    for id in client.get_friends():
+    for id in client.get_friends_ids():
         friends.append(id)
 
     oldest_friend = friends[-1]

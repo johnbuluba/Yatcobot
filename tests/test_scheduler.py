@@ -24,7 +24,7 @@ class TestPeriodicScheduler(unittest.TestCase):
 
     def test_enter(self):
         target = Mock(name='Test')
-
+        target.__name__ = 'Test'
         #Add one task
         self.sched.enter(10, 1, target)
         self.assertEqual(len(self.sched.tasks), 1)
@@ -37,6 +37,7 @@ class TestPeriodicScheduler(unittest.TestCase):
 
     def test_enter_task(self):
         target = Mock(name='Test')
+        target.__name__ = 'Test'
 
         #Add one task
         self.sched.enter(10, 1, target)
@@ -48,6 +49,7 @@ class TestPeriodicScheduler(unittest.TestCase):
 
     def test_enter_task_random(self):
         target = Mock(name='Test')
+        target.__name__ = 'Test'
 
         #Add one task
         self.sched.enter_random(10, 5, 1, target)

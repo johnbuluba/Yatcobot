@@ -46,9 +46,10 @@ class PeriodicScheduler(sched.scheduler):
         task = self.tasks[index]
         if isinstance(task, NormalTask):
             super().enter(task.delay, task.priority, self.run_task, argument=(index,))
-
+            logger.debug("Rescheduling {} for after {} seconds".format(task.action.__name__, task.delay))
         elif isinstance(task, RandomTask):
-            delay = random.randint(task.delay- task.delay_margin, task.delay + task.delay_margin)
+            delay = random.randint(task.delay - task.delay_margin, task.delay + task.delay_margin)
+            logger.debug("Rescheduling {} for after {} seconds".format(task.action.__name__, delay))
             super().enter(delay, task.priority, self.run_task, argument=(index,))
 
     def run_task(self, index):
