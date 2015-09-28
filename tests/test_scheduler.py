@@ -5,13 +5,13 @@ import logging
 
 from yatcobot.scheduler import PeriodicScheduler
 
+logging.disable(logging.ERROR)
+
 
 class TestPeriodicScheduler(unittest.TestCase):
     """Tests for PeriodicScheduler class"""
 
     def setUp(self):
-        logging.disable(logging.ERROR)
-
         def time():
             #time.current_time += 1
             return time.current_time

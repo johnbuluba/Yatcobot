@@ -221,12 +221,12 @@ def CheckForFavoriteRequest(item):
 
     if any(x in text.lower() for x in Config.fav_keywords):
         try:
-            r = api.request('favorites/create', {'id': item['retweeted_status']['id']})
-            CheckError(r)
+            r = client.favorite(item['retweeted_status']['id'])
+            #CheckError(r)
             logger.info("Favorite: {0}".format(item['retweeted_status']['id']))
         except:
-            r = api.request('favorites/create', {'id': item['id']})
-            CheckError(r)
+            r = client.favorite(item['id'])
+            #CheckError(r)
             logger.info("Favorite: {0}".format(item['id']))
 
 

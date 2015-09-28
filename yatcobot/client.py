@@ -25,6 +25,9 @@ class TwitterClient():
     def unfollow(self, user_id):
         return self._api_call('friendships/destroy', {'user_id': user_id})
 
+    def favorite(self, post_id):
+        return self._api_call('favorites/create', {'id': post_id})
+
     def _api_call(self, request, parameters=None):
         r = self.api.request(request, parameters)
         return r.json()

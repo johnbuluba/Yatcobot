@@ -6,12 +6,14 @@ import requests_mock
 
 from yatcobot.client import TwitterClient
 
+logging.disable(logging.ERROR)
+
 
 class TestTwitterClient(unittest.TestCase):
     """Tests for TwitterClient class"""
 
     def setUp(self):
-        logging.disable(logging.ERROR)
+
         self.tests_path = path = os.path.dirname(os.path.abspath(__file__))
         self.client = TwitterClient('Consumer Key', "Consumer Secret", "Access Key", "Access Secret")
 
@@ -63,6 +65,14 @@ class TestTwitterClient(unittest.TestCase):
         m.post('https://api.twitter.com/1.1/friendships/destroy.json', text=response)
         r = self.client.unfollow(1401881)
         self.assertEqual(r['id'], 1401881)
+
+    @requests_mock.mock()
+    def test_favorite(self, m):
+        with open(self.tests_path + '/fixtures/favorites_create.json') as f:
+            response = f.read()
+        m.post('https://api.twitter.com/1.1/favorites/create.json', text=response)
+        r = self.client.favorite(243138128959913986)
+        self.assertEqual(r['id'], 243138128959913986)
 
 
 
