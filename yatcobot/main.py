@@ -53,19 +53,22 @@ class TwitterClient():
         self.api = TwitterAPI(consumer_key, consumer_secret, access_token_key, access_token_secret)
 
     def search_tweets(self, query, limit, result_type='mixed'):
-        r = self.api_call('search/tweets', {'q': query, 'result_type': result_type, 'count': limit})
+        r = self._api_call('search/tweets', {'q': query, 'result_type': result_type, 'count': limit})
         return r['statuses']
 
     def get_tweet(self, post_id):
-        return self.api_call('statuses/show/:{}'.format(post_id))
+        return self._api_call('statuses/show/:{}'.format(post_id))
 
     def retweet(self, post_id):
-        return self.api_call('statuses/retweet/:{}'.format(post_id))
+        return self._api_call('statuses/retweet/:{}'.format(post_id))
 
     def get_friends_ids(self):
-        return self.api_call('friends/ids')['ids']
+        return self._api_call('friends/ids')['ids']
 
-    def api_call(self, request, parameters=None):
+    def follow(self, username):
+        return self._api_call('friendships/create', {'screen_name': username})
+
+    def _api_call(self, request, parameters=None):
         r = self.api.request(request, parameters)
         return r.json()
 
@@ -199,14 +202,14 @@ def CheckForFollowRequest(item):
     if any(x in text.lower() for x in Config.follow_keywords):
         RemoveOldestFollow()
         try:
-            r = api.request('friendships/create', {'screen_name': item['retweeted_status']['user']['screen_name']})
-            CheckError(r)
+            r = client.follow(item['retweeted_status']['user']['screen_name'])
+            #CheckError(r)
             logger.info("Follow: {0}".format(item['retweeted_status']['user']['screen_name']))
         except:
             user = item['user']
             screen_name = user['screen_name']
-            r = api.request('friendships/create', {'screen_name': screen_name})
-            CheckError(r)
+            r = client.follow(screen_name)
+            #CheckError(r)
             logger.info("Follow: {0}".format(screen_name))
 
 

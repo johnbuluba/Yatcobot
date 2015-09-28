@@ -48,7 +48,13 @@ class TestTwitterClient(unittest.TestCase):
         r = self.client.get_friends_ids()
         self.assertEqual(len(r), 31)
 
-
+    @requests_mock.mock()
+    def test_follow(self, m):
+        with open(self.tests_path + '/fixtures/friendship_create.json') as f:
+            response = f.read()
+        m.post('https://api.twitter.com/1.1/friendships/create.json', text=response)
+        r = self.client.follow(1401881)
+        self.assertEqual(r['id'], 1401881)
 
 
 
