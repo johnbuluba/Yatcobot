@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
-from yatcobot.main import run
+from yatcobot.main import Yatcobot
 
-run()
+bot = Yatcobot('config.json', 'ignorelist')
+bot.run()

@@ -14,6 +14,10 @@ class TwitterClientException(Exception):
     pass
 
 
+class TwitterClientRetweetedException(Exception):
+    pass
+
+
 class TwitterClient():
 
     def __init__(self, consumer_key, consumer_secret, access_token_key, access_token_secret):
@@ -74,7 +78,11 @@ class TwitterClient():
             for error in response_dict['errors']:
                 message = error['message']
                 code = error['code']
+                if message == 'You have already retweeted this tweet.':
+                    raise TwitterClientRetweetedException()
+
                 logger.error('Error during twitter api call {} (parameters: {}): {}'.format(request, parameters, message))
+
             raise TwitterClientException('Error during twitter api call {}'.format(request))
 
         return response_dict
