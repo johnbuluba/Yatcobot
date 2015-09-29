@@ -142,7 +142,6 @@ class Yatcobot():
             del self.post_list[:post_list_length - Config.min_posts_queue]
             logger.info("===THE QUEUE HAS BEEN CLEARED===")
 
-
     def update_blocked_users(self):
 
         for b in self.client.get_blocks():
@@ -170,7 +169,6 @@ class Yatcobot():
                     text = item['text']
                     text = text.replace("\n", "")
                     id = item['id']
-                    original_id = id
 
                     if 'retweeted_status' in item:
 
@@ -189,8 +187,8 @@ class Yatcobot():
 
                         self.post_list.append(original_item)
 
-                        logger.info("{0} - {1} retweeting {2} - {3} : {4}".format(id, screen_name, original_id,
-                                                                                  original_screen_name, text))
+                        logger.debug("Got retweet: id:{0} username:{1} original_id:{2} origina_username:{3} text:{4}"
+                                     .format(id, screen_name, original_id, original_screen_name, text))
 
                         self.ignore_list.append(original_id)
 
@@ -206,7 +204,7 @@ class Yatcobot():
 
                         self.post_list.append(item)
 
-                        logger.debug("{0} - {1} : {2}".format(id, screen_name, text))
+                        logger.debug("Got tweet: id:{0} username:{1} text:{2}".format(id, screen_name, text))
                         self.ignore_list.append(id)
 
                 logger.info("Got {0} results".format(c))

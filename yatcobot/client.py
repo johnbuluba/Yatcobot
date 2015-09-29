@@ -70,6 +70,10 @@ class TwitterClient():
         for x in self.ratelimits.values():
             x['percent'] = x['remaining']/x['limit'] * 100
 
+        #log ratelimit status
+        logger.debug("Ratelimit status: {}".format({key: item['percent'] for key, item in self.ratelimits.items()
+                                                                         if item['percent'] < 100}))
+
     def _api_call(self, request, parameters=None):
         r = self.api.request(request, parameters)
         response_dict = r.json()
@@ -103,8 +107,7 @@ class TwitterClient():
             wait = reset_time - now
 
             if wait > 0:
-                logger.warning('Rate limit {}. Waiting for {} seconds'.format(resource_ratelimit['percent'],
-                                                                              wait))
+                logger.warning('Rate limit {}. Waiting for {} seconds'.format(resource_ratelimit['percent'], wait))
                 time.sleep(wait)
 
 
