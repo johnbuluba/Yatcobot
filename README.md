@@ -37,6 +37,16 @@ Then run:
 	python3 yatcobot.py
 
 
+## Usage with Docker
+
+To run container use like below
+
+    $ docker run -v /path/to/config.json:/yatcobot/config.json buluba89/Yatcobot
+
+where /path/to/config.json is the path of your config.json
+
+
+
 Credits
 -----------
 >Forked from [ModusVivendi/twitter-contest](https://github.com/ModusVivendi/twitter-contest)
