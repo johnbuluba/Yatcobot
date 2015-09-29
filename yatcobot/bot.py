@@ -3,35 +3,11 @@ import logging
 
 from .scheduler import PeriodicScheduler
 from .config import Config
+from .ignorelist import IgnoreList
 from .client import TwitterClient, TwitterClientRetweetedException
 
 #The logger object
 logger = logging.getLogger(__name__)
-
-
-
-class IgnoreList(list):
-    """
-    A list like object that loads contents from a file and everything that is appended here gets also
-    appended in the file
-    """
-
-    def __init__(self, filename):
-        self.filename = filename
-        self.load_file()
-
-    def append(self, p_object):
-        self.append_file(p_object)
-        super().append(p_object)
-
-    def load_file(self):
-        with open(self.filename, 'a+') as f:
-            f.seek(0)
-            self.extend(int(x) for x in f.read().splitlines())
-
-    def append_file(self, p_object):
-        with open(self.filename, 'a+') as f:
-            f.write(str(p_object) + '\n')
 
 
 class Yatcobot():
@@ -158,59 +134,55 @@ class Yatcobot():
 
             logger.info("Getting new results for: {0}".format(search_query))
 
-            try:
-                r = self.client.search_tweets(search_query, 50)
-                c = 0
+            r = self.client.search_tweets(search_query, 50)
+            c = 0
 
-                for item in r:
-                    c += 1
-                    user_item = item['user']
-                    screen_name = user_item['screen_name']
-                    text = item['text']
-                    text = text.replace("\n", "")
-                    id = item['id']
+            for item in r:
+                c += 1
+                user_item = item['user']
+                screen_name = user_item['screen_name']
+                text = item['text']
+                text = text.replace("\n", "")
+                id = item['id']
 
-                    if 'retweeted_status' in item:
+                if 'retweeted_status' in item:
 
-                        original_item = item['retweeted_status']
-                        original_id = original_item['id']
-                        original_user_item = original_item['user']
-                        original_screen_name = original_user_item['screen_name']
+                    original_item = item['retweeted_status']
+                    original_id = original_item['id']
+                    original_user_item = original_item['user']
+                    original_screen_name = original_user_item['screen_name']
 
-                        if original_id in self.ignore_list:
-                            logger.debug("{0} ignored {1} in ignore list".format(id, original_id))
-                            continue
+                    if original_id in self.ignore_list:
+                        logger.debug("{0} ignored {1} in ignore list".format(id, original_id))
+                        continue
 
-                        if original_user_item['id'] in self.ignore_list:
-                            logger.info("{0} ignored {1} blocked and in ignore list".format(id, original_screen_name))
-                            continue
+                    if original_user_item['id'] in self.ignore_list:
+                        logger.info("{0} ignored {1} blocked and in ignore list".format(id, original_screen_name))
+                        continue
 
-                        self.post_list.append(original_item)
+                    self.post_list.append(original_item)
 
-                        logger.debug("Got retweet: id:{0} username:{1} original_id:{2} origina_username:{3} text:{4}"
-                                     .format(id, screen_name, original_id, original_screen_name, text))
+                    logger.debug("Got retweet: id:{0} username:{1} original_id:{2} origina_username:{3} text:{4}"
+                                 .format(id, screen_name, original_id, original_screen_name, text))
 
-                        self.ignore_list.append(original_id)
+                    self.ignore_list.append(original_id)
 
-                    else:
+                else:
 
-                        if id in self.ignore_list:
-                            logger.debug("{0} in ignore list".format(id))
-                            continue
+                    if id in self.ignore_list:
+                        logger.debug("{0} in ignore list".format(id))
+                        continue
 
-                        if user_item['id'] in self.ignore_list:
-                            logger.info("{0} ignored {1} blocked user in ignore list".format(id, screen_name))
-                            continue
+                    if user_item['id'] in self.ignore_list:
+                        logger.info("{0} ignored {1} blocked user in ignore list".format(id, screen_name))
+                        continue
 
-                        self.post_list.append(item)
+                    self.post_list.append(item)
 
-                        logger.debug("Got tweet: id:{0} username:{1} text:{2}".format(id, screen_name, text))
-                        self.ignore_list.append(id)
+                    logger.debug("Got tweet: id:{0} username:{1} text:{2}".format(id, screen_name, text))
+                    self.ignore_list.append(id)
 
-                logger.info("Got {0} results".format(c))
-
-            except Exception as e:
-                logger.exception("Could not connect to TwitterAPI - are your credentials correct?")
+            logger.info("Got {0} results".format(c))
 
     def run(self):
 
