@@ -7,7 +7,7 @@ RUN export DEBIAN_FRONTEND='noninteractive' && \
           apt-get install git
 
 RUN git clone --depth 1 https://github.com/buluba89/Yatcobot.git  /yatcobot &&\
-    cd /yatcbot &&\
+    cd /yatcobot &&\
     pip3 install -r requirements.txt
 
 
