@@ -11,7 +11,7 @@ logging.disable(logging.ERROR)
 
 class TestConfig(unittest.TestCase):
 
-    config_data='''{"search-queries":["test"],"follow-keywords":["test"],"fav-keywords":["test"],"scan-update-time":1,"retweet-update-time":1,"rate-limit-update-time":1,"min-ratelimit":1,"min-ratelimit-retweet":1,"min-ratelimit-search":1,"clear-queue-time":1,"min-posts-queue":1,"blocked-users-update-time":1,"max-follows":1,"consumer-key":"test","consumer-secret":"test","access-token-key":"test","access-token-secret":"test"}'''
+    config_data='''{"search_queries":["test"],"follow_keywords":["test"],"fav_keywords":["test"],"scan_update_time":1,"retweet_update_time":1,"rate_limit_update_time":1,"min_ratelimit":1,"min_ratelimit_retweet":1,"min_ratelimit_search":1,"clear_queue_time":1,"min_posts_queue":1,"blocked_users_update_time":1,"max_follows":1,"consumer_key":"test","consumer_secret":"test","access_token_key":"test","access_token_secret":"test"}'''
 
     def test_load(self):
 

@@ -20,6 +20,7 @@ client = None
 api = None #Its initialized if this is main
 post_list = list()
 
+
 class IgnoreList(list):
     """
     A list like object that loads contents from a file and everything that is appended here gets also

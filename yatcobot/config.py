@@ -29,7 +29,4 @@ class Config:
             data = json.load(data_file)
 
         for key, value in data.items():
-            #!Fixme:
-            #Hacky code because the corresponding keys in config file use - instead of _
-            key = key.replace('-', '_')
             setattr(Config, key, value)
