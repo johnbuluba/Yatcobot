@@ -4,6 +4,8 @@ Will poll for Retweet Contests and retweet them. Inspired by http://www.hscott.n
 A more acceptable use of this kind of app may involve using to search for philanthropic causes requesting retweets, and retweet less often so as not to seem spammy.
 
 [![Build Status](https://travis-ci.org/buluba89/Yatcobot.svg)](https://travis-ci.org/buluba89/Yatcbot)
+[![codecov.io](http://codecov.io/github/buluba89/Yatcobot/coverage.svg?branch=master)](http://codecov.io/github/buluba89/Yatcobot?branch=master)
+
 
 Disclaimer!
 ------------
