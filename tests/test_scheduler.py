@@ -5,13 +5,13 @@ import logging
 
 from yatcobot.scheduler import PeriodicScheduler
 
+logging.disable(logging.ERROR)
+
 
 class TestPeriodicScheduler(unittest.TestCase):
     """Tests for PeriodicScheduler class"""
 
     def setUp(self):
-        logging.disable(logging.ERROR)
-
         def time():
             #time.current_time += 1
             return time.current_time
@@ -21,10 +21,9 @@ class TestPeriodicScheduler(unittest.TestCase):
         self.sleep = Mock(return_value=0)
         self.sched = PeriodicScheduler(self.time, self.sleep)
 
-
     def test_enter(self):
         target = Mock(name='Test')
-
+        target.__name__ = 'Test'
         #Add one task
         self.sched.enter(10, 1, target)
         self.assertEqual(len(self.sched.tasks), 1)
@@ -37,6 +36,7 @@ class TestPeriodicScheduler(unittest.TestCase):
 
     def test_enter_task(self):
         target = Mock(name='Test')
+        target.__name__ = 'Test'
 
         #Add one task
         self.sched.enter(10, 1, target)
@@ -48,6 +48,7 @@ class TestPeriodicScheduler(unittest.TestCase):
 
     def test_enter_task_random(self):
         target = Mock(name='Test')
+        target.__name__ = 'Test'
 
         #Add one task
         self.sched.enter_random(10, 5, 1, target)

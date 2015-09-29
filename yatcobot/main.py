@@ -1,58 +1,24 @@
 import logging
 import time
-import json
 import sys
 
 from TwitterAPI import TwitterAPI
 
+
 from .scheduler import PeriodicScheduler
+from .config import Config
+import yatcobot.client
 
 #The logger object
 logger = logging.getLogger(__name__)
 
 
-class Config:
-    """Class that contains all  config variables. It loads user values from a json file """
-
-    # Default values
-    consumer_key = None
-    consumer_secret = None
-    access_token_key = None
-    access_token_secret = None
-    retweet_update_time = 600
-    retweet_random_margin = 60
-    scan_update_time = 5400
-    clear_queue_time = 43200
-    min_posts_queue = 60
-    rate_limit_update_time = 60
-    blocked_users_update_time = 300
-    min_ratelimit = 10
-    min_ratelimit_retweet = 20
-    min_ratelimit_search = 40
-    max_follows = 1950
-    search_queries = ["RT to win", "Retweet and win"]
-    follow_keywords = [" follow ", " follower "]
-    fav_keywords = [" fav ", " favorite "]
-
-    @staticmethod
-    def load(filename):
-        # Load our configuration from the JSON file.
-        with open(filename) as data_file:
-            data = json.load(data_file)
-
-        for key, value in data.items():
-            #!Fixme:
-            #Hacky code because the corresponding keys in config file use - instead of _
-            key = key.replace('-', '_')
-            setattr(Config, key, value)
+client = None
 
 
 # Don't edit these unless you know what you're doing.
 api = None #Its initialized if this is main
 post_list = list()
-ratelimit = [999, 999, 100]
-ratelimit_search = [999, 999, 100]
-
 
 class IgnoreList(list):
     """
@@ -81,46 +47,6 @@ class IgnoreList(list):
 ignore_list = None
 
 
-def CheckError(r):
-    r = r.json()
-    if 'errors' in r:
-        logger.error("We got an error message: {0} Code: {1})".format(r['errors'][0]['message'],
-                                                                      r['errors'][0]['code']))
-
-
-def CheckRateLimit():
-
-    global ratelimit
-    global ratelimit_search
-
-    if ratelimit[2] < Config.min_ratelimit:
-        logger.warn("Ratelimit too low -> Cooldown ({}%)".format(ratelimit[2]))
-        time.sleep(30)
-
-    r = api.request('application/rate_limit_status').json()
-
-    for res_family in r['resources']:
-        for res in r['resources'][res_family]:
-            limit = r['resources'][res_family][res]['limit']
-            remaining = r['resources'][res_family][res]['remaining']
-            percent = float(remaining) / float(limit) * 100
-
-            if res == "/search/tweets":
-                ratelimit_search = [limit, remaining, percent]
-
-            if res == "/application/rate_limit_status":
-                ratelimit = [limit, remaining, percent]
-
-            if percent < 5.0:
-                message = "{0} Rate Limit-> {1}: {2} !!! <5% Emergency exit !!!".format(res_family, res, percent)
-                logger.critical(message)
-                sys.exit(message)
-            elif percent < 30.0:
-                logger.warn("{0} Rate Limit-> {1}: {2} !!! <30% alert !!!".format(res_family, res, percent))
-            elif percent < 70.0:
-                logger.info("{0} Rate Limit-> {1}: {2}".format(res_family, res, percent))
-
-
 def UpdateQueue():
     """ Update the Retweet queue (this prevents too many retweets happening at once.)"""
 
@@ -130,44 +56,23 @@ def UpdateQueue():
 
     if len(post_list) > 0:
 
-        if ratelimit[2] < Config.min_ratelimit_retweet:
-            logger.info("Ratelimit at {0}% -> pausing retweets".format(ratelimit[2]))
-            return
-
-        post = post_list[0]
-
-        if 'errors' in post:
-            post_list.pop(0)
-            logger.error("We got an error message: {0} Code: {1}".format(post['errors'][0]['message'],
-                                                                         post['errors'][0]['code']))
-            return
+        post = post_list.pop(0)
 
         logger.info("Retweeting: {0} {1}".format(post['id'], post['text'].encode('utf8')))
 
-        r = api.request('statuses/show/:%d' % post['id']).json()
-        if 'errors' in r:
-            logger.error("We got an error message: {0} Code: {1}".format(r['errors'][0]['message'],
-                                                                         r['errors'][0]['code']))
-            post_list.pop(0)
-            return
+        r = client.get_tweet(post['id'])
 
         user_item = r['user']
         user_id = user_item['id']
 
         if user_id in ignore_list:
-            post_list.pop(0)
             logger.info("Blocked user's tweet skipped")
             return
 
-        r = api.request('statuses/retweet/:{0}'.format(post['id']))
+        r = client.retweet(post['id'])
 
-        CheckError(r)
-        post_list.pop(0)
-
-        if not 'errors' in r.json():
-
-            CheckForFollowRequest(post)
-            CheckForFavoriteRequest(post)
+        CheckForFollowRequest(post)
+        CheckForFavoriteRequest(post)
 
 
 def CheckForFollowRequest(item):
@@ -176,18 +81,18 @@ def CheckForFollowRequest(item):
     Be careful with this function! Twitter may write ban your application
     for following too aggressively
     """
+    #!Fixme doesnt find .Follow, #Follow
+
     text = item['text']
     if any(x in text.lower() for x in Config.follow_keywords):
         RemoveOldestFollow()
         try:
-            r = api.request('friendships/create', {'screen_name': item['retweeted_status']['user']['screen_name']})
-            CheckError(r)
+            r = client.follow(item['retweeted_status']['user']['screen_name'])
             logger.info("Follow: {0}".format(item['retweeted_status']['user']['screen_name']))
         except:
             user = item['user']
             screen_name = user['screen_name']
-            r = api.request('friendships/create', {'screen_name': screen_name})
-            CheckError(r)
+            r = client.follow(screen_name)
             logger.info("Follow: {0}".format(screen_name))
 
 
@@ -195,24 +100,18 @@ def RemoveOldestFollow():
     """FIFO - Every new follow should result in the oldest follow being removed."""
 
     friends = list()
-    for id in api.request('friends/ids'):
+    for id in client.get_friends_ids():
         friends.append(id)
 
     oldest_friend = friends[-1]
 
     if len(friends) > Config.max_follows:
 
-        r = api.request('friendships/destroy', {'user_id': oldest_friend})
-
-        if r.status_code == 200:
-            status = r.json()
-            logger.info('Unfollowed: {0}'.format(status['screen_name']))
+        r = client.unfollow(oldest_friend)
+        logger.info('Unfollowed: {0}'.format(r['screen_name']))
 
     else:
         logger.info("No friends unfollowed")
-
-    del friends
-    del oldest_friend
 
 
 def CheckForFavoriteRequest(item):
@@ -226,12 +125,10 @@ def CheckForFavoriteRequest(item):
 
     if any(x in text.lower() for x in Config.fav_keywords):
         try:
-            r = api.request('favorites/create', {'id': item['retweeted_status']['id']})
-            CheckError(r)
+            r = client.favorite(item['retweeted_status']['id'])
             logger.info("Favorite: {0}".format(item['retweeted_status']['id']))
         except:
-            r = api.request('favorites/create', {'id': item['id']})
-            CheckError(r)
+            r = client.favorite(item['id'])
             logger.info("Favorite: {0}".format(item['id']))
 
 
@@ -246,15 +143,8 @@ def ClearQueue():
 
 
 def CheckBlockedUsers():
-    """Check list of blocked users and add to ignore list"""
-    if ratelimit_search[2] < Config.min_ratelimit_search:
-        logger.warn("Update blocked users skipped! Queue: {0} Ratelimit: {1}/{2} ({3}%)".format(len(post_list),
-                                                                                                ratelimit_search[1],
-                                                                                                ratelimit_search[0],
-                                                                                                ratelimit_search[2]))
-        return
 
-    for b in api.request('blocks/ids'):
+    for b in client.get_blocks():
         if not b in ignore_list:
             ignore_list.append(b)
             logger.info("Blocked user {0} added to ignore list".format(b))
@@ -263,16 +153,6 @@ def CheckBlockedUsers():
 def ScanForContests():
     """Scan for new contests, but not too often because of the rate limit."""
 
-    global ratelimit_search
-
-    if ratelimit_search[2] < Config.min_ratelimit_search:
-
-        logger.warn("Search skipped! Queue: {0} Ratelimit: {1}/{2} ({3}%)".format(len(post_list),
-                                                                                  ratelimit_search[1],
-                                                                                  ratelimit_search[0],
-                                                                                  ratelimit_search[2]))
-        return
-
     logger.info("=== SCANNING FOR NEW CONTESTS ===")
 
     for search_query in Config.search_queries:
@@ -280,8 +160,7 @@ def ScanForContests():
         logger.info("Getting new results for: {0}".format(search_query))
 
         try:
-            r = api.request( 'search/tweets', {'q': search_query, 'result_type': "mixed", 'count': 50})
-            CheckError(r)
+            r = client.search_tweets(search_query, 50)
             c = 0
 
             for item in r:
@@ -348,6 +227,12 @@ def run():
         Config.access_token_key,
         Config.access_token_secret)
 
+    client = yatcobot.client.TwitterClient(Config.consumer_key,
+                            Config.consumer_secret,
+                            Config.access_token_key,
+                            Config.access_token_secret)
+
+    client.update_ratelimits()
     #Initialize ignorelist
     ignore_list = IgnoreList("ignorelist")
 
@@ -355,7 +240,7 @@ def run():
     s = PeriodicScheduler()
 
     s.enter(Config.clear_queue_time, 1, ClearQueue)
-    s.enter(Config.rate_limit_update_time, 2, CheckRateLimit)
+    s.enter(Config.rate_limit_update_time, 2, client.update_ratelimits)
     s.enter(Config.blocked_users_update_time, 3, CheckBlockedUsers)
     s.enter(Config.scan_update_time, 4, ScanForContests)
     s.enter_random(Config.retweet_update_time, Config.retweet_random_margin, 5, UpdateQueue)

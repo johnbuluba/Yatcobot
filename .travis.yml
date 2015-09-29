@@ -3,5 +3,5 @@ python:
   - "3.4"
   - "3.5"
 install:
-  - "pip3 install -r requirements.txt"
+  - "pip3 install -r requirements-dev.txt"
 script: python3 -m unittest discover
