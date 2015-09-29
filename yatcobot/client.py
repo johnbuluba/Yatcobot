@@ -5,6 +5,7 @@ class TwitterClient():
 
     def __init__(self, consumer_key, consumer_secret, access_token_key, access_token_secret):
         self.api = TwitterAPI(consumer_key, consumer_secret, access_token_key, access_token_secret)
+        self.ratelimits = None
 
     def search_tweets(self, query, limit, result_type='mixed'):
         r = self._api_call('search/tweets', {'q': query, 'result_type': result_type, 'count': limit})
@@ -30,6 +31,18 @@ class TwitterClient():
 
     def get_blocks(self):
         return self._api_call('blocks/ids')['ids']
+
+    def update_ratelimits(self):
+        r = self._api_call('application/rate_limit_status')['resources']
+
+        #flatten dictionary
+        self.ratelimits = dict()
+        for x in r.values():
+            self.ratelimits.update(x)
+
+        #create percent
+        for x in self.ratelimits.values():
+            x['percent'] = x['remaining']/x['limit'] * 100
 
     def _api_call(self, request, parameters=None):
         r = self.api.request(request, parameters)

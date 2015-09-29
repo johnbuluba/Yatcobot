@@ -1,0 +1,130 @@
+{
+  "rate_limit_context": {
+    "access_token": "786491-24zE39NUezJ8UTmOGOtLhgyLgCkPyY4dAcx6NA6sDKw"
+  },
+  "resources": {
+    "users": {
+      "/users/profile_banner": {
+        "limit": 180,
+        "remaining": 180,
+        "reset": 1403602426
+      },
+      "/users/suggestions/:slug/members": {
+        "limit": 15,
+        "remaining": 15,
+        "reset": 1403602426
+      },
+      "/users/show/:id": {
+        "limit": 180,
+        "remaining": 180,
+        "reset": 1403602426
+      },
+      "/users/suggestions": {
+        "limit": 15,
+        "remaining": 15,
+        "reset": 1403602426
+      },
+      "/users/lookup": {
+        "limit": 180,
+        "remaining": 180,
+        "reset": 1403602426
+      },
+      "/users/search": {
+        "limit": 180,
+        "remaining": 180,
+        "reset": 1403602426
+      },
+      "/users/contributors": {
+        "limit": 15,
+        "remaining": 15,
+        "reset": 1403602426
+      },
+      "/users/contributees": {
+        "limit": 15,
+        "remaining": 15,
+        "reset": 1403602426
+      },
+      "/users/suggestions/:slug": {
+        "limit": 15,
+        "remaining": 15,
+        "reset": 1403602426
+      }
+    },
+    "statuses": {
+      "/statuses/mentions_timeline": {
+        "limit": 15,
+        "remaining": 15,
+        "reset": 1403602426
+      },
+      "/statuses/lookup": {
+        "limit": 180,
+        "remaining": 180,
+        "reset": 1403602426
+      },
+      "/statuses/show/:id": {
+        "limit": 180,
+        "remaining": 180,
+        "reset": 1403602426
+      },
+      "/statuses/oembed": {
+        "limit": 180,
+        "remaining": 180,
+        "reset": 1403602426
+      },
+      "/statuses/retweeters/ids": {
+        "limit": 15,
+        "remaining": 15,
+        "reset": 1403602426
+      },
+      "/statuses/home_timeline": {
+        "limit": 15,
+        "remaining": 15,
+        "reset": 1403602426
+      },
+      "/statuses/user_timeline": {
+        "limit": 180,
+        "remaining": 180,
+        "reset": 1403602426
+      },
+      "/statuses/retweets/:id": {
+        "limit": 60,
+        "remaining": 60,
+        "reset": 1403602426
+      },
+      "/statuses/retweets_of_me": {
+        "limit": 15,
+        "remaining": 15,
+        "reset": 1403602426
+      }
+    },
+    "help": {
+      "/help/privacy": {
+        "limit": 15,
+        "remaining": 15,
+        "reset": 1403602426
+      },
+      "/help/tos": {
+        "limit": 15,
+        "remaining": 15,
+        "reset": 1403602426
+      },
+      "/help/configuration": {
+        "limit": 15,
+        "remaining": 15,
+        "reset": 1403602426
+      },
+      "/help/languages": {
+        "limit": 15,
+        "remaining": 15,
+        "reset": 1403602426
+      }
+    },
+    "search": {
+      "/search/tweets": {
+        "limit": 180,
+        "remaining": 180,
+        "reset": 1403602426
+      }
+    }
+  }
+}

@@ -82,8 +82,14 @@ class TestTwitterClient(unittest.TestCase):
         r = self.client.get_blocks()
         self.assertEqual(len(r), 1)
 
-
-
-
-
-
+    @requests_mock.mock()
+    def test_update_ratelimits(self, m):
+        with open(self.tests_path + '/fixtures/application_rate_limit_status.json') as f:
+            response = f.read()
+        m.get('https://api.twitter.com/1.1/application/rate_limit_status.json', text=response)
+        self.client.update_ratelimits()
+        self.assertEqual(len(self.client.ratelimits), 23)
+        #check if percent is computed
+        for x in self.client.ratelimits.values():
+            self.assertIn('percent', x)
+            self.assertEqual(x['limit'] / 100 * x['percent'], x['remaining'])

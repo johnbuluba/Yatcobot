@@ -21,7 +21,6 @@ class TestPeriodicScheduler(unittest.TestCase):
         self.sleep = Mock(return_value=0)
         self.sched = PeriodicScheduler(self.time, self.sleep)
 
-
     def test_enter(self):
         target = Mock(name='Test')
         target.__name__ = 'Test'
