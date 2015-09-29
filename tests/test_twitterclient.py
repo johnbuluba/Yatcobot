@@ -2,7 +2,7 @@ import os
 import unittest
 import logging
 import datetime
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 import requests_mock
 from freezegun import freeze_time
@@ -94,6 +94,7 @@ class TestTwitterClient(unittest.TestCase):
         #revert original function
         with open(self.tests_path + '/fixtures/application_rate_limit_status.json') as f:
             response = f.read()
+
         m.get('https://api.twitter.com/1.1/application/rate_limit_status.json', text=response)
         self.client.update_ratelimits(False)
         self.assertEqual(len(self.client.ratelimits), 80)
@@ -110,9 +111,10 @@ class TestTwitterClient(unittest.TestCase):
         with self.assertRaises(TwitterClientException):
             self.client._api_call('blocks/ids')
 
-    def test_check_ratelimiti_with_no_more_remaining(self):
+    def test_check_ratelimit_with_no_more_remaining(self):
         self.client.ratelimits = self.ratelimits_empty
-        #mock sleep and time
+
+        self.client.update_ratelimits = MagicMock()
 
         with freeze_time(datetime.datetime.fromtimestamp(0)):
             for key in self.ratelimits_empty.keys():

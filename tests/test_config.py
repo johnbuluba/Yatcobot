@@ -3,7 +3,7 @@ import unittest
 import logging
 from unittest.mock import patch, mock_open
 
-from yatcobot.main import Config
+from yatcobot.bot import Config
 
 
 logging.disable(logging.ERROR)
