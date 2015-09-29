@@ -109,6 +109,8 @@ class TwitterClient():
             if wait > 0:
                 logger.warning('Rate limit {}. Waiting for {} seconds'.format(resource_ratelimit['percent'], wait))
                 time.sleep(wait)
+                #Update ratelimits again
+                self.update_ratelimits(check_ratelimit=False)
 
 
 
