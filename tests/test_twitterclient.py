@@ -2,12 +2,12 @@ import os
 import unittest
 import logging
 import datetime
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import requests_mock
 from freezegun import freeze_time
 
-from yatcobot.client import TwitterClient
+from yatcobot.client import TwitterClient, TwitterClientException
 
 logging.disable(logging.ERROR)
 
@@ -101,6 +101,14 @@ class TestTwitterClient(unittest.TestCase):
         for x in self.client.ratelimits.values():
             self.assertIn('percent', x)
             self.assertEqual(x['limit'] / 100 * x['percent'], x['remaining'])
+
+    @requests_mock.mock()
+    def test_api_call_error(self, m):
+        with open(self.tests_path + '/fixtures/error.json') as f:
+            response = f.read()
+        m.get(requests_mock.ANY, text=response)
+        with self.assertRaises(TwitterClientException):
+            self.client._api_call('blocks/ids')
 
     def test_check_ratelimiti_with_no_more_remaining(self):
         self.client.ratelimits = self.ratelimits_empty

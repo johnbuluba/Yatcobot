@@ -47,13 +47,6 @@ class IgnoreList(list):
 ignore_list = None
 
 
-def CheckError(r):
-    r = r.json()
-    if 'errors' in r:
-        logger.error("We got an error message: {0} Code: {1})".format(r['errors'][0]['message'],
-                                                                      r['errors'][0]['code']))
-
-
 def UpdateQueue():
     """ Update the Retweet queue (this prevents too many retweets happening at once.)"""
 
@@ -65,18 +58,9 @@ def UpdateQueue():
 
         post = post_list.pop(0)
 
-        if 'errors' in post:
-            logger.error("We got an error message: {0} Code: {1}".format(post['errors'][0]['message'],
-                                                                         post['errors'][0]['code']))
-            return
-
         logger.info("Retweeting: {0} {1}".format(post['id'], post['text'].encode('utf8')))
 
         r = client.get_tweet(post['id'])
-        if 'errors' in r:
-            logger.error("We got an error message: {0} Code: {1}".format(r['errors'][0]['message'],
-                                                                         r['errors'][0]['code']))
-            return
 
         user_item = r['user']
         user_id = user_item['id']
@@ -87,10 +71,8 @@ def UpdateQueue():
 
         r = client.retweet(post['id'])
 
-        if not 'errors' in r:
-
-            CheckForFollowRequest(post)
-            CheckForFavoriteRequest(post)
+        CheckForFollowRequest(post)
+        CheckForFavoriteRequest(post)
 
 
 def CheckForFollowRequest(item):
@@ -106,13 +88,11 @@ def CheckForFollowRequest(item):
         RemoveOldestFollow()
         try:
             r = client.follow(item['retweeted_status']['user']['screen_name'])
-            #CheckError(r)
             logger.info("Follow: {0}".format(item['retweeted_status']['user']['screen_name']))
         except:
             user = item['user']
             screen_name = user['screen_name']
             r = client.follow(screen_name)
-            #CheckError(r)
             logger.info("Follow: {0}".format(screen_name))
 
 
@@ -128,9 +108,6 @@ def RemoveOldestFollow():
     if len(friends) > Config.max_follows:
 
         r = client.unfollow(oldest_friend)
-
-        #if r.status_code == 200:
-            #status = r.json()
         logger.info('Unfollowed: {0}'.format(r['screen_name']))
 
     else:
@@ -149,11 +126,9 @@ def CheckForFavoriteRequest(item):
     if any(x in text.lower() for x in Config.fav_keywords):
         try:
             r = client.favorite(item['retweeted_status']['id'])
-            #CheckError(r)
             logger.info("Favorite: {0}".format(item['retweeted_status']['id']))
         except:
             r = client.favorite(item['id'])
-            #CheckError(r)
             logger.info("Favorite: {0}".format(item['id']))
 
 

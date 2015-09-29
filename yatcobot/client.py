@@ -10,6 +10,10 @@ from .config import Config
 logger = logging.getLogger(__name__)
 
 
+class TwitterClientException(Exception):
+    pass
+
+
 class TwitterClient():
 
     def __init__(self, consumer_key, consumer_secret, access_token_key, access_token_secret):
@@ -64,7 +68,16 @@ class TwitterClient():
 
     def _api_call(self, request, parameters=None):
         r = self.api.request(request, parameters)
-        return r.json()
+        response_dict = r.json()
+        #check for errors
+        if 'errors' in response_dict:
+            for error in response_dict['errors']:
+                message = error['message']
+                code = error['code']
+                logger.error('Error during twitter api call {} (parameters: {}): {}'.format(request, parameters, message))
+            raise TwitterClientException('Error during twitter api call {}'.format(request))
+
+        return response_dict
 
     def _check_ratelimit(self, request):
 
