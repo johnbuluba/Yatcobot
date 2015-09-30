@@ -1,3 +1,4 @@
+from collections import OrderedDict
 import logging
 
 
@@ -18,7 +19,7 @@ class Yatcobot():
 
         self.queue = list()
         self.ignore_list = IgnoreList(ignore_list_file)
-        self.post_list = list()
+        self.post_list = OrderedDict()
         self.client = TwitterClient(Config.consumer_key, Config.consumer_secret,
                                                          Config.access_token_key,
                                                          Config.access_token_secret)
@@ -33,13 +34,12 @@ class Yatcobot():
 
         if len(self.post_list) > 0:
 
-            post = self.post_list.pop(0)
+            post_id, post = self.post_list.popitem(last=False)
 
-            logger.info("Retweeting: {0} {1}".format(post['id'], post['text'].encode('utf8')))
+            text = post['text'].replace('\n', '')
+            text = (text[:75] + '..') if len(text) > 75 else text
+            logger.info("Retweeting: {0} {1}".format(post['id'], text))
 
-            post = self._get_original_tweet(post)
-
-            url = post['user']['screen_name'] + '/status/' + post['id_str']
             if post['user']['id'] in self.ignore_list:
                 logger.info("Blocked user's tweet skipped")
                 return
@@ -97,11 +97,13 @@ class Yatcobot():
     def clear_queue(self):
         """Clear the post list queue in order to avoid a buildup of old posts"""
 
-        post_list_length = len(self.post_list)
+        to_delete = len(self.post_list) - Config.clear_queue_time# Config.min_posts_queue
 
-        if post_list_length > Config.min_posts_queue:
-            del self.post_list[:post_list_length - Config.min_posts_queue]
-            logger.info("===THE QUEUE HAS BEEN CLEARED===")
+        if to_delete > 0:
+            for i in range(to_delete):
+                self.post_list.popitem(last=False)
+
+            logger.info("===THE QUEUE HAS BEEN CLEARED=== Deleted {} posts".format(to_delete))
 
     def update_blocked_users(self):
 
@@ -133,10 +135,13 @@ class Yatcobot():
                 if post['id'] in self.ignore_list:
                     continue
 
-                self.post_list.append(post)
-
-                logger.debug("Got tweet: id:{0} username:{1} text:{2}".format(post['id'], post['user']['screen_name'],
-                                                                              post['text'].replace('\n', '')))
+                #Insert if it doenst already exists
+                if post['id'] not in self.post_list:
+                    self.post_list[post['id']] = post
+                    text = post['text'].replace('\n', '')
+                    text = (text[:75] + '..') if len(text) > 75 else text
+                    logger.debug("Got tweet: id:{0} username:{1} text:{2}".format(post['id'], post['user']['screen_name'],
+                                                                                  text))
 
             logger.info("Got {0} results".format(len(results)))
 
@@ -160,6 +165,3 @@ class Yatcobot():
         if 'retweeted_status' in post:
             return post['retweeted_status']
         return post
-
-
-

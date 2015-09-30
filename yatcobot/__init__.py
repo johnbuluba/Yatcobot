@@ -9,7 +9,7 @@ fh = logging.FileHandler('log')
 ch = logging.StreamHandler()
 
 #Log format
-formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s', "%Y-%m-%d %H:%M:%S")
 
 #Set logging format
 fh.setFormatter(formatter)
