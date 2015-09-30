@@ -97,7 +97,7 @@ class Yatcobot():
     def clear_queue(self):
         """Clear the post list queue in order to avoid a buildup of old posts"""
 
-        to_delete = len(self.post_list) - Config.clear_queue_time# Config.min_posts_queue
+        to_delete = len(self.post_list) - Config.clear_queue_interval# Config.min_posts_queue
 
         if to_delete > 0:
             for i in range(to_delete):
@@ -147,11 +147,11 @@ class Yatcobot():
 
     def run(self):
 
-        self.scheduler.enter(Config.clear_queue_time, 1, self.clear_queue)
-        self.scheduler.enter(Config.rate_limit_update_time, 2, self.client.update_ratelimits)
-        self.scheduler.enter(Config.blocked_users_update_time, 3, self.update_blocked_users)
-        self.scheduler.enter(Config.scan_update_time, 4, self.scan_new_contests)
-        self.scheduler.enter_random(Config.retweet_update_time, Config.retweet_random_margin, 5, self.enter_contest)
+        self.scheduler.enter(Config.clear_queue_interval, 1, self.clear_queue)
+        self.scheduler.enter(Config.rate_limit_update_interval, 2, self.client.update_ratelimits)
+        self.scheduler.enter(Config.blocked_users_update_interval, 3, self.update_blocked_users)
+        self.scheduler.enter(Config.scan_interval, 4, self.scan_new_contests)
+        self.scheduler.enter_random(Config.retweet_interval, Config.retweet_random_margin, 5, self.enter_contest)
 
         #Init the program
         self.scheduler.run()
