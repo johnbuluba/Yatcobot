@@ -76,7 +76,7 @@ class TestBot(unittest.TestCase):
     def test_enter_contest_simple_post(self):
         posts = 10
         for i in range(posts):
-            self.bot.post_list[i] = {'id': i, 'text': 'test', 'user': {'id': random.randint(1, 1000)}}
+            self.bot.post_list[i] = {'id': i, 'text': 'test', 'user': {'id': random.randint(1, 1000), 'screen_name': 'test'}}
 
         self.bot.enter_contest()
 
@@ -109,3 +109,24 @@ class TestBot(unittest.TestCase):
 
         self.assertEqual(len(self.bot.post_list), posts - 1)
         self.assertFalse(self.bot.client.retweet.called)
+
+    def test_insert_post_to_queue(self):
+        post = {'id': 0, 'text': 'test', 'user': {'id': random.randint(1, 1000), 'screen_name': 'test'}, 'retweeted': False}
+
+        self.bot._insert_post_to_queue(post)
+
+        self.assertIn(post['id'], self.bot.post_list)
+
+    def test_insert_post_to_queue_ignore(self):
+        post = {'id': 0, 'text': 'test', 'user': {'id': random.randint(1, 1000), 'screen_name': 'test'}, 'retweeted': False}
+        self.bot.ignore_list = [0]
+        self.bot._insert_post_to_queue(post)
+
+        self.assertNotIn(post['id'], self.bot.post_list)
+
+    def test_insert_post_to_queue_retweeted(self):
+        post = {'id': 0, 'text': 'test', 'user': {'id': random.randint(1, 1000), 'screen_name': 'test'}, 'retweeted': True}
+        self.bot.ignore_list = [0]
+        self.bot._insert_post_to_queue(post)
+
+        self.assertNotIn(post['id'], self.bot.post_list)

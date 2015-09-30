@@ -17,7 +17,6 @@ class Yatcobot():
 
         Config.load(config_file)
 
-        self.queue = list()
         self.ignore_list = IgnoreList(ignore_list_file)
         self.post_list = OrderedDict()
         self.client = TwitterClient(Config.consumer_key, Config.consumer_secret,
@@ -115,31 +114,11 @@ class Yatcobot():
 
         for search_query in Config.search_queries:
 
-            logger.info("Getting new results for: {0}".format(search_query))
-
             results = self.client.search_tweets(search_query, 50)
+            logger.info("Got {} new results for: {}".format(len(results), search_query))
 
             for post in results:
-                #Get original tweet if retweeted
-                post = self._get_original_tweet(post)
-
-                #Filter retweeted
-                if post['retweeted']:
-                    continue
-
-                #Filter ids in ignore list
-                if post['id'] in self.ignore_list:
-                    continue
-
-                #Insert if it doenst already exists
-                if post['id'] not in self.post_list:
-                    self.post_list[post['id']] = post
-                    text = post['text'].replace('\n', '')
-                    text = (text[:75] + '..') if len(text) > 75 else text
-                    logger.debug("Got tweet: id:{0} username:{1} text:{2}".format(post['id'], post['user']['screen_name'],
-                                                                                  text))
-
-            logger.info("Got {0} results".format(len(results)))
+                self._insert_post_to_queue(post)
 
     def run(self):
 
@@ -161,3 +140,24 @@ class Yatcobot():
         if 'retweeted_status' in post:
             return post['retweeted_status']
         return post
+
+    def _insert_post_to_queue(self, post):
+        #Get original tweet if retweeted
+        post = self._get_original_tweet(post)
+
+        #Filter retweeted
+        if post['retweeted']:
+            return
+
+        #Filter ids in ignore list
+        if post['id'] in self.ignore_list:
+            return
+
+        #Insert if it doenst already exists
+        if post['id'] not in self.post_list:
+            self.post_list[post['id']] = post
+            text = post['text'].replace('\n', '')
+            text = (text[:75] + '..') if len(text) > 75 else text
+            logger.debug("Added tweet to queue: id:{0} username:{1} text:{2}".format(post['id'],
+                                                                                     post['user']['screen_name'],
+                                                                                     text))
