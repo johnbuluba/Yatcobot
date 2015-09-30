@@ -1,8 +1,10 @@
 import unittest
 import logging
+import random
 from unittest.mock import patch, MagicMock
 
 from yatcobot.bot import Yatcobot, Config, PeriodicScheduler
+from yatcobot.client import TwitterClientRetweetedException
 
 
 logging.disable(logging.ERROR)
@@ -70,3 +72,40 @@ class TestBot(unittest.TestCase):
         self.assertEqual(mock_scheduler.enter.call_count, 4)
         self.assertEqual(mock_scheduler.enter_random.call_count, 1)
         self.assertTrue(mock_scheduler.run.called)
+
+    def test_enter_contest_simple_post(self):
+        posts = 10
+        for i in range(posts):
+            self.bot.post_list[i] = {'id': i, 'text': 'test', 'user': {'id': random.randint(1, 1000)}}
+
+        self.bot.enter_contest()
+
+        self.assertEqual(len(self.bot.post_list), posts - 1)
+        self.assertTrue(self.bot.client.retweet.called)
+        self.bot.client.retweet.assert_called_with(0)
+
+    def test_enter_contest_alredy_retweeted(self):
+        posts = 10
+        self.bot.ignore_list = list()
+        for i in range(posts):
+            self.bot.post_list[i] = {'id': i, 'text': 'test', 'user': {'id': random.randint(1, 1000)}}
+        self.bot.client.retweet.side_effect = TwitterClientRetweetedException()
+
+        self.bot.enter_contest()
+
+        self.assertEqual(len(self.bot.post_list), posts - 1)
+        self.assertTrue(self.bot.client.retweet.called)
+        self.bot.client.retweet.assert_called_with(0)
+
+        self.assertIn(0, self.bot.ignore_list)
+
+    def test_enter_contest_ignored_id(self):
+        posts = 10
+        self.bot.ignore_list = [0]
+        for i in range(posts):
+            self.bot.post_list[i] = {'id': i, 'text': 'test', 'user': {'id': 0}}
+
+        self.bot.enter_contest()
+
+        self.assertEqual(len(self.bot.post_list), posts - 1)
+        self.assertFalse(self.bot.client.retweet.called)
