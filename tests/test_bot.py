@@ -2,7 +2,7 @@ import unittest
 import logging
 from unittest.mock import patch, MagicMock
 
-from yatcobot.bot import Yatcobot, Config
+from yatcobot.bot import Yatcobot, Config, PeriodicScheduler
 
 
 logging.disable(logging.ERROR)
@@ -62,3 +62,11 @@ class TestBot(unittest.TestCase):
         self.bot.client.get_blocks.return_value = users
         self.bot.update_blocked_users()
         self.assertEqual(users, self.bot.ignore_list)
+
+    def test_run(self):
+        mock_scheduler = MagicMock(PeriodicScheduler)
+        self.bot.scheduler = mock_scheduler
+        self.bot.run()
+        self.assertEqual(mock_scheduler.enter.call_count, 4)
+        self.assertEqual(mock_scheduler.enter_random.call_count, 1)
+        self.assertTrue(mock_scheduler.run.called)
