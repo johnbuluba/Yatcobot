@@ -50,9 +50,15 @@ class TestBot(unittest.TestCase):
         self.bot.remove_oldest_follow()
         self.assertFalse(self.bot.client.unfollow.called)
 
-
     def test_remove_oldest_follow_full(self):
         follows = [x for x in range(Config.max_follows + 1)]
         self.bot.client.get_friends_ids.return_value = follows
         self.bot.remove_oldest_follow()
         self.bot.client.unfollow.assert_called_with(Config.max_follows)
+
+    def test_update_blocked_users(self):
+        users = [x for x in range(10)]
+        self.bot.ignore_list = list()
+        self.bot.client.get_blocks.return_value = users
+        self.bot.update_blocked_users()
+        self.assertEqual(users, self.bot.ignore_list)
