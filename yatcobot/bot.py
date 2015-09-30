@@ -97,7 +97,7 @@ class Yatcobot():
     def clear_queue(self):
         """Clear the post list queue in order to avoid a buildup of old posts"""
 
-        to_delete = len(self.post_list) - Config.clear_queue_interval# Config.min_posts_queue
+        to_delete = len(self.post_list) - Config.clear_queue_interval
 
         if to_delete > 0:
             for i in range(to_delete):

@@ -7,7 +7,7 @@ from unittest.mock import patch, MagicMock
 import requests_mock
 from freezegun import freeze_time
 
-from yatcobot.client import TwitterClient, TwitterClientException
+from yatcobot.client import TwitterClient, TwitterClientException, TwitterClientRetweetedException
 
 logging.disable(logging.ERROR)
 
@@ -40,6 +40,15 @@ class TestTwitterClient(unittest.TestCase):
         m.post('https://api.twitter.com/1.1/statuses/retweet/241259202004267009.json', text=response)
         r = self.client.retweet("241259202004267009")
         self.assertEqual(r['retweeted_status']['id'], 241259202004267009)
+
+    @requests_mock.mock()
+    def test_retweet_already_retweeted(self, m):
+        with open(self.tests_path + '/fixtures/error_already_retweeted.json') as f:
+            response = f.read()
+        m.post('https://api.twitter.com/1.1/statuses/retweet/241259202004267009.json', text=response)
+        with self.assertRaises(TwitterClientRetweetedException):
+            self.client.retweet("241259202004267009")
+
 
     @requests_mock.mock()
     def test_get_tweet(self, m):
