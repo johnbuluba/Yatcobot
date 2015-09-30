@@ -12,9 +12,9 @@ logger = logging.getLogger(__name__)
 
 class Yatcobot():
 
-    def __init__(self, confg_file, ignore_list_file):
+    def __init__(self, config_file, ignore_list_file):
 
-        Config.load(confg_file)
+        Config.load(config_file)
 
         self.queue = list()
         self.ignore_list = IgnoreList(ignore_list_file)
@@ -37,16 +37,15 @@ class Yatcobot():
 
             logger.info("Retweeting: {0} {1}".format(post['id'], post['text'].encode('utf8')))
 
-            r = self.client.get_tweet(post['id'])
+            post = self._get_original_tweet(post)
 
-            user_item = r['user']
-            user_id = user_item['id']
-
-            if user_id in self.ignore_list:
+            url = post['user']['screen_name'] + '/status/' + post['id_str']
+            if post['user']['id'] in self.ignore_list:
                 logger.info("Blocked user's tweet skipped")
                 return
             try:
-                r = self.client.retweet(post['id'])
+                self.client.retweet(post['id'])
+                self.ignore_list.append(post['id'])
             except TwitterClientRetweetedException:
                 self.ignore_list.append(post['id'])
                 logger.error("Alredy retweeted tweet with id {}".format(post['id']))
@@ -55,7 +54,7 @@ class Yatcobot():
             self.check_follow_request(post)
             self.check_for_favorite(post)
 
-    def check_follow_request(self, item):
+    def check_follow_request(self, post):
         """
         Check if a post requires you to follow the user.
         Be careful with this function! Twitter may write ban your application
@@ -63,17 +62,11 @@ class Yatcobot():
         """
         #!Fixme doesnt find .Follow, #Follow
 
-        text = item['text']
+        text = post['text']
         if any(x in text.lower() for x in Config.follow_keywords):
             self.remove_oldest_follow()
-            try:
-                r = self.client.follow(item['retweeted_status']['user']['screen_name'])
-                logger.info("Follow: {0}".format(item['retweeted_status']['user']['screen_name']))
-            except:
-                user = item['user']
-                screen_name = user['screen_name']
-                r = self.client.follow(screen_name)
-                logger.info("Follow: {0}".format(screen_name))
+            self.client.follow(post['user']['screen_name'])
+            logger.info("Follow: {0}".format(post['user']['screen_name']))
 
     def remove_oldest_follow(self):
         """FIFO - Every new follow should result in the oldest follow being removed."""
@@ -85,29 +78,21 @@ class Yatcobot():
         oldest_friend = friends[-1]
 
         if len(friends) > Config.max_follows:
-
             r = self.client.unfollow(oldest_friend)
             logger.info('Unfollowed: {0}'.format(r['screen_name']))
 
-        else:
-            logger.info("No friends unfollowed")
-
-    def check_for_favorite(self, item):
+    def check_for_favorite(self, post):
         """
         Check if a post requires you to favorite the tweet.
         Be careful with this function! Twitter may write ban your application
         for favoriting too aggressively
 
         """
-        text = item['text']
+        text = post['text']
 
         if any(x in text.lower() for x in Config.fav_keywords):
-            try:
-                r = self.client.favorite(item['retweeted_status']['id'])
-                logger.info("Favorite: {0}".format(item['retweeted_status']['id']))
-            except:
-                r = self.client.favorite(item['id'])
-                logger.info("Favorite: {0}".format(item['id']))
+            r = self.client.favorite(post['id'])
+            logger.info("Favorite: {0}".format(post['id']))
 
     def clear_queue(self):
         """Clear the post list queue in order to avoid a buildup of old posts"""
@@ -134,55 +119,26 @@ class Yatcobot():
 
             logger.info("Getting new results for: {0}".format(search_query))
 
-            r = self.client.search_tweets(search_query, 50)
-            c = 0
+            results = self.client.search_tweets(search_query, 50)
 
-            for item in r:
-                c += 1
-                user_item = item['user']
-                screen_name = user_item['screen_name']
-                text = item['text']
-                text = text.replace("\n", "")
-                id = item['id']
+            for post in results:
+                #Get original tweet if retweeted
+                post = self._get_original_tweet(post)
 
-                if 'retweeted_status' in item:
+                #Filter retweeted
+                if post['retweeted']:
+                    continue
 
-                    original_item = item['retweeted_status']
-                    original_id = original_item['id']
-                    original_user_item = original_item['user']
-                    original_screen_name = original_user_item['screen_name']
+                #Filter ids in ignore list
+                if post['id'] in self.ignore_list:
+                    continue
 
-                    if original_id in self.ignore_list:
-                        logger.debug("{0} ignored {1} in ignore list".format(id, original_id))
-                        continue
+                self.post_list.append(post)
 
-                    if original_user_item['id'] in self.ignore_list:
-                        logger.info("{0} ignored {1} blocked and in ignore list".format(id, original_screen_name))
-                        continue
+                logger.debug("Got tweet: id:{0} username:{1} text:{2}".format(post['id'], post['user']['screen_name'],
+                                                                              post['text'].replace('\n', '')))
 
-                    self.post_list.append(original_item)
-
-                    logger.debug("Got retweet: id:{0} username:{1} original_id:{2} origina_username:{3} text:{4}"
-                                 .format(id, screen_name, original_id, original_screen_name, text))
-
-                    self.ignore_list.append(original_id)
-
-                else:
-
-                    if id in self.ignore_list:
-                        logger.debug("{0} in ignore list".format(id))
-                        continue
-
-                    if user_item['id'] in self.ignore_list:
-                        logger.info("{0} ignored {1} blocked user in ignore list".format(id, screen_name))
-                        continue
-
-                    self.post_list.append(item)
-
-                    logger.debug("Got tweet: id:{0} username:{1} text:{2}".format(id, screen_name, text))
-                    self.ignore_list.append(id)
-
-            logger.info("Got {0} results".format(c))
+            logger.info("Got {0} results".format(len(results)))
 
     def run(self):
 
@@ -194,6 +150,16 @@ class Yatcobot():
 
         #Init the program
         self.scheduler.run()
+
+    def _get_original_tweet(self, post):
+        """
+        Checks if a post is a retweet and returns original tweet
+        :param post: Post to check if its retweeted
+        :return: post: If itsnt retweet it returns the argument, otherwise returns original tweet
+        """
+        if 'retweeted_status' in post:
+            return post['retweeted_status']
+        return post
 
 
 

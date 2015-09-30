@@ -11,7 +11,8 @@ class IgnoreList(set):
         self.load_file()
 
     def append(self, p_object):
-        self.append_file(p_object)
+        if p_object not in self:
+            self.append_file(p_object)
         super().add(p_object)
 
     def load_file(self):
