@@ -71,14 +71,10 @@ class Yatcobot():
     def remove_oldest_follow(self):
         """FIFO - Every new follow should result in the oldest follow being removed."""
 
-        friends = list()
-        for id in self.client.get_friends_ids():
-            friends.append(id)
+        follows = self.client.get_friends_ids()
 
-        oldest_friend = friends[-1]
-
-        if len(friends) > Config.max_follows:
-            r = self.client.unfollow(oldest_friend)
+        if len(follows) > Config.max_follows:
+            r = self.client.unfollow(follows[-1])
             logger.info('Unfollowed: {0}'.format(r['screen_name']))
 
     def check_for_favorite(self, post):

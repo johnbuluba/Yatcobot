@@ -15,6 +15,7 @@ class TestBot(unittest.TestCase):
     @patch('yatcobot.bot.Config')
     def setUp(self, config_mock, ignore_list_mock, client_mock):
         self.config = config_mock
+        self.client = client_mock
         self.bot = Yatcobot('test', 'test')
 
     def test_get_original_tweet_no_retweet(self):
@@ -42,3 +43,16 @@ class TestBot(unittest.TestCase):
         self.bot.clear_queue()
         self.assertTrue(self.bot.post_list.popitem.called)
         self.bot.post_list.popitem.assert_called_with(last=False)
+
+    def test_remove_oldest_follow_empty(self):
+        follows = [x for x in range(Config.max_follows - 1)]
+        self.bot.client.get_friends_ids.return_value = follows
+        self.bot.remove_oldest_follow()
+        self.assertFalse(self.bot.client.unfollow.called)
+
+
+    def test_remove_oldest_follow_full(self):
+        follows = [x for x in range(Config.max_follows + 1)]
+        self.bot.client.get_friends_ids.return_value = follows
+        self.bot.remove_oldest_follow()
+        self.bot.client.unfollow.assert_called_with(Config.max_follows)
