@@ -123,10 +123,4 @@ class TestPeriodicScheduler(unittest.TestCase):
         #Run task
         self.sched.run_task(0)
 
-    def tearDown(self):
-        try:
-            os.remove('log')
-        except:
-            pass
-
 

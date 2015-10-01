@@ -4,20 +4,25 @@ import logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-#Create log outputs
-fh = logging.FileHandler('log')
-ch = logging.StreamHandler()
 
-#Log format
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s', "%Y-%m-%d %H:%M:%S")
+def create_logger(level, file=None):
+    #Create log outputs
+    ch = logging.StreamHandler()
 
-#Set logging format
-fh.setFormatter(formatter)
-ch.setFormatter(formatter)
+    #Log format
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s', "%Y-%m-%d %H:%M:%S")
 
-#Set level per output
-fh.setLevel(logging.DEBUG)
-ch.setLevel(logging.INFO)
+    #Set logging format
+    ch.setFormatter(formatter)
 
-logger.addHandler(fh)
-logger.addHandler(ch)
+    #Set level per output
+
+    ch.setLevel(level)
+
+    if file is not None:
+        fh = logging.FileHandler(file)
+        fh.setLevel(level)
+        fh.setFormatter(formatter)
+        logger.addHandler(fh)
+
+    logger.addHandler(ch)
