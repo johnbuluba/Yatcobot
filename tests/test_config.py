@@ -33,3 +33,11 @@ class TestConfig(unittest.TestCase):
         self.assertEqual(Config.consumer_secret, "test")
         self.assertEqual(Config.access_token_key, "test")
         self.assertEqual(Config.access_token_secret, "test")
+
+    def test_save_tokens(self):
+        with patch.object(builtins,'open',mock_open(read_data=self.config_data)) as m:
+            Config.save_user_tokens("test", "new_token", "new_secret")
+            handle = m()
+            handle.write.assert_any_call('"new_token"')
+            handle.write.assert_any_call('"new_secret"')
+

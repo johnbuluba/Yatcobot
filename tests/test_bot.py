@@ -18,7 +18,7 @@ class TestBot(unittest.TestCase):
     def setUp(self, config_mock, ignore_list_mock, client_mock):
         self.config = config_mock
         self.client = client_mock
-        self.bot = Yatcobot('test', 'test')
+        self.bot = Yatcobot('test')
 
     def test_get_original_tweet_no_retweet(self):
         post = {'id': 1000}

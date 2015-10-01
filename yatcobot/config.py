@@ -30,3 +30,14 @@ class Config:
 
         for key, value in data.items():
             setattr(Config, key, value)
+
+    @staticmethod
+    def save_user_tokens(filename, token, secret):
+        with open(filename) as data_file:
+            data = json.load(data_file)
+
+        data['access_token_key'] = token
+        data['access_token_secret'] = secret
+
+        with open(filename, 'w') as data_file:
+            json.dump(data, data_file, indent=4)

@@ -13,9 +13,7 @@ logger = logging.getLogger(__name__)
 
 class Yatcobot():
 
-    def __init__(self, config_file, ignore_list_file):
-
-        Config.load(config_file)
+    def __init__(self, ignore_list_file):
 
         self.ignore_list = IgnoreList(ignore_list_file)
         self.post_list = OrderedDict()
