@@ -12,7 +12,6 @@ parser = argparse.ArgumentParser(description='Yatcobot: a bot for entering twitt
 parser.add_argument('--login', dest='login', action='store_true', help='Login to twitter to get tokens')
 
 args = parser.parse_args()
-print(args.login)
 
 #Get tokens from twitter and save them
 if args.login:
