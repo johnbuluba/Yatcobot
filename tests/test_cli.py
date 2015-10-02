@@ -1,5 +1,6 @@
 import unittest
 import logging
+import builtins
 import sys
 
 from unittest.mock import MagicMock
@@ -65,4 +66,17 @@ class TestCli(unittest.TestCase):
         yatcobot.cli.Config.load.assert_called_once_with(('config.json'))
         yatcobot.cli.Yatcobot.assert_called_once_with('ignorelist')
         yatcobot.cli.create_logger.assert_called_once_with(logging.DEBUG, None)
+        self.assertTrue(yatcobot.cli.Yatcobot.return_value.run.called)
+
+    def test_simple_debug(self):
+        sys.argv = [self.program_name, '--login']
+        yatcobot.cli.create_logger = MagicMock()
+        yatcobot.cli.get_access_token = MagicMock(return_value={'token': 'test', 'secret': 'test'})
+        builtins.input = MagicMock(return_value='y')
+        main()
+
+        yatcobot.cli.Config.save_user_tokens.assert_called_once_with('config.json', 'test', 'test')
+        yatcobot.cli.Config.load.assert_called_once_with(('config.json'))
+        yatcobot.cli.Yatcobot.assert_called_once_with('ignorelist')
+        yatcobot.cli.create_logger.assert_called_once_with(logging.INFO, None)
         self.assertTrue(yatcobot.cli.Yatcobot.return_value.run.called)
