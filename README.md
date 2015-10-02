@@ -25,7 +25,8 @@ Open up `config.json` and make the values correspond to your Twitter API credent
 Installation
 ------------
 
-* ####System wide
+####System wide
+___
 
 From the command line:
 ```
@@ -49,7 +50,8 @@ sudo pip3 install --upgrade requests
 ---
 
 
-* ####Virtualenv
+####Virtualenv
+___
 
 From the command line:
 ```
