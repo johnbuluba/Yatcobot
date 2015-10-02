@@ -165,6 +165,8 @@ class Yatcobot():
         mutations = list()
         keyword = keyword.strip()
         mutations.append(' {} '.format(keyword))
+        mutations.append('{} '.format(keyword))
+        mutations.append(' {}'.format(keyword))
         mutations.append('#{}'.format(keyword))
         mutations.append(',{}'.format(keyword))
         mutations.append('{},'.format(keyword))

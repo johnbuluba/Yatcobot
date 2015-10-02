@@ -156,7 +156,7 @@ class TestBot(unittest.TestCase):
         self.bot.client.favorite.assert_called_once_with(post['id'])
 
     def test_follow(self):
-        Config.fav_keywords = [' follow ']
+        Config.follow_keywords = [' follow ']
         self.bot.client = MagicMock()
         post = ({'id': 0, 'text': 'test follow tests', 'user': {'id': random.randint(1, 1000), 'screen_name': 'test'}, 'retweeted': False})
 
@@ -166,7 +166,7 @@ class TestBot(unittest.TestCase):
 
     def test_get_keyword_mutations(self):
         keyword = 'keyword'
-        target_mutations = ['#keyword', ' keyword ', '.keyword', 'keyword.', ',keyword', 'keyword,']
+        target_mutations = ['#keyword', ' keyword ', '.keyword', 'keyword ', ' keyword', 'keyword.', ',keyword', 'keyword,']
         mutations = self.bot._get_keyword_mutations(keyword)
         self.assertEqual(len(mutations), len(target_mutations))
         for mutation in mutations:
