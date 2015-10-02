@@ -16,7 +16,7 @@ class Yatcobot():
     def __init__(self, ignore_list_file):
 
         self.ignore_list = IgnoreList(ignore_list_file)
-        self.post_list = OrderedDict()
+        self.post_queue = OrderedDict()
         self.client = TwitterClient(Config.consumer_key, Config.consumer_secret,
                                                          Config.access_token_key,
                                                          Config.access_token_secret)
@@ -27,11 +27,11 @@ class Yatcobot():
 
         logger.info("=== CHECKING RETWEET QUEUE ===")
 
-        logger.info("Queue length: {}".format(len(self.post_list)))
+        logger.info("Queue length: {}".format(len(self.post_queue)))
 
-        if len(self.post_list) > 0:
+        if len(self.post_queue) > 0:
 
-            post_id, post = self.post_list.popitem(last=False)
+            post_id, post = self.post_queue.popitem(last=False)
 
             text = post['text'].replace('\n', '')
             text = (text[:75] + '..') if len(text) > 75 else text
@@ -90,11 +90,11 @@ class Yatcobot():
     def clear_queue(self):
         """Clear the post list queue in order to avoid a buildup of old posts"""
 
-        to_delete = len(self.post_list) - Config.max_queue
+        to_delete = len(self.post_queue) - Config.max_queue
 
         if to_delete > 0:
             for i in range(to_delete):
-                self.post_list.popitem(last=False)
+                self.post_queue.popitem(last=False)
 
             logger.info("===THE QUEUE HAS BEEN CLEARED=== Deleted {} posts".format(to_delete))
 
@@ -152,8 +152,8 @@ class Yatcobot():
             return
 
         #Insert if it doenst already exists
-        if post['id'] not in self.post_list:
-            self.post_list[post['id']] = post
+        if post['id'] not in self.post_queue:
+            self.post_queue[post['id']] = post
             text = post['text'].replace('\n', '')
             text = (text[:75] + '..') if len(text) > 75 else text
             logger.debug("Added tweet to queue: id:{0} username:{1} text:{2}".format(post['id'],
