@@ -47,9 +47,6 @@ sudo pip3 install --upgrade requests
 ```
 
 
----
-
-
 ####Virtualenv
 ___
 
