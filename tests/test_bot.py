@@ -163,3 +163,11 @@ class TestBot(unittest.TestCase):
         self.bot.check_follow_request(post)
 
         self.bot.client.follow.assert_called_once_with(post['user']['screen_name'])
+
+    def test_get_keyword_mutations(self):
+        keyword = 'keyword'
+        target_mutations = ['#keyword', ' keyword ', '.keyword', 'keyword.', ',keyword', 'keyword,']
+        mutations = self.bot._get_keyword_mutations(keyword)
+        self.assertEqual(len(mutations), len(target_mutations))
+        for mutation in mutations:
+            self.assertIn(mutation, target_mutations)

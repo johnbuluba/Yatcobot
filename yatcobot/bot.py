@@ -60,7 +60,8 @@ class Yatcobot():
         #!Fixme doesnt find .Follow, #Follow
 
         text = post['text']
-        if any(x in text.lower() for x in Config.follow_keywords):
+        keywords = sum((self._get_keyword_mutations(x) for x in Config.follow_keywords), [])
+        if any(x in text.lower() for x in keywords):
             self.remove_oldest_follow()
             self.client.follow(post['user']['screen_name'])
             logger.info("Follow: {0}".format(post['user']['screen_name']))
@@ -82,8 +83,8 @@ class Yatcobot():
 
         """
         text = post['text']
-
-        if any(x in text.lower() for x in Config.fav_keywords):
+        keywords = sum((self._get_keyword_mutations(x) for x in Config.fav_keywords), [])
+        if any(x in text.lower() for x in keywords):
             r = self.client.favorite(post['id'])
             logger.info("Favorite: {0}".format(post['id']))
 
@@ -159,3 +160,14 @@ class Yatcobot():
             logger.debug("Added tweet to queue: id:{0} username:{1} text:{2}".format(post['id'],
                                                                                      post['user']['screen_name'],
                                                                                      text))
+
+    def _get_keyword_mutations(self, keyword):
+        mutations = list()
+        keyword = keyword.strip()
+        mutations.append(' {} '.format(keyword))
+        mutations.append('#{}'.format(keyword))
+        mutations.append(',{}'.format(keyword))
+        mutations.append('{},'.format(keyword))
+        mutations.append('.{}'.format(keyword))
+        mutations.append('{}.'.format(keyword))
+        return mutations
