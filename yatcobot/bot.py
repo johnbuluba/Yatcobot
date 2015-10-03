@@ -6,7 +6,7 @@ from .scheduler import PeriodicScheduler
 from .config import Config
 from .ignorelist import IgnoreList
 from .client import TwitterClient, TwitterClientRetweetedException
-
+from .post_queue_sort import post_queue_sort
 #The logger object
 logger = logging.getLogger(__name__)
 
@@ -36,6 +36,7 @@ class Yatcobot():
             text = post['text'].replace('\n', '')
             text = (text[:75] + '..') if len(text) > 75 else text
             logger.info("Retweeting: {0} {1}".format(post['id'], text))
+            logger.debug("Tweet score: {}".format(post['score']))
 
             if post['user']['id'] in self.ignore_list:
                 logger.info("Blocked user's tweet skipped")
@@ -95,7 +96,8 @@ class Yatcobot():
 
         if to_delete > 0:
             for i in range(to_delete):
-                self.post_queue.popitem(last=False)
+                #Remove from the end where the posts has lower score
+                self.post_queue.popitem()
 
             logger.info("===THE QUEUE HAS BEEN CLEARED=== Deleted {} posts".format(to_delete))
 
@@ -118,6 +120,9 @@ class Yatcobot():
 
             for post in results:
                 self._insert_post_to_queue(post)
+
+        #Sort the queue based on some features
+        self.post_queue = post_queue_sort(self.post_queue)
 
     def run(self):
 

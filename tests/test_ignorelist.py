@@ -22,7 +22,6 @@ class TestIgnoreList(unittest.TestCase):
         for x in range(3):
             self.assertIn(x, ignorelist)
 
-
     def test_append(self):
 
         with patch.object(builtins, 'open', mock_open()) as m:

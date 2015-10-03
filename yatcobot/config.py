@@ -21,6 +21,7 @@ class Config:
     search_queries = ["RT to win", "Retweet and win"]
     follow_keywords = [" follow ", " follower "]
     fav_keywords = [" fav ", " favorite "]
+    priority_keywords = ["ps4", "pc"]
 
     @staticmethod
     def load(filename):
