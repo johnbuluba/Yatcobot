@@ -2,7 +2,7 @@
 The best bot for searching twitter contests and automatically retweet them
 
 
-[![Build Status](https://travis-ci.org/buluba89/Yatcobot.svg)](https://travis-ci.org/buluba89/Yatcbot)
+[![Build Status](https://travis-ci.org/buluba89/Yatcobot.svg?branch=master)](https://travis-ci.org/buluba89/Yatcbot)
 [![codecov.io](http://codecov.io/github/buluba89/Yatcobot/coverage.svg?branch=master)](http://codecov.io/github/buluba89/Yatcobot?branch=master)
 
 
@@ -33,7 +33,6 @@ From the command line:
 sudo apt-get install git python3 python3-pip
 git clone https://github.com/buluba89/Yatcobot.git
 sudo pip3 install -r requirements.txt
-
 ```
 To run:
 ```
