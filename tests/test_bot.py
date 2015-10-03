@@ -45,7 +45,7 @@ class TestBot(unittest.TestCase):
 
         self.bot.clear_queue()
         self.assertTrue(self.bot.post_queue.popitem.called)
-        self.bot.post_queue.popitem.assert_called_with(last=False)
+        self.bot.post_queue.popitem.assert_called_with()
 
     def test_remove_oldest_follow_empty(self):
         follows = [x for x in range(Config.max_follows - 1)]

@@ -96,7 +96,8 @@ class Yatcobot():
 
         if to_delete > 0:
             for i in range(to_delete):
-                self.post_queue.popitem(last=False)
+                #Remove from the end where the posts has lower score
+                self.post_queue.popitem()
 
             logger.info("===THE QUEUE HAS BEEN CLEARED=== Deleted {} posts".format(to_delete))
 
@@ -122,7 +123,6 @@ class Yatcobot():
 
         #Sort the queue based on some features
         self.post_queue = post_queue_sort(self.post_queue)
-
 
     def run(self):
 
