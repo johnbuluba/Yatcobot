@@ -22,7 +22,7 @@ Configuration
 
 Open up `config.json` and make the values correspond to your Twitter API credentials.
 
-** See [Config manual](docs/config.md) for more details **
+**See [Config manual](docs/config.md) for more details**
 
 Installation
 ------------
@@ -66,8 +66,8 @@ cd /path/to/repo/
 source env/bin/activate
 python3 yatcobot.py
 ```
-** For options with command line arguments see
-[Command Line Arguments!](docs/cli.md) **
+**For options with command line arguments see
+[Command Line Arguments!](docs/cli.md)**
 
 ## Usage with Docker
 
