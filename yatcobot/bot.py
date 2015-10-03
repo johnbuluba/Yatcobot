@@ -1,4 +1,5 @@
 from collections import OrderedDict
+import difflib
 import logging
 
 
@@ -146,6 +147,24 @@ class Yatcobot():
             return post['retweeted_status']
         return post
 
+    def _get_quoted_tweet(self, post):
+        """
+        Checks if a post is a quote of the original tweet
+        :param post: The post to check if its a quote
+        :return: If it isnt a quote the argument, otherwise the original tweet
+        """
+        if 'quoted_status' not in post:
+            return post
+
+        quote = post['quoted_status']
+
+        diff = difflib.SequenceMatcher(None, post['text'], quote['text']).ratio()
+
+        if diff >= Config.min_quote_similarity:
+            return quote
+
+        return post
+
     def _insert_post_to_queue(self, post):
         """
         Check if a post is wanted and add's it in the post queue
@@ -153,6 +172,9 @@ class Yatcobot():
         """
         #Get original tweet if retweeted
         post = self._get_original_tweet(post)
+
+        #Get original post, if it is quoted
+        post = self._get_quoted_tweet(post)
 
         #Filter retweeted
         if post['retweeted']:

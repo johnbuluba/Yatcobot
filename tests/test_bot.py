@@ -31,6 +31,20 @@ class TestBot(unittest.TestCase):
         original = self.bot._get_original_tweet(post)
         self.assertEqual(post['retweeted_status'], original)
 
+    def test_get_quoted_tweet_similar(self):
+        quoted = {'id': 1, 'text': 'test'}
+        post = {'id': 2, 'text': 'test', 'quoted_status': quoted}
+
+        r = self.bot._get_quoted_tweet(post)
+        self.assertEqual(r, quoted)
+
+    def test_get_quoted_tweet_not_similar(self):
+        quoted = {'id': 1, 'text': 'test'}
+        post = {'id': 2, 'text': 'test sdfsdfsf', 'quoted_status': quoted}
+
+        r = self.bot._get_quoted_tweet(post)
+        self.assertEqual(r, post)
+
     def test_clear_queue_empty(self):
         Config.max_queue = 60
         self.bot.post_queue = MagicMock()

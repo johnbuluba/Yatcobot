@@ -21,6 +21,7 @@ Example config with default values:
     "clear_queue_interval":43200,
     "rate_limit_update_interval":60,
     "min_ratelimit_percent":10,
+    "min_quote_similarity": 0.94,
     "blocked_users_update_interval": 300,
     "max_follows": 1950
 }
@@ -69,6 +70,11 @@ some posts. (_seconds_)
 Twitter api has a limit on how many api calls you can make on a period of time.
 The bot checks the remaining api calls and if it's bellow min_ratelimit_percent
 it pauses.
+
+- #### min_quote_similarity
+When the bot gets new tweets, it checks if they are a quote of a contest (some people quote the contest, they dont
+retweet them). To get rid of that, the similarity between the quote and the post is compared. This is the threshold
+which we get the quoted tweet as the contest and not the one we got. 1.0 means 100% the same
 
 - #### blocked_users_update_interval
 The interval to update the twitter blocked users so you dont retweet posts
