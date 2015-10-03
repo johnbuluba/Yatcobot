@@ -77,7 +77,7 @@ class TestBot(unittest.TestCase):
     def test_enter_contest_simple_post(self):
         posts = 10
         for i in range(posts):
-            self.bot.post_queue[i] = {'id': i, 'text': 'test', 'user': {'id': random.randint(1, 1000), 'screen_name': 'test'}}
+            self.bot.post_queue[i] = {'id': i, 'text': 'test', 'score': 0, 'user': {'id': random.randint(1, 1000), 'screen_name': 'test'}}
 
         self.bot.enter_contest()
 
@@ -89,7 +89,7 @@ class TestBot(unittest.TestCase):
         posts = 10
         self.bot.ignore_list = list()
         for i in range(posts):
-            self.bot.post_queue[i] = {'id': i, 'text': 'test', 'user': {'id': random.randint(1, 1000)}}
+            self.bot.post_queue[i] = {'id': i, 'text': 'test', 'score': 0, 'user': {'id': random.randint(1, 1000)}}
         self.bot.client.retweet.side_effect = TwitterClientRetweetedException()
 
         self.bot.enter_contest()
@@ -104,7 +104,7 @@ class TestBot(unittest.TestCase):
         posts = 10
         self.bot.ignore_list = [0]
         for i in range(posts):
-            self.bot.post_queue[i] = {'id': i, 'text': 'test', 'user': {'id': 0}}
+            self.bot.post_queue[i] = {'id': i, 'text': 'test', 'score': 0, 'user': {'id': 0}}
 
         self.bot.enter_contest()
 
@@ -136,7 +136,7 @@ class TestBot(unittest.TestCase):
         Config.search_queries = ['test1']
         posts = list()
         for i in range(2):
-            posts.append({'id': i, 'text': 'test', 'user': {'id': random.randint(1, 1000), 'screen_name': 'test'}, 'retweeted': False})
+            posts.append({'id': i, 'text': 'test', 'retweet_count': 1, 'user': {'id': random.randint(1, 1000), 'screen_name': 'test'}, 'retweeted': False})
 
         self.bot.client = MagicMock()
         self.bot.client.search_tweets.return_value = posts
