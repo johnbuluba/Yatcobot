@@ -19,8 +19,8 @@ class Config:
     blocked_users_update_interval = 300
     max_follows = 1950
     search_queries = ["RT to win", "Retweet and win"]
-    follow_keywords = [" follow ", " follower "]
-    fav_keywords = [" fav ", " favorite "]
+    follow_keywords = ["follow", "follower"]
+    fav_keywords = ["fav", "favorite"]
     priority_keywords = ["ps4", "pc"]
 
     @staticmethod
