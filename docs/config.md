@@ -21,7 +21,7 @@ Example config with default values:
     "clear_queue_interval":43200,
     "rate_limit_update_interval":60,
     "min_ratelimit_percent":10,
-    "min_quote_similarity": 0.94,
+    "min_quote_similarity": 0.80,
     "blocked_users_update_interval": 300,
     "max_follows": 1950
 }

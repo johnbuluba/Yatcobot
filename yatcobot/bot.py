@@ -144,6 +144,7 @@ class Yatcobot():
         :return: post: If itsnt retweet it returns the argument, otherwise returns original tweet
         """
         if 'retweeted_status' in post:
+            logger.debug('Tweet {} is a retweet'.format(post['id']))
             return post['retweeted_status']
         return post
 
@@ -161,6 +162,7 @@ class Yatcobot():
         diff = difflib.SequenceMatcher(None, post['text'], quote['text']).ratio()
 
         if diff >= Config.min_quote_similarity:
+            logger.debug('Tweet {} is a quote'.format(post['id']))
             return quote
 
         return post

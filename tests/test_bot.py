@@ -1,7 +1,10 @@
 import unittest
+import os
 import logging
 import random
 from unittest.mock import patch, MagicMock
+
+import json
 
 import yatcobot.bot
 from yatcobot.bot import Yatcobot, Config, PeriodicScheduler
@@ -12,6 +15,8 @@ logging.disable(logging.ERROR)
 
 
 class TestBot(unittest.TestCase):
+
+    tests_path = path = os.path.dirname(os.path.abspath(__file__))
 
     @patch('yatcobot.bot.TwitterClient')
     @patch('yatcobot.bot.IgnoreList')
@@ -44,6 +49,12 @@ class TestBot(unittest.TestCase):
 
         r = self.bot._get_quoted_tweet(post)
         self.assertEqual(r, post)
+
+    def test_get_quoted_tweet_real_post(self):
+        with open(self.tests_path + '/fixtures/post_with_quote.json') as f:
+            post = json.load(f)
+        r = self.bot._get_quoted_tweet(post)
+        self.assertEqual(r, post['quoted_status'])
 
     def test_clear_queue_empty(self):
         Config.max_queue = 60
