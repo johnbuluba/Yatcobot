@@ -160,7 +160,7 @@ class TestBot(unittest.TestCase):
         self.bot.client = MagicMock()
         post = ({'id': 0, 'text': 'test follow tests', 'user': {'id': random.randint(1, 1000), 'screen_name': 'test'}, 'retweeted': False})
 
-        self.bot.check_follow_request(post)
+        self.bot.check_for_follow(post)
 
         self.bot.client.follow.assert_called_once_with(post['user']['screen_name'])
 

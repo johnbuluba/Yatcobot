@@ -28,9 +28,9 @@ def post_queue_sort(queue):
 
 def combine_scores(*scores):
     """
-    Sorts queue based on their score
-    :param scores:
-    :return:Returns an ordered dict sorted by the scores
+    Combines the scores of multiple features to one final score
+    :param scores: a tuple of list of scores ( [Ascore1, Ascore2], [Bscore1,Bscore2])
+    :return:Returns an a dict with final scores {id:Score}
     """
     combined_scores = {}
     for score_list in scores:
@@ -45,7 +45,8 @@ def combine_scores(*scores):
 def get_keywords_score(queue):
     """
     Gets a queue and returns the scores based on the keywords in text
-    :return:A dict of {postid:Score}
+    :param queue: The queue to score
+    :return:A list of scores [Score]
     """
     scores = []
 
@@ -67,8 +68,9 @@ def get_keywords_score(queue):
 
 def get_retweets_score(queue):
     """
-    Gets a queue and returns the scores based on number of retweets
-    :return:A dict of {postid:Score}
+    Gets a queue and returns the scores based on the retweets of the post
+    :param queue: The queue to score
+    :return:A list of scores [Score]
     """
     scores = [Score(id,post['retweet_count']) for id, post in queue.items()]
 
@@ -79,10 +81,8 @@ def get_retweets_score(queue):
 
 def normalize_scores(scores):
     """
-    Computes the standardized score for a collection of posts and scores
-    :param value: The post score
-    :param mean_value: The mean value of all scores
-    :param standard_deviation: Standard deviation of all scores
+    Computes the standardized score for a collection of scores
+    :param scores: A list of scores [Score]
     :return:Standardized score
     """
     m = mean(x.score for x in scores)

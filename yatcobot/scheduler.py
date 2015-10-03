@@ -15,8 +15,6 @@ RandomTask = namedtuple('RandomTask', ['delay', 'delay_margin', 'priority', 'act
 class PeriodicScheduler(sched.scheduler):
     """Schedules tasks to be called periodically"""
 
-
-
     def __init__(self, timefunc=time.time, delayfunc=time.sleep):
         # List of tasks that will be periodically be called
         self.tasks = []
@@ -43,6 +41,11 @@ class PeriodicScheduler(sched.scheduler):
         super().run(blocking)
 
     def enter_task(self, index):
+        """
+        Inserts a task in the sched queue. We dont enter the task itself, rather the run_task with the index
+        of taskas a parameter. We do it that way so we can reschedule it later
+        :param index: the index of the task
+        """
         task = self.tasks[index]
         if isinstance(task, NormalTask):
             super().enter(task.delay, task.priority, self.run_task, argument=(index,))
@@ -53,6 +56,10 @@ class PeriodicScheduler(sched.scheduler):
             super().enter(delay, task.priority, self.run_task, argument=(index,))
 
     def run_task(self, index):
+        """
+        Runs a task and reschedules it again
+        :param index:  the index of the task to run
+        """
         self.enter_task(index)
         try:
             logger.debug("Scheduler is calling: {}".format(self.tasks[index].action.__name__))

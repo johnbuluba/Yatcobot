@@ -12,6 +12,12 @@ logger = logging.getLogger(__name__)
 
 
 def get_access_token(consumer_key, consumer_secret):
+    """
+    Gets the user tokens from  twitter given application tokens
+    :param consumer_key: Consumer api key
+    :param consumer_secret: Consumer secret api key
+    :return: dict {'token': token, 'secret': secret}
+    """
     oauth_client = OAuth1Session(consumer_key, client_secret=consumer_secret)
 
     logger.info('Requesting temp token from Twitter')

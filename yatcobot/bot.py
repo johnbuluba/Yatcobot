@@ -23,7 +23,7 @@ class Yatcobot():
         self.scheduler = PeriodicScheduler()
 
     def enter_contest(self):
-        """ Update the Retweet queue (this prevents too many retweets happening at once.)"""
+        """ Gets one post from post_queue and retweets it"""
 
         logger.info("=== CHECKING RETWEET QUEUE ===")
 
@@ -49,16 +49,14 @@ class Yatcobot():
                 logger.error("Alredy retweeted tweet with id {}".format(post['id']))
                 return
 
-            self.check_follow_request(post)
+            self.check_for_follow(post)
             self.check_for_favorite(post)
 
-    def check_follow_request(self, post):
+    def check_for_follow(self, post):
         """
-        Check if a post requires you to follow the user.
-        Be careful with this function! Twitter may write ban your application
-        for following too aggressively
+        Checks if a contest needs follow to enter and follows the user
+        :param post: The post to check
         """
-        #!Fixme doesnt find .Follow, #Follow
 
         text = post['text']
         keywords = sum((self._get_keyword_mutations(x) for x in Config.follow_keywords), [])
@@ -67,8 +65,22 @@ class Yatcobot():
             self.client.follow(post['user']['screen_name'])
             logger.info("Follow: {0}".format(post['user']['screen_name']))
 
+    def check_for_favorite(self, post):
+        """
+        Checks if a contest needs favorite to enter, and favorites the post
+        :param post: The post to check
+        """
+
+        text = post['text']
+        keywords = sum((self._get_keyword_mutations(x) for x in Config.fav_keywords), [])
+        if any(x in text.lower() for x in keywords):
+            r = self.client.favorite(post['id'])
+            logger.info("Favorite: {0}".format(post['id']))
+
     def remove_oldest_follow(self):
-        """FIFO - Every new follow should result in the oldest follow being removed."""
+        """
+        If the follow limit is reached, unfollow the oldest follow
+        """
 
         follows = self.client.get_friends_ids()
 
@@ -76,21 +88,8 @@ class Yatcobot():
             r = self.client.unfollow(follows[-1])
             logger.info('Unfollowed: {0}'.format(r['screen_name']))
 
-    def check_for_favorite(self, post):
-        """
-        Check if a post requires you to favorite the tweet.
-        Be careful with this function! Twitter may write ban your application
-        for favoriting too aggressively
-
-        """
-        text = post['text']
-        keywords = sum((self._get_keyword_mutations(x) for x in Config.fav_keywords), [])
-        if any(x in text.lower() for x in keywords):
-            r = self.client.favorite(post['id'])
-            logger.info("Favorite: {0}".format(post['id']))
-
     def clear_queue(self):
-        """Clear the post list queue in order to avoid a buildup of old posts"""
+        """Removes the extraneous posts from the post_queue"""
 
         to_delete = len(self.post_queue) - Config.max_queue
 
@@ -102,6 +101,7 @@ class Yatcobot():
             logger.info("===THE QUEUE HAS BEEN CLEARED=== Deleted {} posts".format(to_delete))
 
     def update_blocked_users(self):
+        """Gets the blocked users and adds their ids in the ignore list"""
 
         for b in self.client.get_blocks():
             if not b in self.ignore_list:
@@ -109,7 +109,7 @@ class Yatcobot():
                 logger.info("Blocked user {0} added to ignore list".format(b))
 
     def scan_new_contests(self):
-        """Scan for new contests, but not too often because of the rate limit."""
+        """Searches the twitter for new contests and adds the to the post queue"""
 
         logger.info("=== SCANNING FOR NEW CONTESTS ===")
 
@@ -125,6 +125,7 @@ class Yatcobot():
         self.post_queue = post_queue_sort(self.post_queue)
 
     def run(self):
+        """Run the bot as a daemon. This is blocking command"""
 
         self.scheduler.enter(Config.clear_queue_interval, 1, self.clear_queue)
         self.scheduler.enter(Config.rate_limit_update_interval, 2, self.client.update_ratelimits)
@@ -146,6 +147,10 @@ class Yatcobot():
         return post
 
     def _insert_post_to_queue(self, post):
+        """
+        Check if a post is wanted and add's it in the post queue
+        :param post: The post to insert
+        """
         #Get original tweet if retweeted
         post = self._get_original_tweet(post)
 
@@ -167,6 +172,11 @@ class Yatcobot():
                                                                                      text))
 
     def _get_keyword_mutations(self, keyword):
+        """
+        Given a keyword, create various mutations to be searched inside a post
+        :param keyword: the base keyword of the mutations
+        :return: list of mutation
+        """
         mutations = list()
         keyword = keyword.strip()
         mutations.append(' {} '.format(keyword))

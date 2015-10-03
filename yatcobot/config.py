@@ -25,6 +25,10 @@ class Config:
 
     @staticmethod
     def load(filename):
+        """
+        Loads a file and imports the settings
+        :param filename: the file to import
+        """
         # Load our configuration from the JSON file.
         with open(filename) as data_file:
             data = json.load(data_file)
@@ -34,6 +38,12 @@ class Config:
 
     @staticmethod
     def save_user_tokens(filename, token, secret):
+        """
+        Saves the user tokens to the config file
+        :param filename: the destination config file
+        :param token: the user token
+        :param secret: the user token secret
+        """
         with open(filename) as data_file:
             data = json.load(data_file)
 
