@@ -40,7 +40,7 @@ The path of the configuration file that will be used. Example usage:
 ```
 
 ## --ignore_list, -i
-** ignorelist by default**. The path of the ignore_list file, that stores
+**ignorelist by default**. The path of the ignore_list file, that stores
 the tweets that have been retweeted. Example usage:
 ```
 ./yatcobot.py --ignore_list /path/to/ignorelist
