@@ -27,23 +27,23 @@ Example config with default values:
 ```
 ---
 - #### consumer_key, consumer_secret, access_token_key, access_token_secret:
-The twitter api keys that are needed for interacti with the twitter api.
+The twitter api keys that are needed for interacting with the twitter api.
 Obtain them from [here](https://apps.twitter.com/)
 
 - #### search_queries 
-This are the queries that are used to find contests from the twitter. It works
+These are the queries that are used to find contests from the twitter. It works
 like the twitter search bar, so you can experiment there first
 
 - #### follow_keywords
-This keywords are searched inside the tweet's text to determinate if it is
+These keywords are searched inside the tweet's text to determinate if it is
 needed to follow the original poster.
 
 - #### fav_keywords
-This keywords are searched inside the tweet's text to determinate if it is
+These keywords are searched inside the tweet's text to determinate if it is
 needed to favorite the original post.
 
 - #### priority_keywords
-This keywords are used to promote contests that contain this keywords so the
+These keywords are used to promote contests that contain this keywords so the
 bot enters more contests that the user is interested in
 
 - #### retweet_interval
@@ -51,7 +51,7 @@ How often a retweet will be posted. (_seconds_)
 
 - #### retweet_random_margin
 Adds randomness to the post interval. For example if retweet_interval is 600
-and retweet_random_margin is 60 retweets will be posted every 9-11 minutes.
+and retweet_random_margin is 60, retweets will be posted every 9-11 minutes.
  (_seconds_)
 
 - ####  scan_interval
@@ -67,7 +67,7 @@ some posts. (_seconds_)
 
 - #### min_ratelimit_percent
 Twitter api has a limit on how many api calls you can make on a period of time.
-The bot checks the remaining api calls and if its bellow min_ratelimit_percent
+The bot checks the remaining api calls and if it's bellow min_ratelimit_percent
 it pauses.
 
 - #### blocked_users_update_interval
@@ -75,5 +75,5 @@ The interval to update the twitter blocked users so you dont retweet posts
 from unwanted users. (_seconds_)
 
 - #### max_follows
-The maximum follows the user has. If user follows exceeds max_follows the oldests
+The maximum follows the user has. If user follows exceeds max_follows the oldest
 follow will be unfollowed.
