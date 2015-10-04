@@ -163,6 +163,7 @@ class Yatcobot():
 
         if diff >= Config.min_quote_similarity:
             logger.debug('Tweet {} is a quote'.format(post['id']))
+            quote = self.client.get_tweet(post['id'])
             return quote
 
         return post
