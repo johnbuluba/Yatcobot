@@ -39,13 +39,17 @@ class TestBot(unittest.TestCase):
     def test_get_quoted_tweet_similar(self):
         quoted = {'id': 1, 'text': 'test'}
         post = {'id': 2, 'text': 'test', 'quoted_status': quoted}
+        quoted_post_full = {'id': 1, 'text': 'test', 'user': {'id:1'}}
+        self.bot.client.get_tweet.return_value = quoted_post_full
 
         r = self.bot._get_quoted_tweet(post)
-        self.assertEqual(r, quoted)
+        self.assertEqual(r, quoted_post_full)
 
     def test_get_quoted_tweet_not_similar(self):
         quoted = {'id': 1, 'text': 'test'}
         post = {'id': 2, 'text': 'test sdfsdfsf', 'quoted_status': quoted}
+        quoted_post_full = {'id': 1, 'text': 'test', 'user': {'id:1'}}
+        self.bot.client.get_tweet.return_value = quoted_post_full
 
         r = self.bot._get_quoted_tweet(post)
         self.assertEqual(r, post)
@@ -53,8 +57,12 @@ class TestBot(unittest.TestCase):
     def test_get_quoted_tweet_real_post(self):
         with open(self.tests_path + '/fixtures/post_with_quote.json') as f:
             post = json.load(f)
+        quoted_post_full = post.copy()
+        quoted_post_full['user'] = {'id': 1}
+        self.bot.client.get_tweet.return_value = quoted_post_full
+
         r = self.bot._get_quoted_tweet(post)
-        self.assertEqual(r, post['quoted_status'])
+        self.assertEqual(r, quoted_post_full)
 
     def test_clear_queue_empty(self):
         Config.max_queue = 60
