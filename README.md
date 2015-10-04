@@ -41,12 +41,6 @@ To run:
 cd /path/to/repo/
 python3 yatcobot.py
 ```
-If you get an error like `ImportError: cannot import name 'ReadTimeout'`
-you must update request library:
-```
-sudo pip3 install --upgrade requests
-```
-
 
 ####Virtualenv
 ___
