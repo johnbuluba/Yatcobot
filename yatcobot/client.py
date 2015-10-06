@@ -26,6 +26,10 @@ class RateLimiterExpired(Exception):
 class RateLimiter(dict):
 
     def refresh_limits(self, new_limits):
+        '''
+        Refreshes the limits with the new limits info that was getted from the twitter api
+        :param new_limits: a dictionary with the new limits
+        '''
 
         #delete old values
         self.clear()
@@ -41,7 +45,14 @@ class RateLimiter(dict):
         for key in self.keys():
             self._calculate_percent_remaining(key)
 
+        logger.debug('Ratelimits was refreshed')
+
     def check_limit(self, endpoint):
+        '''
+        Check if we exceded the api calls for a particular endpoint. If we did it pauses until the nex
+        reset
+        :param endpoint: the endpoint (api url) to be checked
+        '''
 
         #Only GET methods have ratelimits
         if constants.ENDPOINTS[endpoint][0] == 'POST':
@@ -64,6 +75,10 @@ class RateLimiter(dict):
                 raise RateLimiterExpired()
 
     def decrease_remaining(self, endpoint):
+        '''
+        Decreases the remaining calls of an endpoint
+        :param endpoint: the endpoint to decrease
+        '''
         endpoint = self._get_internal_endpoint_name(endpoint)
         if endpoint in self:
             self[endpoint]['remaining'] -= 1
@@ -71,9 +86,20 @@ class RateLimiter(dict):
             self._calculate_percent_remaining(endpoint)
 
     def _calculate_percent_remaining(self, endpoint):
+        '''
+        Calculate the percent of remaining calls for an endpoint
+        :param endpoint: The target endpoint to calculate
+        '''
         self[endpoint]['percent'] = self[endpoint]['remaining']/self[endpoint]['limit'] * 100
 
     def _get_internal_endpoint_name(self, endpoint):
+        '''
+        Maps an TwitterApi endpoint to the internal endpoint. This is usefull because
+        TwitterApi has the endpoints without the leading '/' but the twitter returns
+        a dictionary starting with '/'
+        :param endpoint: the endpoint to convert
+        :return: the internal endpoint
+        '''
         return '/' + endpoint
 
 
@@ -122,35 +148,38 @@ class TwitterClient:
 
     def _api_call(self, request, parameters=None, check_ratelimit=True):
 
+        #!Fixme: TwitterApi doenst have all the endpoints. Some will raise exception
         _, endpoint = self.api._get_endpoint(request)
 
         if check_ratelimit:
-
 
             try:
                 self.ratelimiter.check_limit(endpoint)
             except RateLimiterExpired:
                 self.update_ratelimits(check_ratelimit=False)
 
-        r = self.api.request(request, parameters)
+        response = self.api.request(request, parameters).json()
+
+        try:
+            self._check_for_errors(response)
+        except Exception as e:
+            logger.error('Error during twitter api call {} (parameters: {})'.format(request, parameters))
+            raise
 
         self.ratelimiter.decrease_remaining(endpoint)
 
-        response_dict = r.json()
+        return response
+
+    def _check_for_errors(self, response):
         #check for errors
-        if 'errors' in response_dict:
-            for error in response_dict['errors']:
+        if 'errors' in response:
+            for error in response['errors']:
                 message = error['message']
                 code = error['code']
                 if message == 'You have already retweeted this tweet.':
                     raise TwitterClientRetweetedException()
-
-                logger.error('Error during twitter api call {} (parameters: {}): {}'.format(request, parameters, message))
-
-            raise TwitterClientException('Error during twitter api call {}'.format(request))
-
-        return response_dict
-
+                logger.error('Twitter api error code:{} error:{}'.format(code, message))
+            raise TwitterClientException()
 
 
 
