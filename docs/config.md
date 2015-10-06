@@ -22,6 +22,7 @@ Example config with default values:
     "rate_limit_update_interval":60,
     "min_ratelimit_percent":10,
     "min_quote_similarity": 0.80,
+    "max_quote_depth": 5,
     "blocked_users_update_interval": 300,
     "max_follows": 1950
 }
@@ -75,6 +76,11 @@ it pauses.
 When the bot gets new tweets, it checks if they are a quote of a contest (some people quote the contest, they dont
 retweet them). To get rid of that, the similarity between the quote and the post is compared. This is the threshold
 which we get the quoted tweet as the contest and not the one we got. 1.0 means 100% the same
+
+- #### max_quote_depth
+Some posts are quotes that quoting other quote(..that quoting other quote). So we need to follow the quotes
+to find the original post that is the contest. This value defines the max quotes that we will follow
+to get the original post
 
 - #### blocked_users_update_interval
 The interval to update the twitter blocked users so you dont retweet posts

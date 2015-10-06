@@ -151,20 +151,27 @@ class Yatcobot():
     def _get_quoted_tweet(self, post):
         """
         Checks if a post is a quote of the original tweet
+        Also the quote maybe is quoting another quote. So we follow quotes until we find the original or
+        if we follow Config.max_quote_depth times
         :param post: The post to check if its a quote
         :return: If it isnt a quote the argument, otherwise the original tweet
         """
-        if 'quoted_status' not in post:
-            return post
+        for i in range(Config.max_quote_depth):
+            #If it hasnt quote return the post
+            if 'quoted_status' not in post:
+                return post
 
-        quote = post['quoted_status']
-
-        diff = difflib.SequenceMatcher(None, post['text'], quote['text']).ratio()
-
-        if diff >= Config.min_quote_similarity:
-            logger.debug('Tweet {} is a quote'.format(post['id']))
-            quote = self.client.get_tweet(post['id'])
-            return quote
+            quote = post['quoted_status']
+            diff = difflib.SequenceMatcher(None, post['text'], quote['text']).ratio()
+            #If the texts are similar continue
+            if diff >= Config.min_quote_similarity:
+                logger.debug('{} is a quote, following to next post. Depth from original post {}'.format(post['id'], i))
+                quote = self.client.get_tweet(quote['id'])
+                #If its a quote of quote, get next quote and continue
+                post = quote
+                continue
+            #Else return the last post
+            break
 
         return post
 

@@ -19,6 +19,7 @@ class Config:
     blocked_users_update_interval = 300
     max_follows = 1950
     min_quote_similarity = 0.80
+    max_quote_depth = 5
     search_queries = ["RT to win", "Retweet and win"]
     follow_keywords = ["follow", "follower"]
     fav_keywords = ["fav", "favorite"]

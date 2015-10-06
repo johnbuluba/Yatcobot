@@ -45,6 +45,20 @@ class TestBot(unittest.TestCase):
         r = self.bot._get_quoted_tweet(post)
         self.assertEqual(r, quoted_post_full)
 
+    def test_get_quoted_tweet_quote_of_quotes(self):
+
+        def mock_return(id):
+            return mock_return.posts[id]
+        mock_return.posts = dict()
+        mock_return.posts[1] = {'id': 1, 'text': 'test', 'user': {'id:1'}}
+        mock_return.posts[2] = {'id': 2, 'text': 'test', 'quoted_status': mock_return.posts[1]}
+        mock_return.posts[3] = {'id': 3, 'text': 'test', 'quoted_status': mock_return.posts[2]}
+
+        self.bot.client.get_tweet.side_effect = mock_return
+
+        r = self.bot._get_quoted_tweet(mock_return.posts[3])
+        self.assertEqual(r, mock_return.posts[1])
+
     def test_get_quoted_tweet_not_similar(self):
         quoted = {'id': 1, 'text': 'test'}
         post = {'id': 2, 'text': 'test sdfsdfsf', 'quoted_status': quoted}
