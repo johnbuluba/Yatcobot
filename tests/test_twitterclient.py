@@ -193,7 +193,7 @@ class TestRatelimiter(unittest.TestCase):
             with patch('time.sleep') as p:
                 with self.assertRaises(RateLimiterExpired):
                     ratelimiter.check_limit('geo/search')
-                    p.assert_called_with(100)
+                p.assert_called_with(100)
 
     def test_decrease_remaining(self):
         self.limiter['/geo/search'] = {'reset': 100, 'percent': 0, 'limit': 1, 'remaining': 1}

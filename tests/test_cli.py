@@ -68,7 +68,7 @@ class TestCli(unittest.TestCase):
         yatcobot.cli.create_logger.assert_called_once_with(logging.DEBUG, None)
         self.assertTrue(yatcobot.cli.Yatcobot.return_value.run.called)
 
-    def test_simple_debug(self):
+    def test_login(self):
         sys.argv = [self.program_name, '--login']
         yatcobot.cli.create_logger = MagicMock()
         yatcobot.cli.get_access_token = MagicMock(return_value={'token': 'test', 'secret': 'test'})
