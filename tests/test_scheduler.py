@@ -122,5 +122,8 @@ class TestPeriodicScheduler(unittest.TestCase):
 
         #Run task
         self.sched.run_task(0)
+        self.sched.run_task(0)
+        self.sched.run_task(0)
+        self.sched.run_task(0)
 
 

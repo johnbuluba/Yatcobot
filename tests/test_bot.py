@@ -183,7 +183,9 @@ class TestBot(unittest.TestCase):
         Config.search_queries = ['test1']
         posts = list()
         for i in range(2):
-            posts.append({'id': i, 'text': 'test', 'retweet_count': 1, 'user': {'id': random.randint(1, 1000), 'screen_name': 'test'}, 'retweeted': False})
+            posts.append({'id': i, 'text': 'test', 'retweet_count': 1,
+                          'user': {'id': random.randint(1, 1000), 'screen_name': 'test'}, 'retweeted': False,
+                          'created_at':'Thu Oct 08 08:34:51 +0000 2015'})
 
         self.bot.client = MagicMock()
         self.bot.client.search_tweets.return_value = posts

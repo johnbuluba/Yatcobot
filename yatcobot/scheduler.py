@@ -65,4 +65,5 @@ class PeriodicScheduler(sched.scheduler):
             logger.debug("Scheduler is calling: {}".format(self.tasks[index].action.__name__))
             self.tasks[index].action()
         except Exception as e:
-            logger.error("Exception in scheduled task :{}".format(e), exc_info=True)
+            logger.error("Exception in scheduled task :{}".format(self.tasks[index].action.__name__), exc_info=True)
+            pass
