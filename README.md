@@ -2,7 +2,7 @@
 The best bot for searching twitter contests and automatically retweet them
 
 
-[![Build Status](https://travis-ci.org/buluba89/Yatcobot.svg?branch=master)](https://travis-ci.org/buluba89/Yatcobot.svg?branch=master)
+[![Build Status](https://travis-ci.org/buluba89/Yatcobot.svg?branch=master)](https://travis-ci.org/buluba89/Yatcobot)
 [![codecov.io](http://codecov.io/github/buluba89/Yatcobot/coverage.svg?branch=master)](http://codecov.io/github/buluba89/Yatcobot?branch=master)
 
 
