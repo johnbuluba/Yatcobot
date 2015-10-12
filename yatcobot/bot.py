@@ -194,6 +194,10 @@ class Yatcobot():
         if post['id'] in self.ignore_list:
             return
 
+        #Filter blocked users
+        if post['user']['id'] in self.ignore_list:
+            return
+
         #Insert if it doenst already exists
         if post['id'] not in self.post_queue:
             self.post_queue[post['id']] = post

@@ -179,6 +179,13 @@ class TestBot(unittest.TestCase):
 
         self.assertNotIn(post['id'], self.bot.post_queue)
 
+    def test_insert_post_to_queue_blocked_user(self):
+        post = {'id': 0, 'text': 'test', 'user': {'id': 1, 'screen_name': 'test'}, 'retweeted': False}
+        self.bot.ignore_list = [1]
+        self.bot._insert_post_to_queue(post)
+
+        self.assertNotIn(post['id'], self.bot.post_queue)
+
     def test_scan_new_contests(self):
         Config.search_queries = ['test1']
         posts = list()
