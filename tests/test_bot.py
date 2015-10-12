@@ -186,6 +186,14 @@ class TestBot(unittest.TestCase):
 
         self.assertNotIn(post['id'], self.bot.post_queue)
 
+    def test_insert_post_to_queue_that_has_a_quote_thats_deleted(self):
+        with open(self.tests_path + '/fixtures/deleted_quote.json') as f:
+            post = json.load(f)
+
+        self.bot._insert_post_to_queue(post)
+
+        self.assertNotIn(post['id'], self.bot.post_queue)
+
     def test_scan_new_contests(self):
         Config.search_queries = ['test1']
         posts = list()

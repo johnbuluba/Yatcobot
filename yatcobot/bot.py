@@ -198,6 +198,11 @@ class Yatcobot():
         if post['user']['id'] in self.ignore_list:
             return
 
+        #Filter posts with deleted quote
+        #We check if there is a key 'is_a_quote_status' that is true but there isn't a quoted_status
+        if 'is_quote_status' in post and post['is_quote_status'] and not 'quoted_status' in post:
+            return
+
         #Insert if it doenst already exists
         if post['id'] not in self.post_queue:
             self.post_queue[post['id']] = post
