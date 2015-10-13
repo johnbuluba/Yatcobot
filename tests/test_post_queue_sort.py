@@ -32,7 +32,7 @@ class TestPostQueueSorter(unittest.TestCase):
         scores = get_retweets_score(posts)
 
         self.assertEqual(len(scores), len(posts))
-        sorted_scores = sorted((x for x in scores.items()), key=lambda x: x[1], reverse=True)
+        sorted_scores = sorted(((x.id, x.score) for x in scores), key=lambda x: x[1], reverse=True)
         previous = sorted_scores.pop(0)[0]
         for id, score in sorted_scores:
             self.assertLessEqual(posts[id]['retweet_count'], posts[previous]['retweet_count'])
@@ -48,6 +48,7 @@ class TestPostQueueSorter(unittest.TestCase):
         }
 
         scores = get_keywords_score(posts)
+        scores = {x.id: x.score for x in scores}
         self.assertEqual(scores[1], scores[2])
         self.assertLess(scores[3], scores[2])
         self.assertGreater(scores[4], scores[2])
@@ -61,7 +62,7 @@ class TestPostQueueSorter(unittest.TestCase):
         }
 
         scores = get_age_score(posts)
-
+        scores = {x.id: x.score for x in scores}
         self.assertGreater(scores[1], scores[2])
         self.assertGreater(scores[2], scores[3])
         self.assertGreater(scores[3], scores[4])

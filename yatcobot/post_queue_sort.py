@@ -37,10 +37,10 @@ def combine_scores(*scores):
     """
     combined_scores = {}
     for score_list in scores:
-        for key, score in score_list.items():
-            current_score = combined_scores.get(key, 0)
-            current_score += score
-            combined_scores[key] = current_score
+        for score in score_list:
+            current_score = combined_scores.get(score.id, 0)
+            current_score += score.score
+            combined_scores[score.id] = current_score
 
     return combined_scores
 
@@ -75,7 +75,7 @@ def get_retweets_score(queue):
     :param queue: The queue to score
     :return:A list of scores [Score]
     """
-    scores = [Score(id,post['retweet_count']) for id, post in queue.items()]
+    scores = [Score(id, post['retweet_count']) for id, post in queue.items()]
 
     norm_scores = normalize_scores(scores)
 
@@ -104,14 +104,14 @@ def normalize_scores(scores):
     m = mean(x.score for x in scores)
     s = stdev(x.score for x in scores)
 
-    normalized_scores = {}
+    normalized_scores = []
 
     # if standard deviation is 0 return 0 scores
     if s == 0:
-        return {x.id: 0 for x in scores}
+        return [Score(x.id, 0) for x in scores]
 
     for x in scores:
-        normalized_scores[x.id] = (x.score - m)/s
+        normalized_scores.append(Score(x.id, (x.score - m)/s))
 
     return normalized_scores
 
