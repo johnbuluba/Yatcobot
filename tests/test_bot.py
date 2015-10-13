@@ -12,6 +12,7 @@ from tests.helper_func import create_post
 from yatcobot.bot import Yatcobot, Config, PeriodicScheduler
 from yatcobot.client import TwitterClientRetweetedException
 
+NotficationService = patch('yatcobot.bot.NotificationService').start()
 
 logging.disable(logging.ERROR)
 
@@ -119,7 +120,7 @@ class TestBot(unittest.TestCase):
         mock_scheduler = MagicMock(PeriodicScheduler)
         self.bot.scheduler = mock_scheduler
         self.bot.run()
-        self.assertEqual(mock_scheduler.enter.call_count, 4)
+        self.assertEqual(mock_scheduler.enter.call_count, 5)
         self.assertEqual(mock_scheduler.enter_random.call_count, 1)
         self.assertTrue(mock_scheduler.run.called)
 
@@ -257,3 +258,18 @@ class TestBot(unittest.TestCase):
 
         self.bot.client.get_mentions_timeline.assert_called_once_with(since_id=last_id)
         self.assertEqual(self.bot.last_mention, posts[0])
+        self.assertTrue(NotficationService.return_value.send_notification.called)
+
+    def test_check_new_mentions_no_notifiers_enabled(self):
+
+        self.bot.client.get_mentions_timeline = MagicMock()
+        self.bot.notification = MagicMock()
+        self.bot.notification.is_enabled.return_value = False
+        NotficationService.reset_mock()
+
+        self.bot.check_new_mentions()
+
+        self.assertFalse(self.bot.client.get_mentions_timeline.called)
+        self.assertFalse(NotficationService.return_value.send_notification.called)
+        self.assertTrue(self.bot.notification.is_enabled)
+

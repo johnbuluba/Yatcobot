@@ -8,6 +8,7 @@ from .config import Config
 from .ignorelist import IgnoreList
 from .client import TwitterClient, TwitterClientRetweetedException
 from .post_queue_sort import post_queue_sort
+from .notifier import NotificationService
 #The logger object
 logger = logging.getLogger(__name__)
 
@@ -22,6 +23,8 @@ class Yatcobot():
                                                          Config.access_token_key,
                                                          Config.access_token_secret)
         self.scheduler = PeriodicScheduler()
+        self.notification = NotificationService()
+
         self.last_mention = None
 
     def enter_contest(self):
@@ -131,8 +134,12 @@ class Yatcobot():
         Check if someone mentioned the user and sends a notification
         Usefull because many winners are mentioned in tweets
         """
-        #If its the first time its called get the last mention
 
+        #Check if notification is enabled
+        if not self.notification.is_enabled():
+            return
+
+        #If its the first time its called get the last mention
         logger.info("=== CHECKING NEW MENTIONS ===")
         if self.last_mention is None:
             posts = self.client.get_mentions_timeline(count=1)
@@ -145,6 +152,9 @@ class Yatcobot():
         if len(posts) > 0:
             links = ' , '.join(self.create_tweet_link(x) for x in posts)
             logger.info("You ve got {} new mentions: {}".format(len(posts), links))
+            self.notification.send_notification('Yatcobot: Someone mentioned you, you may won something!',
+                                                '{} new mentions : \n {}'.format(len(posts), links))
+
             self.last_mention = posts[0]
 
     def run(self):

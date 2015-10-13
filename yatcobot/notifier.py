@@ -1,0 +1,89 @@
+from abc import ABCMeta, abstractmethod, abstractstaticmethod, abstractclassmethod
+import logging
+
+from .config import Config
+
+logger = logging.getLogger(__name__)
+
+
+class NotificationService:
+
+    def __init__(self):
+        self.active_notifiers = []
+        self._intialize_notifiers()
+
+    def send_notification(self, title, message):
+        """Sends a message to all enabled notifiers"""
+        for notifier in self.active_notifiers:
+            notifier.notify(title, message)
+
+    def _intialize_notifiers(self):
+        """Adds all enabled notifiers in the active_notifiers list"""
+        for cls in AbstractNotifier.__subclasses__():
+            if cls.is_enabled():
+                self.active_notifiers.append(cls.from_config())
+
+    def is_enabled(self):
+        """Checks if any notifier is enabled"""
+
+        if len(self.active_notifiers) > 0:
+            return True
+        return False
+
+
+class AbstractNotifier(metaclass=ABCMeta):
+    """
+    Abstract class that all methods that want to notify the user must derive from
+    """
+    @abstractmethod
+    def notify(self, title, message):
+        """Sends the message to the user"""
+
+    @staticmethod
+    @abstractstaticmethod
+    def is_enabled():
+        """
+        Returns if its enabled or not
+        :return: Bool
+        """
+
+    @classmethod
+    @abstractclassmethod
+    def from_config(cls):
+        """
+        Instatiates a Notifier class using parameters from config
+        :return:
+        """
+
+
+#Define pushbullet only if the user doesnt have the apropriate library, prevent crash and just disable feature
+try:
+    from pushbullet import PushBullet
+
+    class PushbulletNotifier(AbstractNotifier):
+
+        def __init__(self, api_key):
+            self.pb = PushBullet(api_key)
+
+        def notify(self, title, message):
+            self.pb.push_note(title, message)
+
+        @staticmethod
+        def is_enabled():
+            if Config.pushbullet_token:
+                return True
+            return False
+
+        @classmethod
+        def from_config(cls):
+            return cls(Config.pushbullet_token)
+
+except ImportError:
+    logger.warning("Could not import pushbullet.py. Pushbullet notification is disabled")
+    pass
+
+
+
+
+
+

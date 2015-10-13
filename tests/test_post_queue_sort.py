@@ -66,5 +66,5 @@ class TestPostQueueSorter(unittest.TestCase):
         sorted = post_queue_sort(posts)
         key, previous = sorted.popitem(last=False)
         for post in sorted.values():
-            self.assertLess(post['score'], previous['score'])
+            self.assertLessEqual(post['score'], previous['score'])
 

@@ -9,6 +9,7 @@ class Config:
     consumer_secret = None
     access_token_key = None
     access_token_secret = None
+    pushbullet_token = None
     retweet_interval = 600
     retweet_random_margin = 60
     scan_interval = 5400
