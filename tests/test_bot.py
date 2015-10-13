@@ -6,7 +6,9 @@ from unittest.mock import patch, MagicMock
 
 import json
 
-import yatcobot.bot
+
+from tests.helper_func import create_post
+
 from yatcobot.bot import Yatcobot, Config, PeriodicScheduler
 from yatcobot.client import TwitterClientRetweetedException
 
@@ -235,3 +237,23 @@ class TestBot(unittest.TestCase):
         self.assertEqual(len(mutations), len(target_mutations))
         for mutation in mutations:
             self.assertIn(mutation, target_mutations)
+
+    def test_check_new_mentions_empty(self):
+        posts = [create_post()]
+        self.bot.client.get_mentions_timeline = MagicMock(return_value=posts)
+
+        self.bot.check_new_mentions()
+
+        self.bot.client.get_mentions_timeline.assert_called_once_with(count=1)
+        self.assertEqual(self.bot.last_mention, posts[0])
+
+    def test_check_new_mentions(self):
+        posts = [create_post()]
+        self.bot.client.get_mentions_timeline = MagicMock(return_value=posts)
+        self.bot.last_mention = create_post()
+        last_id = self.bot.last_mention['id']
+
+        self.bot.check_new_mentions()
+
+        self.bot.client.get_mentions_timeline.assert_called_once_with(since_id=last_id)
+        self.assertEqual(self.bot.last_mention, posts[0])

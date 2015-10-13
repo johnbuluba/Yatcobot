@@ -22,6 +22,7 @@ class Yatcobot():
                                                          Config.access_token_key,
                                                          Config.access_token_secret)
         self.scheduler = PeriodicScheduler()
+        self.last_mention = None
 
     def enter_contest(self):
         """ Gets one post from post_queue and retweets it"""
@@ -124,6 +125,25 @@ class Yatcobot():
 
         #Sort the queue based on some features
         self.post_queue = post_queue_sort(self.post_queue)
+
+    def check_new_mentions(self):
+        """
+        Check if someone mentioned the user and sends a notification
+        Usefull because many winners are mentioned in tweets
+        """
+        #If its the first time its called get the last mention
+        if self.last_mention is None:
+            posts = self.client.get_mentions_timeline(count=1)
+            if len(posts) > 0:
+                self.last_mention = posts[0]
+            return
+
+        #Else check if there are new mentions after the last, notify
+        posts = self.client.get_mentions_timeline(since_id=self.last_mention['id'])
+        if len(posts) > 0:
+            links = ' , '.join(self.create_tweet_link(x) for x in posts)
+            logger.info("You ve got {} new mentions: {}".format(len(posts), links))
+            self.last_mention = posts[0]
 
     def run(self):
         """Run the bot as a daemon. This is blocking command"""
@@ -229,3 +249,6 @@ class Yatcobot():
         mutations.append('.{}'.format(keyword))
         mutations.append('{}.'.format(keyword))
         return mutations
+
+    def create_tweet_link(self, post):
+        return "http://twitter.com/{}/status/{}".format(post['user']['screen_name'], post['id'])

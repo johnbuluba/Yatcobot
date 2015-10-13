@@ -101,6 +101,30 @@ class TestTwitterClient(unittest.TestCase):
         self.assertEqual(len(r), 1)
 
     @requests_mock.mock()
+    def test_get_mentions_timeline(self, m):
+        with open(self.tests_path + '/fixtures/statuses_mentions_timeline.json') as f:
+            response = f.read()
+        m.get('https://api.twitter.com/1.1/statuses/mentions_timeline.json', text=response)
+        r = self.client.get_mentions_timeline()
+        self.assertEqual(len(r), 2)
+
+    @requests_mock.mock()
+    def test_get_mentions_timeline_since_id(self, m):
+        with open(self.tests_path + '/fixtures/statuses_mentions_timeline_since_id.json') as f:
+            response = f.read()
+        m.get('https://api.twitter.com/1.1/statuses/mentions_timeline.json?since_id=653965849364180992', text=response)
+        r = self.client.get_mentions_timeline(since_id=653965849364180992)
+        self.assertEqual(len(r), 1)
+
+    @requests_mock.mock()
+    def test_get_mentions_timeline_count_1(self, m):
+        with open(self.tests_path + '/fixtures/statuses_mentions_timeline_count_1.json') as f:
+            response = f.read()
+        m.get('https://api.twitter.com/1.1/statuses/mentions_timeline.json?count=1', text=response)
+        r = self.client.get_mentions_timeline(count=1)
+        self.assertEqual(len(r), 1)
+
+    @requests_mock.mock()
     def test_update_ratelimits(self, m):
         #revert original function
         with open(self.tests_path + '/fixtures/application_rate_limit_status.json') as f:
@@ -200,3 +224,4 @@ class TestRatelimiter(unittest.TestCase):
         self.limiter.decrease_remaining('geo/search')
         self.assertEqual(self.limiter['/geo/search']['remaining'], 0)
         self.assertEqual(self.limiter['/geo/search']['percent'], 0)
+

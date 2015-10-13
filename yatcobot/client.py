@@ -135,6 +135,16 @@ class TwitterClient:
     def get_blocks(self):
         return self._api_call('blocks/ids')['ids']
 
+    def get_mentions_timeline(self, count=None, since_id=None):
+        parameters = dict()
+        if count is not None:
+            parameters['count'] = count
+
+        if since_id is not None:
+            parameters['since_id'] = since_id
+
+        return self._api_call('statuses/mentions_timeline', parameters)
+
     def update_ratelimits(self, check_ratelimit=True):
 
         #ratelimit_check controls if before the api_call we check the ratelimit. Usefull to be false the first update
