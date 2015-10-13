@@ -20,6 +20,7 @@ class Config:
     max_follows = 1950
     min_quote_similarity = 0.50
     max_quote_depth = 10
+    check_mentions_interval = 600
     search_queries = ["RT to win", "Retweet and win"]
     follow_keywords = ["follow", "follower"]
     fav_keywords = ["fav", "favorite"]

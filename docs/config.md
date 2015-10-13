@@ -24,7 +24,8 @@ Example config with default values:
     "min_quote_similarity": 0.50,
     "max_quote_depth": 10,
     "blocked_users_update_interval": 300,
-    "max_follows": 1950
+    "max_follows": 1950,
+    "check_mentions_interval": 600
 }
 ```
 ---
@@ -89,3 +90,7 @@ from unwanted users. (_seconds_)
 - #### max_follows
 The maximum follows the user has. If user follows exceeds max_follows the oldest
 follow will be unfollowed.
+
+- #### check_mentions_interval
+How often we check if the user is mentioned in a tweet. We check this because many contests mention the winners
+in a tweet, so we can notify the user for a possible win.

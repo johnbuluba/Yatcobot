@@ -11,7 +11,7 @@ logging.disable(logging.ERROR)
 
 class TestConfig(unittest.TestCase):
 
-    config_data='''{"search_queries":["test"],"follow_keywords":["test"],"fav_keywords":["test"],"consumer_key":"test","consumer_secret":"test","access_token_key":"test","access_token_secret":"test","retweet_interval":1,"retweet_random_margin":1,"scan_interval":1,"clear_queue_interval":1,"max_queue":1,"rate_limit_update_interval":1,"min_ratelimit_percent":1, "min_quote_similarity":0.80, "max_quote_depth": 5,"blocked_users_update_interval":1,"max_follows":1}'''
+    config_data='''{"search_queries":["test"],"follow_keywords":["test"],"fav_keywords":["test"],"consumer_key":"test","consumer_secret":"test","access_token_key":"test","access_token_secret":"test","retweet_interval":1,"retweet_random_margin":1,"scan_interval":1,"clear_queue_interval":1,"max_queue":1,"rate_limit_update_interval":1,"min_ratelimit_percent":1, "min_quote_similarity":0.80, "max_quote_depth": 5,"blocked_users_update_interval":1,"max_follows":1, "check_mentions_interval":1}'''
 
     def test_load(self):
 
@@ -35,6 +35,7 @@ class TestConfig(unittest.TestCase):
         self.assertEqual(Config.access_token_secret, "test")
         self.assertEqual(Config.min_quote_similarity, 0.80)
         self.assertEqual(Config.max_quote_depth, 5)
+        self.assertEqual(Config.check_mentions_interval, 1)
 
     def test_save_tokens(self):
         with patch.object(builtins,'open',mock_open(read_data=self.config_data)) as m:

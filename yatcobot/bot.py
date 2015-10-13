@@ -132,6 +132,8 @@ class Yatcobot():
         Usefull because many winners are mentioned in tweets
         """
         #If its the first time its called get the last mention
+
+        logger.info("=== CHECKING NEW MENTIONS ===")
         if self.last_mention is None:
             posts = self.client.get_mentions_timeline(count=1)
             if len(posts) > 0:
@@ -151,8 +153,9 @@ class Yatcobot():
         self.scheduler.enter(Config.clear_queue_interval, 1, self.clear_queue)
         self.scheduler.enter(Config.rate_limit_update_interval, 2, self.client.update_ratelimits)
         self.scheduler.enter(Config.blocked_users_update_interval, 3, self.update_blocked_users)
-        self.scheduler.enter(Config.scan_interval, 4, self.scan_new_contests)
-        self.scheduler.enter_random(Config.retweet_interval, Config.retweet_random_margin, 5, self.enter_contest)
+        self.scheduler.enter(Config.check_mentions_interval, 4, self.check_new_mentions)
+        self.scheduler.enter(Config.scan_interval, 5, self.scan_new_contests)
+        self.scheduler.enter_random(Config.retweet_interval, Config.retweet_random_margin, 6, self.enter_contest)
 
         #Init the program
         self.scheduler.run()
