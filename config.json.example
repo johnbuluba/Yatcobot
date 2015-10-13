@@ -19,5 +19,6 @@
     "blocked_users_update_interval": 300,
     "max_follows": 1950,
     "check_mentions_interval": 600,
+    "pushbullet_token": ""
 
 }

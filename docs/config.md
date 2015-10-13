@@ -25,7 +25,8 @@ Example config with default values:
     "max_quote_depth": 10,
     "blocked_users_update_interval": 300,
     "max_follows": 1950,
-    "check_mentions_interval": 600
+    "check_mentions_interval": 600,
+    "pushbullet_token": ""
 }
 ```
 ---
@@ -94,3 +95,6 @@ follow will be unfollowed.
 - #### check_mentions_interval
 How often we check if the user is mentioned in a tweet. We check this because many contests mention the winners
 in a tweet, so we can notify the user for a possible win.
+
+- #### pushbullet_token
+Its the api token of pushbullet. It is used to notify you when someone is mentioned you in a tweet.
