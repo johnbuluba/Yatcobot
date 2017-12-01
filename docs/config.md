@@ -11,6 +11,7 @@ Example config with default values:
     "access_token_key": "",
     "access_token_secret": "",
     "search_queries": ["RT to win", "Retweet and win"],
+    "search_language": "en",
     "follow_keywords": ["follow", "follower"],
     "fav_keywords": ["fav", "favorite"],
     "priority_keywords": ["ps4", "iphone"],
@@ -37,6 +38,10 @@ Obtain them from [here](https://apps.twitter.com/)
 - #### search_queries 
 These are the queries that are used to find contests from the twitter. It works
 like the twitter search bar, so you can experiment there first
+
+- #### search_language 
+Filter search results by a language. Only tweets that are written by this language
+are used. Set this field using the iso 693-1 standard [language codes](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) 
 
 - #### follow_keywords
 These keywords are searched inside the tweet's text to determinate if it is

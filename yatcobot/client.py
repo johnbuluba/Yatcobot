@@ -110,8 +110,11 @@ class TwitterClient:
         self.ratelimiter = RateLimiter()
         self.update_ratelimits(check_ratelimit=False)
 
-    def search_tweets(self, query, limit, result_type='mixed'):
-        r = self._api_call('search/tweets', {'q': query, 'result_type': result_type, 'count': limit})
+    def search_tweets(self, query, limit, result_type='mixed', language=None):
+        parameters = {'q': query, 'result_type': result_type, 'count': limit}
+        if language is not None:
+            parameters['l'] = language
+        r = self._api_call('search/tweets', parameters)
         return r['statuses']
 
     def get_tweet(self, post_id):

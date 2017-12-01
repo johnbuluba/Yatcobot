@@ -27,7 +27,7 @@ Open up `config.json` and make the values correspond to your Twitter API credent
 Installation
 ------------
 
-####System wide
+#### System wide
 ___
 
 From the command line:
@@ -42,7 +42,7 @@ cd /path/to/repo/
 python3 yatcobot.py
 ```
 
-####Virtualenv
+#### Virtualenv
 ___
 
 From the command line:

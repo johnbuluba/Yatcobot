@@ -26,6 +26,7 @@ class Config:
     follow_keywords = ["follow", "follower"]
     fav_keywords = ["fav", "favorite"]
     priority_keywords = ["ps4", "pc"]
+    search_language = None
 
     @staticmethod
     def load(filename):
@@ -38,7 +39,11 @@ class Config:
             data = json.load(data_file)
 
         for key, value in data.items():
+            if value == "":
+                value = None
             setattr(Config, key, value)
+        b = Config.search_language
+        a = 5
 
     @staticmethod
     def save_user_tokens(filename, token, secret):

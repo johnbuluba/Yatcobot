@@ -210,7 +210,7 @@ class TestBot(unittest.TestCase):
 
         self.bot.scan_new_contests()
 
-        self.bot.client.search_tweets.assert_called_once_with('test1', 50)
+        self.bot.client.search_tweets.assert_called_once_with('test1', 50, language=None)
         self.assertEqual(len(self.bot.post_queue), 2)
 
     def test_favorite(self):

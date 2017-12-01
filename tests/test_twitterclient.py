@@ -25,14 +25,22 @@ class TestTwitterClient(unittest.TestCase):
         m.get('https://api.twitter.com/1.1/application/rate_limit_status.json', text=response)
         self.client = TwitterClient('Consumer Key', "Consumer Secret", "Access Key", "Access Secret")
 
-
     @requests_mock.mock()
     def test_search_tweets(self, m):
         with open(self.tests_path + '/fixtures/search_tweets.json') as f:
             response = f.read()
         m.get('https://api.twitter.com/1.1/search/tweets.json?q=210462857140252672&result_type=mixed&count=50',
-                                                                                                    text=response)
+              text=response)
         r = self.client.search_tweets("210462857140252672", 50)
+        self.assertEqual(len(r), 4)
+
+    @requests_mock.mock()
+    def test_search_tweets_with_language(self, m):
+        with open(self.tests_path + '/fixtures/search_tweets.json') as f:
+            response = f.read()
+        m.get('https://api.twitter.com/1.1/search/tweets.json?&l=en&q=210462857140252672&result_type=mixed&count=50',
+                                                                                                    text=response)
+        r = self.client.search_tweets("210462857140252672", 50, language="en")
         self.assertEqual(len(r), 4)
 
     @requests_mock.mock()

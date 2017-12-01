@@ -120,7 +120,7 @@ class Yatcobot():
 
         for search_query in Config.search_queries:
 
-            results = self.client.search_tweets(search_query, 50)
+            results = self.client.search_tweets(search_query, 50, language=Config.search_language)
             logger.info("Got {} new results for: {}".format(len(results), search_query))
 
             for post in results:

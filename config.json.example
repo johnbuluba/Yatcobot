@@ -1,5 +1,6 @@
 {
     "search_queries": ["RT to win", "Retweet and win"],
+    "search_language": "",
     "follow_keywords": ["follow", "follower"],
     "fav_keywords": ["fav", "favorite"],
     "priority_keywords": ["ps4", "iphone"],
