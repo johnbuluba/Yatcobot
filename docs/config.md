@@ -41,7 +41,9 @@ like the twitter search bar, so you can experiment there first
 
 - #### search_language 
 Filter search results by a language. Only tweets that are written by this language
-are used. Set this field using the iso 693-1 standard [language codes](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) 
+are used. Set this field using the iso 639-1 standard 
+[language codes](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)
+*e.g. : ("en", "el")*
 
 - #### follow_keywords
 These keywords are searched inside the tweet's text to determinate if it is
