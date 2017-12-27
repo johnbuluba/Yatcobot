@@ -38,7 +38,7 @@ class Yatcobot():
 
             post_id, post = self.post_queue.popitem(last=False)
 
-            text = post['text'].replace('\n', '')
+            text = post['full_text'].replace('\n', '')
             text = (text[:75] + '..') if len(text) > 75 else text
             logger.info("Retweeting: {0} {1}".format(post['id'], text))
             logger.debug("Tweet score: {}".format(post['score']))
@@ -63,7 +63,7 @@ class Yatcobot():
         :param post: The post to check
         """
 
-        text = post['text']
+        text = post['full_text']
         keywords = sum((self._get_keyword_mutations(x) for x in Config.follow_keywords), [])
         if any(x in text.lower() for x in keywords):
             self.remove_oldest_follow()
@@ -76,7 +76,7 @@ class Yatcobot():
         :param post: The post to check
         """
 
-        text = post['text']
+        text = post['full_text']
         keywords = sum((self._get_keyword_mutations(x) for x in Config.fav_keywords), [])
         if any(x in text.lower() for x in keywords):
             r = self.client.favorite(post['id'])
@@ -195,7 +195,7 @@ class Yatcobot():
                 return post
 
             quote = post['quoted_status']
-            diff = difflib.SequenceMatcher(None, post['text'], quote['text']).ratio()
+            diff = difflib.SequenceMatcher(None, post['full_text'], quote['full_text']).ratio()
             #If the texts are similar continue
             if diff >= Config.min_quote_similarity:
                 logger.debug('{} is a quote, following to next post. Depth from original post {}'.format(post['id'], i))
@@ -239,7 +239,7 @@ class Yatcobot():
         #Insert if it doenst already exists
         if post['id'] not in self.post_queue:
             self.post_queue[post['id']] = post
-            text = post['text'].replace('\n', '')
+            text = post['full_text'].replace('\n', '')
             text = (text[:75] + '..') if len(text) > 75 else text
             logger.debug("Added tweet to queue: id:{0} username:{1} text:{2}".format(post['id'],
                                                                                      post['user']['screen_name'],
