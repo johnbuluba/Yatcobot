@@ -56,7 +56,7 @@ def get_keywords_score(queue):
     # Find how many times each keyword appears in the text
     for post in queue.values():
         score = 0
-        text = post['text'].lower()
+        text = post['full_text'].lower()
 
         for keyword in Config.priority_keywords:
             keyword = keyword.lower()
