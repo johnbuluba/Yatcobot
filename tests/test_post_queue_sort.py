@@ -30,10 +30,10 @@ class TestPostQueueSorter(unittest.TestCase):
     def test_get_keywords_score(self):
         Config.priority_keywords = "Test"
         posts = {
-            1: create_post(id=1, text="Test"),
-            2: create_post(id=2, text="test"),
-            3: create_post(id=3, text="noscore"),
-            4: create_post(id=4, text="test test"),
+            1: create_post(id=1, full_text="Test"),
+            2: create_post(id=2, full_text="test"),
+            3: create_post(id=3, full_text="noscore"),
+            4: create_post(id=4, full_text="test test"),
         }
 
         scores = get_keywords_score(posts)

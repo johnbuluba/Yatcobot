@@ -40,9 +40,9 @@ class TestBot(unittest.TestCase):
         self.assertEqual(post['retweeted_status'], original)
 
     def test_get_quoted_tweet_similar(self):
-        quoted = {'id': 1, 'text': 'test'}
-        post = {'id': 2, 'text': 'test', 'quoted_status': quoted}
-        quoted_post_full = {'id': 1, 'text': 'test', 'user': {'id:1'}}
+        quoted = {'id': 1, 'full_text': 'test'}
+        post = {'id': 2, 'full_text': 'test', 'quoted_status': quoted}
+        quoted_post_full = {'id': 1, 'full_text': 'test', 'user': {'id:1'}}
         self.bot.client.get_tweet.return_value = quoted_post_full
 
         r = self.bot._get_quoted_tweet(post)
@@ -53,9 +53,9 @@ class TestBot(unittest.TestCase):
         def mock_return(id):
             return mock_return.posts[id]
         mock_return.posts = dict()
-        mock_return.posts[1] = {'id': 1, 'text': 'test', 'user': {'id:1'}}
-        mock_return.posts[2] = {'id': 2, 'text': 'test', 'quoted_status': mock_return.posts[1]}
-        mock_return.posts[3] = {'id': 3, 'text': 'test', 'quoted_status': mock_return.posts[2]}
+        mock_return.posts[1] = {'id': 1, 'full_text': 'test', 'user': {'id:1'}}
+        mock_return.posts[2] = {'id': 2, 'full_text': 'test', 'quoted_status': mock_return.posts[1]}
+        mock_return.posts[3] = {'id': 3, 'full_text': 'test', 'quoted_status': mock_return.posts[2]}
 
         self.bot.client.get_tweet.side_effect = mock_return
 
@@ -63,9 +63,9 @@ class TestBot(unittest.TestCase):
         self.assertEqual(r, mock_return.posts[1])
 
     def test_get_quoted_tweet_not_similar(self):
-        quoted = {'id': 1, 'text': 'test'}
-        post = {'id': 2, 'text': 'test sdfsdfsf', 'quoted_status': quoted}
-        quoted_post_full = {'id': 1, 'text': 'test', 'user': {'id:1'}}
+        quoted = {'id': 1, 'full_text': 'test'}
+        post = {'id': 2, 'full_text': 'test sdfsdfsf', 'quoted_status': quoted}
+        quoted_post_full = {'id': 1, 'full_text': 'test', 'user': {'id:1'}}
         self.bot.client.get_tweet.return_value = quoted_post_full
 
         r = self.bot._get_quoted_tweet(post)
@@ -127,7 +127,7 @@ class TestBot(unittest.TestCase):
     def test_enter_contest_simple_post(self):
         posts = 10
         for i in range(posts):
-            self.bot.post_queue[i] = {'id': i, 'text': 'test', 'score': 0, 'user': {'id': random.randint(1, 1000), 'screen_name': 'test'}}
+            self.bot.post_queue[i] = {'id': i, 'full_text': 'test', 'score': 0, 'user': {'id': random.randint(1, 1000), 'screen_name': 'test'}}
 
         self.bot.enter_contest()
 
@@ -139,7 +139,7 @@ class TestBot(unittest.TestCase):
         posts = 10
         self.bot.ignore_list = list()
         for i in range(posts):
-            self.bot.post_queue[i] = {'id': i, 'text': 'test', 'score': 0, 'user': {'id': random.randint(1, 1000)}}
+            self.bot.post_queue[i] = {'id': i, 'full_text': 'test', 'score': 0, 'user': {'id': random.randint(1, 1000)}}
         self.bot.client.retweet.side_effect = TwitterClientRetweetedException()
 
         self.bot.enter_contest()
@@ -154,7 +154,7 @@ class TestBot(unittest.TestCase):
         posts = 10
         self.bot.ignore_list = [0]
         for i in range(posts):
-            self.bot.post_queue[i] = {'id': i, 'text': 'test', 'score': 0, 'user': {'id': 0}}
+            self.bot.post_queue[i] = {'id': i, 'full_text': 'test', 'score': 0, 'user': {'id': 0}}
 
         self.bot.enter_contest()
 
@@ -162,21 +162,21 @@ class TestBot(unittest.TestCase):
         self.assertFalse(self.bot.client.retweet.called)
 
     def test_insert_post_to_queue(self):
-        post = {'id': 0, 'text': 'test', 'user': {'id': random.randint(1, 1000), 'screen_name': 'test'}, 'retweeted': False}
+        post = {'id': 0, 'full_text': 'test', 'user': {'id': random.randint(1, 1000), 'screen_name': 'test'}, 'retweeted': False}
 
         self.bot._insert_post_to_queue(post)
 
         self.assertIn(post['id'], self.bot.post_queue)
 
     def test_insert_post_to_queue_ignore(self):
-        post = {'id': 0, 'text': 'test', 'user': {'id': random.randint(1, 1000), 'screen_name': 'test'}, 'retweeted': False}
+        post = {'id': 0, 'full_text': 'test', 'user': {'id': random.randint(1, 1000), 'screen_name': 'test'}, 'retweeted': False}
         self.bot.ignore_list = [0]
         self.bot._insert_post_to_queue(post)
 
         self.assertNotIn(post['id'], self.bot.post_queue)
 
     def test_insert_post_to_queue_retweeted(self):
-        post = {'id': 0, 'text': 'test', 'user': {'id': random.randint(1, 1000), 'screen_name': 'test'}, 'retweeted': True}
+        post = {'id': 0, 'full_text': 'test', 'user': {'id': random.randint(1, 1000), 'screen_name': 'test'}, 'retweeted': True}
         self.bot.ignore_list = [0]
         self.bot._insert_post_to_queue(post)
 
@@ -201,7 +201,7 @@ class TestBot(unittest.TestCase):
         Config.search_queries = ['test1']
         posts = list()
         for i in range(2):
-            posts.append({'id': i, 'text': 'test', 'retweet_count': 1,
+            posts.append({'id': i, 'full_text': 'test', 'retweet_count': 1,
                           'user': {'id': random.randint(1, 1000), 'screen_name': 'test'}, 'retweeted': False,
                           'created_at':'Thu Oct 08 08:34:51 +0000 2015'})
 
@@ -216,7 +216,7 @@ class TestBot(unittest.TestCase):
     def test_favorite(self):
         Config.fav_keywords = [' favorite ']
         self.bot.client = MagicMock()
-        post = ({'id': 0, 'text': 'test favorite tests', 'user': {'id': random.randint(1, 1000), 'screen_name': 'test'}, 'retweeted': False})
+        post = ({'id': 0, 'full_text': 'test favorite tests', 'user': {'id': random.randint(1, 1000), 'screen_name': 'test'}, 'retweeted': False})
 
         self.bot.check_for_favorite(post)
 
@@ -225,7 +225,7 @@ class TestBot(unittest.TestCase):
     def test_follow(self):
         Config.follow_keywords = [' follow ']
         self.bot.client = MagicMock()
-        post = ({'id': 0, 'text': 'test follow tests', 'user': {'id': random.randint(1, 1000), 'screen_name': 'test'}, 'retweeted': False})
+        post = ({'id': 0, 'full_text': 'test follow tests', 'user': {'id': random.randint(1, 1000), 'screen_name': 'test'}, 'retweeted': False})
 
         self.bot.check_for_follow(post)
 
