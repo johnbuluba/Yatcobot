@@ -67,7 +67,7 @@ python3 yatcobot.py
 
 To run container use like below
 
-    $ docker run -v /path/to/config.json:/yatcobot/config.json buluba89/Yatcobot
+    $ docker run -v /path/to/config.json:/yatcobot/config.json buluba89/yatcobot
 
 where /path/to/config.json is the path of your config.json
 

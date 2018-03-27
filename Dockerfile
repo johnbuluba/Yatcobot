@@ -13,4 +13,5 @@ RUN git clone --depth 1 https://github.com/buluba89/Yatcobot.git  /yatcobot &&\
 
 WORKDIR /yatcobot
 
-ENTRYPOINT python3 yatcobot.py  
+ENTRYPOINT ["python3", "yatcobot.py"]
+CMD []
