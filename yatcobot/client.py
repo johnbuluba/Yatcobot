@@ -7,7 +7,6 @@ from TwitterAPI import TwitterAPI, constants
 
 from .config import Config
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -31,17 +30,17 @@ class RateLimiter(dict):
         :param new_limits: a dictionary with the new limits
         '''
 
-        #delete old values
+        # delete old values
         self.clear()
 
-        #flatten dictionay
+        # flatten dictionay
         for value in new_limits.values():
             for key, limits in value.items():
-                #replace parameters in url like :id :slug to :PARAM
+                # replace parameters in url like :id :slug to :PARAM
                 key = re.sub(r'\/:[a-z_]+', '/:PARAM', key)
                 self[key] = limits
 
-        #create percent
+        # create percent
         for key in self.keys():
             self._calculate_percent_remaining(key)
 
@@ -54,7 +53,7 @@ class RateLimiter(dict):
         :param endpoint: the endpoint (api url) to be checked
         '''
 
-        #Only GET methods have ratelimits
+        # Only GET methods have ratelimits
         if constants.ENDPOINTS[endpoint][0] == 'POST':
             return
 
@@ -82,7 +81,7 @@ class RateLimiter(dict):
         endpoint = self._get_internal_endpoint_name(endpoint)
         if endpoint in self:
             self[endpoint]['remaining'] -= 1
-            logger.debug('Decreased remainin usages of {}. New value {}'. format(endpoint, self[endpoint]['remaining']))
+            logger.debug('Decreased remainin usages of {}. New value {}'.format(endpoint, self[endpoint]['remaining']))
             self._calculate_percent_remaining(endpoint)
 
     def _calculate_percent_remaining(self, endpoint):
@@ -90,7 +89,7 @@ class RateLimiter(dict):
         Calculate the percent of remaining calls for an endpoint
         :param endpoint: The target endpoint to calculate
         '''
-        self[endpoint]['percent'] = self[endpoint]['remaining']/self[endpoint]['limit'] * 100
+        self[endpoint]['percent'] = self[endpoint]['remaining'] / self[endpoint]['limit'] * 100
 
     def _get_internal_endpoint_name(self, endpoint):
         '''
@@ -110,8 +109,8 @@ class TwitterClient:
         self.ratelimiter = RateLimiter()
         self.update_ratelimits(check_ratelimit=False)
 
-    def search_tweets(self, query, limit, result_type='mixed', language=None, tweet_mode='extended'):
-        parameters = {'q': query, 'result_type': result_type, 'count': limit, 'tweet_mode': tweet_mode}
+    def search_tweets(self, query, limit, result_type='mixed', language=None):
+        parameters = {'q': query, 'result_type': result_type, 'count': limit}
         if language is not None:
             parameters['l'] = language
         r = self._api_call('search/tweets', parameters)
@@ -150,18 +149,18 @@ class TwitterClient:
 
     def update_ratelimits(self, check_ratelimit=True):
 
-        #ratelimit_check controls if before the api_call we check the ratelimit. Usefull to be false the first update
-        r = self._api_call('application/rate_limit_status',check_ratelimit=check_ratelimit)['resources']
+        # ratelimit_check controls if before the api_call we check the ratelimit. Usefull to be false the first update
+        r = self._api_call('application/rate_limit_status', check_ratelimit=check_ratelimit)['resources']
 
         self.ratelimiter.refresh_limits(r)
 
-        #log ratelimit status
+        # log ratelimit status
         logger.debug("Ratelimit status: {}".format({key: item['percent'] for key, item in self.ratelimiter.items()
-                                                                         if item['percent'] < 100}))
+                                                    if item['percent'] < 100}))
 
     def _api_call(self, request, parameters=None, check_ratelimit=True):
 
-        #!Fixme: TwitterApi doenst have all the endpoints. Some will raise exception
+        # !Fixme: TwitterApi doenst have all the endpoints. Some will raise exception
         _, endpoint = self.api._get_endpoint(request)
 
         if check_ratelimit:
@@ -170,6 +169,12 @@ class TwitterClient:
                 self.ratelimiter.check_limit(endpoint)
             except RateLimiterExpired:
                 self.update_ratelimits(check_ratelimit=False)
+
+        # Add support for extended tweets
+        if parameters is not None:
+            parameters['tweet_mode'] = 'extended'
+        else:
+            parameters = {'tweet_mode': 'extended'}
 
         response = self.api.request(request, parameters).json()
 
@@ -184,7 +189,7 @@ class TwitterClient:
         return response
 
     def _check_for_errors(self, response):
-        #check for errors
+        # check for errors
         if 'errors' in response:
             for error in response['errors']:
                 message = error['message']
@@ -193,6 +198,3 @@ class TwitterClient:
                     raise TwitterClientRetweetedException()
                 logger.error('Twitter api error code:{} error:{}'.format(code, message))
             raise TwitterClientException()
-
-
-
