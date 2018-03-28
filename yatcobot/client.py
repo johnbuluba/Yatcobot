@@ -112,7 +112,7 @@ class TwitterClient:
     def search_tweets(self, query, limit, result_type='mixed', language=None):
         parameters = {'q': query, 'result_type': result_type, 'count': limit}
         if language is not None:
-            parameters['l'] = language
+            parameters['lang'] = language
         r = self._api_call('search/tweets', parameters)
         return r['statuses']
 
