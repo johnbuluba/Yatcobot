@@ -1,6 +1,5 @@
 import difflib
 import logging
-from typing import List
 
 from .actions import ActionABC, Favorite, Follow
 from .client import TwitterClient, TwitterClientRetweetedException
@@ -25,7 +24,7 @@ class Yatcobot():
                                     Config.access_token_secret)
         self.scheduler = PeriodicScheduler()
         self.notification = NotificationService()
-        self.actions: List[ActionABC] = [Follow(self.client), Favorite(self.client)]
+        self.actions = [Follow(self.client), Favorite(self.client)]
         self.last_mention = None
 
     def enter_contest(self):
