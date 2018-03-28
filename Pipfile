@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+TwitterAPI = ">=2.3.4"
+requests = ">=2.7.0"
+requests-oauthlib = ">=0.5.0"
+python-dateutil = ">=2.4.2"
+"pushbullet.py" = ">=0.8.1"
+
+[dev-packages]
+requests-mock = "*"
+freezegun = "*"
+coverage = "*"
+
+[requires]
+python_version = "3.6"
