@@ -3,7 +3,7 @@ import logging
 
 from tests.helper_func import create_post
 
-from yatcobot.post_queue_sort import *
+from yatcobot.post_queue import *
 
 
 logging.disable(logging.ERROR)
@@ -17,8 +17,8 @@ class TestPostQueueSorter(unittest.TestCase):
             post = create_post()
             posts[post['id']] = post
 
-
-        scores = get_retweets_score(posts)
+        queue = PostQueue(posts)
+        scores = queue.get_retweets_score()
 
         self.assertEqual(len(scores), len(posts))
         sorted_scores = sorted(((x.id, x.score) for x in scores), key=lambda x: x[1], reverse=True)
@@ -36,7 +36,9 @@ class TestPostQueueSorter(unittest.TestCase):
             4: create_post(id=4, full_text="test test"),
         }
 
-        scores = get_keywords_score(posts)
+        queue = PostQueue(posts)
+
+        scores = queue.get_keywords_score()
         scores = {x.id: x.score for x in scores}
         self.assertEqual(scores[1], scores[2])
         self.assertLess(scores[3], scores[2])
@@ -50,7 +52,9 @@ class TestPostQueueSorter(unittest.TestCase):
             4: create_post(id=4, date='Thu Oct 05 08:34:51 +0000 2015'),
         }
 
-        scores = get_age_score(posts)
+        queue = PostQueue(posts)
+
+        scores = queue.get_age_score()
         scores = {x.id: x.score for x in scores}
         self.assertGreater(scores[1], scores[2])
         self.assertGreater(scores[2], scores[3])
@@ -62,9 +66,11 @@ class TestPostQueueSorter(unittest.TestCase):
             post = create_post()
             posts[post['id']] = post
 
+        queue = PostQueue(posts)
 
-        sorted = post_queue_sort(posts)
-        key, previous = sorted.popitem(last=False)
-        for post in sorted.values():
+        queue.sort()
+
+        key, previous = queue.popitem(last=False)
+        for post in queue.values():
             self.assertLessEqual(post['score'], previous['score'])
 

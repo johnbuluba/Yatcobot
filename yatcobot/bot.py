@@ -1,4 +1,3 @@
-from collections import OrderedDict
 import difflib
 import logging
 
@@ -7,7 +6,7 @@ from .scheduler import PeriodicScheduler
 from .config import Config
 from .ignorelist import IgnoreList
 from .client import TwitterClient, TwitterClientRetweetedException
-from .post_queue_sort import post_queue_sort
+from .post_queue import PostQueue
 from .notifier import NotificationService
 #The logger object
 logger = logging.getLogger(__name__)
@@ -18,7 +17,7 @@ class Yatcobot():
     def __init__(self, ignore_list_file):
 
         self.ignore_list = IgnoreList(ignore_list_file)
-        self.post_queue = OrderedDict()
+        self.post_queue = PostQueue()
         self.client = TwitterClient(Config.consumer_key, Config.consumer_secret,
                                                          Config.access_token_key,
                                                          Config.access_token_secret)
@@ -127,7 +126,7 @@ class Yatcobot():
                 self._insert_post_to_queue(post)
 
         #Sort the queue based on some features
-        self.post_queue = post_queue_sort(self.post_queue)
+        self.post_queue.sort()
 
     def check_new_mentions(self):
         """
