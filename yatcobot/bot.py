@@ -1,14 +1,16 @@
 import difflib
 import logging
+from typing import List
 
-
-from .scheduler import PeriodicScheduler
+from .actions import ActionABC, Favorite, Follow
+from .client import TwitterClient, TwitterClientRetweetedException
 from .config import Config
 from .ignorelist import IgnoreList
-from .client import TwitterClient, TwitterClientRetweetedException
-from .post_queue import PostQueue
 from .notifier import NotificationService
-#The logger object
+from .post_queue import PostQueue
+from .scheduler import PeriodicScheduler
+
+# The logger object
 logger = logging.getLogger(__name__)
 
 
@@ -19,11 +21,11 @@ class Yatcobot():
         self.ignore_list = IgnoreList(ignore_list_file)
         self.post_queue = PostQueue()
         self.client = TwitterClient(Config.consumer_key, Config.consumer_secret,
-                                                         Config.access_token_key,
-                                                         Config.access_token_secret)
+                                    Config.access_token_key,
+                                    Config.access_token_secret)
         self.scheduler = PeriodicScheduler()
         self.notification = NotificationService()
-
+        self.actions: List[ActionABC] = [Follow(self.client), Favorite(self.client)]
         self.last_mention = None
 
     def enter_contest(self):
@@ -53,44 +55,8 @@ class Yatcobot():
                 logger.error("Alredy retweeted tweet with id {}".format(post['id']))
                 return
 
-            self.check_for_follow(post)
-            self.check_for_favorite(post)
-
-    def check_for_follow(self, post):
-        """
-        Checks if a contest needs follow to enter and follows the user
-        :param post: The post to check
-        """
-
-        text = post['full_text']
-        keywords = sum((self._get_keyword_mutations(x) for x in Config.follow_keywords), [])
-        if any(x in text.lower() for x in keywords):
-            self.remove_oldest_follow()
-            self.client.follow(post['user']['screen_name'])
-            logger.info("Follow: {0}".format(post['user']['screen_name']))
-
-    def check_for_favorite(self, post):
-        """
-        Checks if a contest needs favorite to enter, and favorites the post
-        :param post: The post to check
-        """
-
-        text = post['full_text']
-        keywords = sum((self._get_keyword_mutations(x) for x in Config.fav_keywords), [])
-        if any(x in text.lower() for x in keywords):
-            r = self.client.favorite(post['id'])
-            logger.info("Favorite: {0}".format(post['id']))
-
-    def remove_oldest_follow(self):
-        """
-        If the follow limit is reached, unfollow the oldest follow
-        """
-
-        follows = self.client.get_friends_ids()
-
-        if len(follows) > Config.max_follows:
-            r = self.client.unfollow(follows[-1])
-            logger.info('Unfollowed: {0}'.format(r['screen_name']))
+            for action in self.actions:
+                action.process(post)
 
     def clear_queue(self):
         """Removes the extraneous posts from the post_queue"""
@@ -99,7 +65,7 @@ class Yatcobot():
 
         if to_delete > 0:
             for i in range(to_delete):
-                #Remove from the end where the posts has lower score
+                # Remove from the end where the posts has lower score
                 self.post_queue.popitem()
 
             logger.info("===THE QUEUE HAS BEEN CLEARED=== Deleted {} posts".format(to_delete))
@@ -125,7 +91,7 @@ class Yatcobot():
             for post in results:
                 self._insert_post_to_queue(post)
 
-        #Sort the queue based on some features
+        # Sort the queue based on some features
         self.post_queue.sort()
 
     def check_new_mentions(self):
@@ -134,11 +100,11 @@ class Yatcobot():
         Usefull because many winners are mentioned in tweets
         """
 
-        #Check if notification is enabled
+        # Check if notification is enabled
         if not self.notification.is_enabled():
             return
 
-        #If its the first time its called get the last mention
+        # If its the first time its called get the last mention
         logger.info("=== CHECKING NEW MENTIONS ===")
         if self.last_mention is None:
             posts = self.client.get_mentions_timeline(count=1)
@@ -146,7 +112,7 @@ class Yatcobot():
                 self.last_mention = posts[0]
             return
 
-        #Else check if there are new mentions after the last, notify
+        # Else check if there are new mentions after the last, notify
         posts = self.client.get_mentions_timeline(since_id=self.last_mention['id'])
         if len(posts) > 0:
             links = ' , '.join(self.create_tweet_link(x) for x in posts)
@@ -166,7 +132,7 @@ class Yatcobot():
         self.scheduler.enter(Config.scan_interval, 5, self.scan_new_contests)
         self.scheduler.enter_random(Config.retweet_interval, Config.retweet_random_margin, 6, self.enter_contest)
 
-        #Init the program
+        # Init the program
         self.scheduler.run()
 
     def _get_original_tweet(self, post):
@@ -189,20 +155,20 @@ class Yatcobot():
         :return: If it isnt a quote the argument, otherwise the original tweet
         """
         for i in range(Config.max_quote_depth):
-            #If it hasnt quote return the post
+            # If it hasnt quote return the post
             if 'quoted_status' not in post:
                 return post
 
             quote = post['quoted_status']
             diff = difflib.SequenceMatcher(None, post['full_text'], quote['full_text']).ratio()
-            #If the texts are similar continue
+            # If the texts are similar continue
             if diff >= Config.min_quote_similarity:
                 logger.debug('{} is a quote, following to next post. Depth from original post {}'.format(post['id'], i))
                 quote = self.client.get_tweet(quote['id'])
-                #If its a quote of quote, get next quote and continue
+                # If its a quote of quote, get next quote and continue
                 post = quote
                 continue
-            #Else return the last post
+            # Else return the last post
             break
 
         return post
@@ -212,30 +178,30 @@ class Yatcobot():
         Check if a post is wanted and add's it in the post queue
         :param post: The post to insert
         """
-        #Get original tweet if retweeted
+        # Get original tweet if retweeted
         post = self._get_original_tweet(post)
 
-        #Get original post, if it is quoted
+        # Get original post, if it is quoted
         post = self._get_quoted_tweet(post)
 
-        #Filter retweeted
+        # Filter retweeted
         if post['retweeted']:
             return
 
-        #Filter ids in ignore list
+        # Filter ids in ignore list
         if post['id'] in self.ignore_list:
             return
 
-        #Filter blocked users
+        # Filter blocked users
         if post['user']['id'] in self.ignore_list:
             return
 
-        #Filter posts with deleted quote
-        #We check if there is a key 'is_a_quote_status' that is true but there isn't a quoted_status
+        # Filter posts with deleted quote
+        # We check if there is a key 'is_a_quote_status' that is true but there isn't a quoted_status
         if 'is_quote_status' in post and post['is_quote_status'] and not 'quoted_status' in post:
             return
 
-        #Insert if it doenst already exists
+        # Insert if it doenst already exists
         if post['id'] not in self.post_queue:
             self.post_queue[post['id']] = post
             text = post['full_text'].replace('\n', '')
@@ -243,24 +209,6 @@ class Yatcobot():
             logger.debug("Added tweet to queue: id:{0} username:{1} text:{2}".format(post['id'],
                                                                                      post['user']['screen_name'],
                                                                                      text))
-
-    def _get_keyword_mutations(self, keyword):
-        """
-        Given a keyword, create various mutations to be searched inside a post
-        :param keyword: the base keyword of the mutations
-        :return: list of mutation
-        """
-        mutations = list()
-        keyword = keyword.strip()
-        mutations.append(' {} '.format(keyword))
-        mutations.append('{} '.format(keyword))
-        mutations.append(' {}'.format(keyword))
-        mutations.append('#{}'.format(keyword))
-        mutations.append(',{}'.format(keyword))
-        mutations.append('{},'.format(keyword))
-        mutations.append('.{}'.format(keyword))
-        mutations.append('{}.'.format(keyword))
-        return mutations
 
     def create_tweet_link(self, post):
         return "http://twitter.com/{}/status/{}".format(post['user']['screen_name'], post['id'])

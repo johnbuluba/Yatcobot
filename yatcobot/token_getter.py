@@ -1,12 +1,12 @@
 import logging
 import webbrowser
+
 from requests_oauthlib import OAuth1Session
 
 REQUEST_TOKEN_URL = 'https://api.twitter.com/oauth/request_token'
 ACCESS_TOKEN_URL = 'https://api.twitter.com/oauth/access_token'
 AUTHORIZATION_URL = 'https://api.twitter.com/oauth/authorize'
 SIGNIN_URL = 'https://api.twitter.com/oauth/authenticate'
-
 
 logger = logging.getLogger(__name__)
 
@@ -40,15 +40,13 @@ def get_access_token(consumer_key, consumer_secret):
     webbrowser.open(url)
     pincode = input('Pincode? ')
 
-
     logger.info('Generating and signing request for an access token')
-
 
     oauth_client = OAuth1Session(consumer_key, client_secret=consumer_secret,
                                  resource_owner_key=resp.get('oauth_token'),
                                  resource_owner_secret=resp.get('oauth_token_secret'),
                                  verifier=pincode
-    )
+                                 )
     try:
         resp = oauth_client.fetch_access_token(ACCESS_TOKEN_URL)
     except ValueError as e:

@@ -1,10 +1,10 @@
-from statistics import mean, stdev
 from collections import namedtuple, OrderedDict
 from datetime import datetime
+from statistics import mean, stdev
+
 from dateutil import tz
 
 from .config import Config
-
 
 Score = namedtuple('Score', ('id', 'score'))
 
@@ -111,6 +111,6 @@ class PostQueue(OrderedDict):
             return [Score(x.id, 0) for x in scores]
 
         for x in scores:
-            normalized_scores.append(Score(x.id, (x.score - m)/s))
+            normalized_scores.append(Score(x.id, (x.score - m) / s))
 
         return normalized_scores

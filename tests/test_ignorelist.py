@@ -1,11 +1,9 @@
-import unittest
-import logging
 import builtins
-
+import logging
+import unittest
 from unittest.mock import patch, mock_open
 
 from yatcobot.ignorelist import IgnoreList
-
 
 logging.disable(logging.ERROR)
 
@@ -13,7 +11,6 @@ logging.disable(logging.ERROR)
 class TestIgnoreList(unittest.TestCase):
 
     def test_load_file(self):
-
         data = '0\n1\n2'
         with patch.object(builtins, 'open', mock_open(read_data=data)) as m:
             ignorelist = IgnoreList("test")
@@ -23,7 +20,6 @@ class TestIgnoreList(unittest.TestCase):
             self.assertIn(x, ignorelist)
 
     def test_append(self):
-
         with patch.object(builtins, 'open', mock_open()) as m:
             ignorelist = IgnoreList("test")
             ignorelist.append(1)
@@ -39,4 +35,3 @@ class TestIgnoreList(unittest.TestCase):
 
         self.assertEqual(len(ignorelist), 1)
         self.assertIn(0, ignorelist)
-

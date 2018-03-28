@@ -1,10 +1,8 @@
-import unittest
 import logging
+import unittest
 
 from tests.helper_func import create_post
-
 from yatcobot.post_queue import *
-
 
 logging.disable(logging.ERROR)
 
@@ -73,4 +71,3 @@ class TestPostQueueSorter(unittest.TestCase):
         key, previous = queue.popitem(last=False)
         for post in queue.values():
             self.assertLessEqual(post['score'], previous['score'])
-

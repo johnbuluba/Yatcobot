@@ -1,5 +1,3 @@
-
-
 class IgnoreList(set):
     """
     A list like object that loads contents from a file and everything that is appended here gets also

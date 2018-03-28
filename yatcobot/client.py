@@ -1,7 +1,7 @@
-import time
 import datetime
 import logging
 import re
+import time
 
 from TwitterAPI import TwitterAPI, constants
 
@@ -194,7 +194,7 @@ class TwitterClient:
             for error in response['errors']:
                 message = error['message']
                 code = error['code']
-                if message == 'You have already retweeted this tweet.':
+                if message == 'You have already retweeted this Tweet.':
                     raise TwitterClientRetweetedException()
                 logger.error('Twitter api error code:{} error:{}'.format(code, message))
             raise TwitterClientException()

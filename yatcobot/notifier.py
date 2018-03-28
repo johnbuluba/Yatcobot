@@ -1,5 +1,5 @@
-from abc import ABCMeta, abstractmethod, abstractstaticmethod, abstractclassmethod
 import logging
+from abc import ABCMeta, abstractmethod, abstractstaticmethod, abstractclassmethod
 
 from .config import Config
 
@@ -35,6 +35,7 @@ class AbstractNotifier(metaclass=ABCMeta):
     """
     Abstract class that all methods that want to notify the user must derive from
     """
+
     @abstractmethod
     def notify(self, title, message):
         """Sends the message to the user"""
@@ -56,9 +57,10 @@ class AbstractNotifier(metaclass=ABCMeta):
         """
 
 
-#Define pushbullet only if the user doesnt have the apropriate library, prevent crash and just disable feature
+# Define pushbullet only if the user doesnt have the apropriate library, prevent crash and just disable feature
 try:
     from pushbullet import PushBullet
+
 
     class PushbulletNotifier(AbstractNotifier):
 
@@ -81,9 +83,3 @@ try:
 except ImportError:
     logger.warning("Could not import pushbullet.py. Pushbullet notification is disabled")
     pass
-
-
-
-
-
-

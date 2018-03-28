@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 import argparse
 import logging
+
 from yatcobot import create_logger
 from yatcobot.bot import Yatcobot
-from yatcobot.token_getter import get_access_token
 from yatcobot.config import Config
+from yatcobot.token_getter import get_access_token
 
 
 def main():
@@ -17,7 +18,7 @@ def main():
 
     args = parser.parse_args()
 
-    #Gets user tokens from twitter and saves them
+    # Gets user tokens from twitter and saves them
     if args.login:
         tokens = get_access_token(Config.consumer_key, Config.consumer_secret)
 
@@ -32,12 +33,11 @@ def main():
         if user_input == 'y':
             Config.save_user_tokens(args.config, tokens['token'], tokens['secret'])
 
-    #Create logger
+    # Create logger
     if args.debug:
         create_logger(logging.DEBUG, args.logfile)
     else:
         create_logger(logging.INFO, args.logfile)
-
 
     Config.load(args.config)
 

@@ -1,13 +1,12 @@
-from collections import namedtuple
+import logging
 import random
 import sched
 import time
-import logging
+from collections import namedtuple
 
 logger = logging.getLogger(__name__)
 
-
-#Task types
+# Task types
 NormalTask = namedtuple('NormalTask', ['delay', 'priority', 'action'])
 RandomTask = namedtuple('RandomTask', ['delay', 'delay_margin', 'priority', 'action'])
 

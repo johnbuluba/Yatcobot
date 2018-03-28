@@ -1,7 +1,6 @@
-import unittest
 import random
+import unittest
 from unittest.mock import patch, MagicMock
-
 
 from yatcobot.notifier import NotificationService, PushbulletNotifier, AbstractNotifier
 
@@ -25,7 +24,7 @@ class TestNotificationService(unittest.TestCase):
 
     def test_send_notification(self):
         n = NotificationService()
-        #delete if some notifier is actualy loaded
+        # delete if some notifier is actualy loaded
         n.active_notifiers = []
         for i in range(10):
             n.active_notifiers.append(MagicMock())
@@ -37,7 +36,7 @@ class TestNotificationService(unittest.TestCase):
 
     def test_is_enabled_disabled(self):
         n = NotificationService()
-        #delete if some notifier is actualy loaded
+        # delete if some notifier is actualy loaded
         n.active_notifiers = []
 
         self.assertFalse(n.is_enabled())
@@ -73,7 +72,7 @@ class TestPushbulletNotifier(unittest.TestCase):
         self.assertTrue(PushbulletNotifier.is_enabled())
 
     @patch('yatcobot.notifier.Config')
-    def test_notify(self,Config):
+    def test_notify(self, Config):
         Config.pushbullet_token = 'test'
 
         pushbullet_notifier = PushbulletNotifier.from_config()
@@ -82,5 +81,3 @@ class TestPushbulletNotifier(unittest.TestCase):
         pushbullet_notifier.notify("test", "test")
 
         self.PushBullet.return_value.push_note.assert_called_once_with("test", "test")
-
-

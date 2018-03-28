@@ -3,7 +3,7 @@ import string
 
 
 def get_random_string(length=10):
-    return''.join([random.choice(string.ascii_letters + string.digits) for n in range(length)])
+    return ''.join([random.choice(string.ascii_letters + string.digits) for n in range(length)])
 
 
 def create_post(id=None, userid=None, retweets=None, favorites=None, user_followers=None,
@@ -17,9 +17,9 @@ def create_post(id=None, userid=None, retweets=None, favorites=None, user_follow
     date = 'Thu Oct 08 08:34:51 +0000 2015' if date is None else date
 
     user = {'followers_count': user_followers,
-             'id': userid,
-             'screen_name': get_random_string()
-    }
+            'id': userid,
+            'screen_name': get_random_string()
+            }
 
     return {'id': id, 'retweet_count': retweets, 'favorite_count': favorites, 'full_text': text,
-             'created_at': date, 'user': user}
+            'created_at': date, 'user': user}

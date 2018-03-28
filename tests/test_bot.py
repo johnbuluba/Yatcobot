@@ -1,14 +1,11 @@
-import unittest
-import os
+import json
 import logging
+import os
 import random
+import unittest
 from unittest.mock import patch, MagicMock
 
-import json
-
-
 from tests.helper_func import create_post
-
 from yatcobot.bot import Yatcobot, Config, PeriodicScheduler
 from yatcobot.client import TwitterClientRetweetedException
 
@@ -18,7 +15,6 @@ logging.disable(logging.ERROR)
 
 
 class TestBot(unittest.TestCase):
-
     tests_path = path = os.path.dirname(os.path.abspath(__file__))
 
     @patch('yatcobot.bot.TwitterClient')
@@ -52,6 +48,7 @@ class TestBot(unittest.TestCase):
 
         def mock_return(id):
             return mock_return.posts[id]
+
         mock_return.posts = dict()
         mock_return.posts[1] = {'id': 1, 'full_text': 'test', 'user': {'id:1'}}
         mock_return.posts[2] = {'id': 2, 'full_text': 'test', 'quoted_status': mock_return.posts[1]}
@@ -97,18 +94,6 @@ class TestBot(unittest.TestCase):
         self.assertTrue(self.bot.post_queue.popitem.called)
         self.bot.post_queue.popitem.assert_called_with()
 
-    def test_remove_oldest_follow_empty(self):
-        follows = [x for x in range(Config.max_follows - 1)]
-        self.bot.client.get_friends_ids.return_value = follows
-        self.bot.remove_oldest_follow()
-        self.assertFalse(self.bot.client.unfollow.called)
-
-    def test_remove_oldest_follow_full(self):
-        follows = [x for x in range(Config.max_follows + 1)]
-        self.bot.client.get_friends_ids.return_value = follows
-        self.bot.remove_oldest_follow()
-        self.bot.client.unfollow.assert_called_with(Config.max_follows)
-
     def test_update_blocked_users(self):
         users = [x for x in range(10)]
         self.bot.ignore_list = list()
@@ -127,7 +112,8 @@ class TestBot(unittest.TestCase):
     def test_enter_contest_simple_post(self):
         posts = 10
         for i in range(posts):
-            self.bot.post_queue[i] = {'id': i, 'full_text': 'test', 'score': 0, 'user': {'id': random.randint(1, 1000), 'screen_name': 'test'}}
+            self.bot.post_queue[i] = {'id': i, 'full_text': 'test', 'score': 0,
+                                      'user': {'id': random.randint(1, 1000), 'screen_name': 'test'}}
 
         self.bot.enter_contest()
 
@@ -162,21 +148,24 @@ class TestBot(unittest.TestCase):
         self.assertFalse(self.bot.client.retweet.called)
 
     def test_insert_post_to_queue(self):
-        post = {'id': 0, 'full_text': 'test', 'user': {'id': random.randint(1, 1000), 'screen_name': 'test'}, 'retweeted': False}
+        post = {'id': 0, 'full_text': 'test', 'user': {'id': random.randint(1, 1000), 'screen_name': 'test'},
+                'retweeted': False}
 
         self.bot._insert_post_to_queue(post)
 
         self.assertIn(post['id'], self.bot.post_queue)
 
     def test_insert_post_to_queue_ignore(self):
-        post = {'id': 0, 'full_text': 'test', 'user': {'id': random.randint(1, 1000), 'screen_name': 'test'}, 'retweeted': False}
+        post = {'id': 0, 'full_text': 'test', 'user': {'id': random.randint(1, 1000), 'screen_name': 'test'},
+                'retweeted': False}
         self.bot.ignore_list = [0]
         self.bot._insert_post_to_queue(post)
 
         self.assertNotIn(post['id'], self.bot.post_queue)
 
     def test_insert_post_to_queue_retweeted(self):
-        post = {'id': 0, 'full_text': 'test', 'user': {'id': random.randint(1, 1000), 'screen_name': 'test'}, 'retweeted': True}
+        post = {'id': 0, 'full_text': 'test', 'user': {'id': random.randint(1, 1000), 'screen_name': 'test'},
+                'retweeted': True}
         self.bot.ignore_list = [0]
         self.bot._insert_post_to_queue(post)
 
@@ -203,7 +192,7 @@ class TestBot(unittest.TestCase):
         for i in range(2):
             posts.append({'id': i, 'full_text': 'test', 'retweet_count': 1,
                           'user': {'id': random.randint(1, 1000), 'screen_name': 'test'}, 'retweeted': False,
-                          'created_at':'Thu Oct 08 08:34:51 +0000 2015'})
+                          'created_at': 'Thu Oct 08 08:34:51 +0000 2015'})
 
         self.bot.client = MagicMock()
         self.bot.client.search_tweets.return_value = posts
@@ -212,32 +201,6 @@ class TestBot(unittest.TestCase):
 
         self.bot.client.search_tweets.assert_called_once_with('test1', 50, language=None)
         self.assertEqual(len(self.bot.post_queue), 2)
-
-    def test_favorite(self):
-        Config.fav_keywords = [' favorite ']
-        self.bot.client = MagicMock()
-        post = ({'id': 0, 'full_text': 'test favorite tests', 'user': {'id': random.randint(1, 1000), 'screen_name': 'test'}, 'retweeted': False})
-
-        self.bot.check_for_favorite(post)
-
-        self.bot.client.favorite.assert_called_once_with(post['id'])
-
-    def test_follow(self):
-        Config.follow_keywords = [' follow ']
-        self.bot.client = MagicMock()
-        post = ({'id': 0, 'full_text': 'test follow tests', 'user': {'id': random.randint(1, 1000), 'screen_name': 'test'}, 'retweeted': False})
-
-        self.bot.check_for_follow(post)
-
-        self.bot.client.follow.assert_called_once_with(post['user']['screen_name'])
-
-    def test_get_keyword_mutations(self):
-        keyword = 'keyword'
-        target_mutations = ['#keyword', ' keyword ', '.keyword', 'keyword ', ' keyword', 'keyword.', ',keyword', 'keyword,']
-        mutations = self.bot._get_keyword_mutations(keyword)
-        self.assertEqual(len(mutations), len(target_mutations))
-        for mutation in mutations:
-            self.assertIn(mutation, target_mutations)
 
     def test_check_new_mentions_empty(self):
         posts = [create_post()]
@@ -272,4 +235,3 @@ class TestBot(unittest.TestCase):
         self.assertFalse(self.bot.client.get_mentions_timeline.called)
         self.assertFalse(NotficationService.return_value.send_notification.called)
         self.assertTrue(self.bot.notification.is_enabled)
-

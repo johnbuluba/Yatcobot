@@ -1,14 +1,13 @@
-import unittest
+import builtins
 import logging
 import os
-import builtins
+import unittest
 from unittest.mock import MagicMock
-
-from yatcobot.token_getter import get_access_token
-import yatcobot.token_getter
 
 import requests_mock
 
+import yatcobot.token_getter
+from yatcobot.token_getter import get_access_token
 
 logging.disable(logging.ERROR)
 
@@ -37,4 +36,3 @@ class TestTokenGetter(unittest.TestCase):
         tokens = get_access_token('test', 'test')
         self.assertEqual(tokens['secret'], '2EEfA6BG3ly3sR3RjE0IBSnlQu4ZrUzPiYKmrkVU')
         self.assertEqual(tokens['token'], '6253282-eWudHldSbIaelX7swmsiHImEL4KinwaGloHANdrY')
-

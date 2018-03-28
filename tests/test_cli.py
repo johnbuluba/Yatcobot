@@ -1,20 +1,16 @@
-import unittest
-import logging
 import builtins
+import logging
 import sys
-
+import unittest
 from unittest.mock import MagicMock
 
 import yatcobot.cli
 from yatcobot.cli import main
 
-
-
 logging.disable(logging.ERROR)
 
 
 class TestCli(unittest.TestCase):
-
     program_name = 'yatcobot.py'
 
     def setUp(self):
