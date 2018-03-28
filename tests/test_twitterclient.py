@@ -40,7 +40,7 @@ class TestTwitterClient(unittest.TestCase):
             response = f.read()
         m.get('https://api.twitter.com/1.1/search/tweets.json?&lang=en&q=210462857140252672&result_type=mixed&count=50',
                                                                                                     text=response)
-        r = self.client.search_tweets("210462857140252672", 50, lang="en")
+        r = self.client.search_tweets("210462857140252672", 50, language="en")
         self.assertEqual(len(r), 4)
 
     @requests_mock.mock()
