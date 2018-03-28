@@ -9,5 +9,6 @@ requests-oauthlib==0.8.0
 requests==2.18.4
 six==1.11.0
 twitterapi==2.5.0
+typing==3.6.4
 urllib3==1.22
 websocket-client==0.47.0
