@@ -1,7 +1,7 @@
 import difflib
 import logging
 
-from .actions import ActionABC, Favorite, Follow
+from .actions import Favorite, Follow
 from .client import TwitterClient, TwitterClientRetweetedException
 from .config import Config
 from .ignorelist import IgnoreList

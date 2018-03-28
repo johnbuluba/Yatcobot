@@ -75,12 +75,15 @@ Donate
 ---------
 If you want to suppport this project please consider donating with one of the following ways:
 
-  <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=buluba89%40gmail%2ecom&lc=GR&item_name=John%20Buluba&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted" ><img src="https://www.dokuwiki.org/lib/exe/fetch.php?tok=d9fa04&media=https%3A%2F%2Fraw.githubusercontent.com%2Ftschinz%2Fdokuwiki_paypal_plugin%2Fmaster%2Flogo.jpg" height="24"> </a>
-
   [![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=buluba89&url=https://github.com/buluba89/Yatcobot&title=Yatcobot&language=GH_PROJECT_PROG_LANGUAGE&tags=github&category=software)
 
-  <img src="http://www.thisweekintomorrow.com/wp-content/plugins/bitmate-author-donations/images/donate.png" height="24">   *18zSZvVF6XNhg2zi7yvy6fSRnMATc134wm*
+  [![Donate with Paypal](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=QWCTMJZ9JME3L&lc=GR&item_name=Yatcobot&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted) 
+      
+  [![Donate with Bitcoin](https://en.cryptobadges.io/badge/small/19iX7wCSzjmr66BY7h3uGRqKWGxuoddjLN)](https://en.cryptobadges.io/donate/19iX7wCSzjmr66BY7h3uGRqKWGxuoddjLN)
 
+  [![Donate with Litecoin](https://en.cryptobadges.io/badge/small/LPzjwWzAPBeUWoeKsusZKEsavkmDS83fRR)](https://en.cryptobadges.io/donate/LPzjwWzAPBeUWoeKsusZKEsavkmDS83fRR)
+
+  [![Donate with Ethereum](https://en.cryptobadges.io/badge/small/0x1c1304173d05c61903789de07a3edcc9629e0222)](https://en.cryptobadges.io/donate/0x1c1304173d05c61903789de07a3edcc9629e0222)
 
 Credits
 -----------
