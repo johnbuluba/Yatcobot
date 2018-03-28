@@ -38,7 +38,7 @@ class TestTwitterClient(unittest.TestCase):
     def test_search_tweets_with_language(self, m):
         with open(self.tests_path + '/fixtures/search_tweets.json') as f:
             response = f.read()
-        m.get('https://api.twitter.com/1.1/search/tweets.json?&l=en&q=210462857140252672&result_type=mixed&count=50',
+        m.get('https://api.twitter.com/1.1/search/tweets.json?&lang=en&q=210462857140252672&result_type=mixed&count=50',
                                                                                                     text=response)
         r = self.client.search_tweets("210462857140252672", 50, lang="en")
         self.assertEqual(len(r), 4)
