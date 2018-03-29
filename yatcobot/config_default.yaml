@@ -37,6 +37,6 @@ scheduler:
 notifiers:
   pushbullet:
     enabled: false
-    token: null
+    token: my_pushbullet_token
 
 

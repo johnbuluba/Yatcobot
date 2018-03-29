@@ -1,11 +1,12 @@
-#!/usr/bin/env python3
 import argparse
 import logging
-
+import os
 from yatcobot import create_logger
 from yatcobot.bot import Yatcobot
 from yatcobot.config import Config
-from yatcobot.token_getter import get_access_token
+
+
+logger = logging.getLogger(__name__)
 
 
 def main():
@@ -22,6 +23,11 @@ def main():
         create_logger(logging.DEBUG, args.logfile)
     else:
         create_logger(logging.INFO, args.logfile)
+
+    # Check for old config
+    if args.config.endswith('.json') or (os.path.isfile('config.json') and not os.path.isfile('config.yaml')):
+        logger.error("Config file format changed, please update your config to the new yaml format!")
+        exit(1)
 
     Config.load(args.config)
     bot = Yatcobot(args.ignore_list)
