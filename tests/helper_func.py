@@ -1,5 +1,8 @@
 import random
 import string
+import os
+
+from yatcobot.config import Config
 
 
 def get_random_string(length=10):
@@ -23,3 +26,10 @@ def create_post(id=None, userid=None, retweets=None, favorites=None, user_follow
 
     return {'id': id, 'retweet_count': retweets, 'favorite_count': favorites, 'full_text': text,
             'created_at': date, 'user': user}
+
+
+def load_fixture_config():
+    tests_path = os.path.dirname(os.path.abspath(__file__))
+    config_path = os.path.join(tests_path, 'fixtures', 'config.test.yaml')
+    Config.load(config_path)
+

@@ -3,7 +3,7 @@ import os.path
 import confuse
 
 
-class Config(confuse.AttrDict):
+class Config:
     template = {
         'consumer_key': confuse.String(),
         'consumer_secret': confuse.String(),

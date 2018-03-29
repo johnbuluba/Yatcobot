@@ -3,6 +3,7 @@ import random
 import unittest
 from unittest.mock import patch
 
+from tests.helper_func import load_fixture_config
 from yatcobot.actions import Favorite, Follow
 from yatcobot.config import Config
 
@@ -17,7 +18,7 @@ class TestFollow(unittest.TestCase):
         self.config = config_mock
         self.client = client_mock
         self.action = Follow(self.client)
-        Config.load('fixtures/config.test.yaml')
+        load_fixture_config()
 
     def test_follow(self):
         Config.get_config()['actions']['follow']['keywords'] = [' follow ']
@@ -74,7 +75,7 @@ class TestFavorite(unittest.TestCase):
         self.config = config_mock
         self.client = client_mock
         self.action = Favorite(self.client)
-        Config.load('fixtures/config.test.yaml')
+        load_fixture_config()
 
     def test_favorite(self):
         self.action = Favorite(self.client)

@@ -1,7 +1,7 @@
 import logging
 import unittest
 
-from tests.helper_func import create_post
+from tests.helper_func import create_post, load_fixture_config
 from yatcobot.post_queue import *
 
 logging.disable(logging.ERROR)
@@ -10,7 +10,7 @@ logging.disable(logging.ERROR)
 class TestPostQueueSorter(unittest.TestCase):
 
     def setUp(self):
-        Config.load("fixtures/config.test.yaml")
+        load_fixture_config()
 
     def test_get_retweets_score(self):
         posts = dict()

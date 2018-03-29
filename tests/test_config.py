@@ -5,6 +5,7 @@ from collections import OrderedDict
 
 import confuse
 
+from tests.helper_func import load_fixture_config
 from yatcobot.bot import Config
 
 logging.disable(logging.ERROR)
@@ -17,7 +18,7 @@ class TestConfig(unittest.TestCase):
             Config.load()
 
     def test_load_values(self):
-        Config.load(os.path.join("fixtures", "config.test.yaml"))
+        load_fixture_config()
 
         # Global settings
         self.assertEqual(Config.get_config().consumer_key, "test")

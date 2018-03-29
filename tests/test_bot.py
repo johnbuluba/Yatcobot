@@ -6,7 +6,7 @@ import unittest
 from collections import OrderedDict
 from unittest.mock import patch, MagicMock
 
-from tests.helper_func import create_post
+from tests.helper_func import create_post, load_fixture_config
 from yatcobot.bot import Yatcobot, Config, PeriodicScheduler
 from yatcobot.client import TwitterClientRetweetedException
 
@@ -25,7 +25,7 @@ class TestBot(unittest.TestCase):
         self.config = config_mock
         self.client = client_mock
         self.bot = Yatcobot('test')
-        Config.load("fixtures/config.test.yaml")
+        load_fixture_config()
 
     def test_get_original_tweet_no_retweet(self):
         post = {'id': 1000}

@@ -2,6 +2,7 @@ import random
 import unittest
 from unittest.mock import patch, MagicMock
 
+from tests.helper_func import load_fixture_config
 from yatcobot.config import Config
 from yatcobot.notifier import NotificationService, PushbulletNotifier, AbstractNotifier
 
@@ -59,7 +60,7 @@ class TestPushbulletNotifier(unittest.TestCase):
 
     def setUp(self):
         self.PushBullet = patch('yatcobot.notifier.PushBullet').start()
-        Config.load('fixtures/config.test.yaml')
+        load_fixture_config()
 
     def test_is_enabled_disabled(self):
         Config.get_config()['notifiers']['pushbullet']['enabled'] = False
