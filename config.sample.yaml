@@ -1,0 +1,45 @@
+consumer_key: your_consumer_key_here
+consumer_secret:  your_consumer_secrete_her
+access_token_key: your_access_token_key_here
+access_token_secret: your_access_token_secret_here
+
+
+#min_ratelimit_percent: 10
+#
+#
+#search:
+#  queries:
+#    - RT to win
+#    - Retweet and win
+#    - Giveaway retweet:
+#      lang:en
+#  max_queue: 100
+#  max_quote_depth: 20
+#  min_quote_similarity: 0.5
+#  priority_keywords: ["pc", "iphone"]
+#
+#actions:
+#  follow:
+#    enabled: true
+#    keywords: ["follow", "follower"]
+#    max_following: 1950
+#  favorite:
+#    enabled: true
+#    keywords: ["fav", "favorite"]
+#
+#scheduler:
+#  search_interval: 5400
+#  retweet_interval: 600
+#  retweet_random_margin: 60
+#  blocked_users_update_interval: 300
+#  clear_queue_interval: 60
+#  rate_limit_update_interval: 60
+#  check_mentions_interval: 600
+#
+#notifiers:
+#  pushbullet:
+#    enabled: false
+#    token: my_pushbullet_token
+
+
+

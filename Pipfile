@@ -16,6 +16,10 @@ requests-mock = "*"
 freezegun = "*"
 coverage = "*"
 pipenv = {git = "https://github.com/pypa/pipenv.git", editable=true}
+sphinx = "*"
+sphinx-autobuild = "*"
+recommonmark = {git = "https://github.com/rtfd/recommonmark.git", editable=true}
+sphinx-rtd-theme = "*"
 
 [requires]
 python_version = "3.6"

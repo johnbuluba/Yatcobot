@@ -1,14 +1,11 @@
 #!/usr/bin/env python
 from os import path
 from setuptools import setup, find_packages
-from pipenv.project import Project
-from pipenv.utils import convert_deps_to_pip
-
-pfile = Project(chdir=True).parsed_pipfile
-requirements = convert_deps_to_pip(pfile['packages'], r=False)
-test_requirements = convert_deps_to_pip(pfile['dev-packages'], r=False)
+from pip.req import parse_requirements
 
 
+requirements = parse_requirements('requirements.txt', session='hack')
+requirements = [str(ir.req) for ir in requirements]
 root_path = path.abspath(path.dirname(__file__))
 with open(path.join(root_path, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
@@ -17,7 +14,7 @@ with open(path.join(root_path, 'README.md'), encoding='utf-8') as f:
 setup(
     name='Yatcobot',
 
-    version='1.0.0',
+    version='1.0.3',
 
     description='The best bot for searching twitter contests and automatically retweet them',
 
@@ -43,6 +40,7 @@ setup(
     },
 
     install_requires=requirements,
+    setup_requires=['pipenv'],
 
     entry_points={  # Optional
         'console_scripts': [
