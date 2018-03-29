@@ -89,11 +89,8 @@ class Yatcobot():
             if isinstance(search_query, str):
                 results = self.client.search_tweets(search_query, 50)
             elif isinstance(search_query, OrderedDict):
-                _, lang = search_query.popitem()
-                assert _ == 'lang'
-
-                search_query, _ = search_query.popitem()
-                assert _ is None
+                lang = search_query['lang']
+                search_query = list(search_query.keys())[0]
 
                 results = self.client.search_tweets(search_query, 50, language=lang)
             else:
