@@ -38,6 +38,10 @@ setup(
 
     packages=find_packages(exclude=['contrib', 'docs', 'tests', 'utils']),  # Required
 
+    package_data={  # Optional
+        'yatcobot': ['config_default.yaml'],
+    },
+
     install_requires=requirements,
 
     entry_points={  # Optional

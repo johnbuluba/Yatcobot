@@ -1,6 +1,8 @@
 import json
 import os.path
 import confuse
+import pkg_resources
+import yaml
 
 
 class Config:
@@ -68,6 +70,11 @@ class Config:
         :param filename: the file to import
         """
         config = confuse.LazyConfig('Yatcobot', __name__)
+
+        # Add default config (using this way because egg is breaking the default way)
+        default_config_text = pkg_resources.resource_string("yatcobot", "config_default.yaml")
+        config.add(yaml.load(default_config_text, Loader=confuse.Loader))
+
         if filename is not None and os.path.isfile(filename):
             config.set_file(filename)
         Config._valid = config.get(Config.template)
