@@ -1,5 +1,5 @@
 import json
-
+import os.path
 import confuse
 
 
@@ -68,7 +68,7 @@ class Config(confuse.AttrDict):
         :param filename: the file to import
         """
         config = confuse.LazyConfig('Yatcobot', __name__)
-        if filename is not None:
+        if filename is not None and os.path.isfile(filename):
             config.set_file(filename)
         Config._valid = config.get(Config.template)
 

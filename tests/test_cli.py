@@ -40,7 +40,7 @@ class TestCli(unittest.TestCase):
 
         main()
 
-        yatcobot.cli.Config.load.assert_called_once_with(('config.yaml'))
+        yatcobot.cli.Config.load.assert_called_once_with('config.yaml')
         yatcobot.cli.Yatcobot.assert_called_once_with('test')
         self.assertTrue(yatcobot.cli.Yatcobot.return_value.run.called)
 
@@ -49,7 +49,7 @@ class TestCli(unittest.TestCase):
         yatcobot.cli.create_logger = MagicMock()
         main()
 
-        yatcobot.cli.Config.load.assert_called_once_with(('config.yaml'))
+        yatcobot.cli.Config.load.assert_called_once_with('config.yaml')
         yatcobot.cli.Yatcobot.assert_called_once_with('ignorelist')
         yatcobot.cli.create_logger.assert_called_once_with(logging.INFO, 'test')
         self.assertTrue(yatcobot.cli.Yatcobot.return_value.run.called)
@@ -59,20 +59,7 @@ class TestCli(unittest.TestCase):
         yatcobot.cli.create_logger = MagicMock()
         main()
 
-        yatcobot.cli.Config.load.assert_called_once_with(('config.yaml'))
+        yatcobot.cli.Config.load.assert_called_once_with('config.yaml')
         yatcobot.cli.Yatcobot.assert_called_once_with('ignorelist')
         yatcobot.cli.create_logger.assert_called_once_with(logging.DEBUG, None)
-        self.assertTrue(yatcobot.cli.Yatcobot.return_value.run.called)
-
-    def test_login(self):
-        sys.argv = [self.program_name, '--login']
-        yatcobot.cli.create_logger = MagicMock()
-        yatcobot.cli.get_access_token = MagicMock(return_value={'token': 'test', 'secret': 'test'})
-        builtins.input = MagicMock(return_value='y')
-        main()
-
-        yatcobot.cli.Config.save_user_tokens.assert_called_once_with('config.yaml', 'test', 'test')
-        yatcobot.cli.Config.load.assert_called_once_with(('config.yaml'))
-        yatcobot.cli.Yatcobot.assert_called_once_with('ignorelist')
-        yatcobot.cli.create_logger.assert_called_once_with(logging.INFO, None)
         self.assertTrue(yatcobot.cli.Yatcobot.return_value.run.called)
