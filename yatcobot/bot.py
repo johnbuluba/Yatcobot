@@ -89,8 +89,13 @@ class Yatcobot():
             if isinstance(search_query, str):
                 results = self.client.search_tweets(search_query, 50)
             elif isinstance(search_query, OrderedDict):
-                search_query, settings = search_query.popitem()
-                results = self.client.search_tweets(search_query, 50, language=settings['lang'])
+                _, lang = search_query.popitem()
+                assert _ == 'lang'
+
+                search_query, _ = search_query.popitem()
+                assert _ is None
+
+                results = self.client.search_tweets(search_query, 50, language=lang)
             else:
                 raise ValueError("Uknown type of query {}".format(str(search_query)))
 

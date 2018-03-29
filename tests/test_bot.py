@@ -205,7 +205,7 @@ class TestBot(unittest.TestCase):
         self.assertEqual(len(self.bot.post_queue), 2)
 
     def test_scan_new_contests_with_language(self):
-        Config.get_config()['search']['queries'] = [OrderedDict({'test1': {'lang': 'el'}})]
+        Config.get_config()['search']['queries'] = [OrderedDict({'test1': None, 'lang': 'el'})]
         posts = list()
         for i in range(2):
             posts.append({'id': i, 'full_text': 'test', 'retweet_count': 1,

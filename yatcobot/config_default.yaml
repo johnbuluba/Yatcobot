@@ -10,7 +10,7 @@ search:
     - RT to win
     - Retweet and win
     - Διαγωνισμός:
-        lang: el
+      lang: el
   max_queue: 100
   max_quote_depth: 20
   min_quote_similarity: 0.5

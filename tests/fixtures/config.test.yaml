@@ -10,7 +10,7 @@ search:
     - test1
     - test2
     - test3:
-        lang: el
+      lang: el
   max_queue: 100
   max_quote_depth: 20
   min_quote_similarity: 0.5
