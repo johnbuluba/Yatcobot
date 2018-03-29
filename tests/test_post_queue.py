@@ -9,6 +9,9 @@ logging.disable(logging.ERROR)
 
 class TestPostQueueSorter(unittest.TestCase):
 
+    def setUp(self):
+        Config.load("fixtures/config.test.yaml")
+
     def test_get_retweets_score(self):
         posts = dict()
         for i in range(10):
@@ -26,7 +29,7 @@ class TestPostQueueSorter(unittest.TestCase):
             previous = id
 
     def test_get_keywords_score(self):
-        Config.priority_keywords = "Test"
+        Config.get_config()['search']['priority_keywords'] = ["Test"]
         posts = {
             1: create_post(id=1, full_text="Test"),
             2: create_post(id=2, full_text="test"),

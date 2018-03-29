@@ -1,9 +1,9 @@
 import json
+
 import confuse
 
 
 class Config(confuse.AttrDict):
-
     template = {
         'consumer_key': confuse.String(),
         'consumer_secret': confuse.String(),
@@ -62,13 +62,14 @@ class Config(confuse.AttrDict):
         return Config._valid
 
     @staticmethod
-    def load(filename):
+    def load(filename=None):
         """
         Loads a file and imports the settings
         :param filename: the file to import
         """
         config = confuse.LazyConfig('Yatcobot', __name__)
-        config.set_file(filename)
+        if filename is not None:
+            config.set_file(filename)
         Config._valid = config.get(Config.template)
 
 

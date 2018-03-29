@@ -3,6 +3,7 @@ import logging
 import os
 import random
 import unittest
+from collections import OrderedDict
 from unittest.mock import patch, MagicMock
 
 from tests.helper_func import create_post
@@ -24,6 +25,7 @@ class TestBot(unittest.TestCase):
         self.config = config_mock
         self.client = client_mock
         self.bot = Yatcobot('test')
+        Config.load("fixtures/config.test.yaml")
 
     def test_get_original_tweet_no_retweet(self):
         post = {'id': 1000}
@@ -79,16 +81,16 @@ class TestBot(unittest.TestCase):
         self.assertEqual(r, quoted_post_full)
 
     def test_clear_queue_empty(self):
-        Config.max_queue = 60
+        Config.get_config()['search']['max_queue'] = 60
         self.bot.post_queue = MagicMock()
         self.bot.post_queue.__len__.return_value = 0
         self.bot.clear_queue()
         self.assertFalse(self.bot.post_queue.popitem.called)
 
     def test_clear_queue_full(self):
-        self.config.max_queue = 60
+        Config.get_config()['search']['max_queue'] = 60
         self.bot.post_queue = MagicMock()
-        self.bot.post_queue.__len__.return_value = self.config.max_queue + 1
+        self.bot.post_queue.__len__.return_value = Config.get_config()['search']['max_queue'] + 1
 
         self.bot.clear_queue()
         self.assertTrue(self.bot.post_queue.popitem.called)
@@ -187,7 +189,7 @@ class TestBot(unittest.TestCase):
         self.assertNotIn(post['id'], self.bot.post_queue)
 
     def test_scan_new_contests(self):
-        Config.search_queries = ['test1']
+        Config.get_config()['search']['queries'] = ['test1']
         posts = list()
         for i in range(2):
             posts.append({'id': i, 'full_text': 'test', 'retweet_count': 1,
@@ -199,7 +201,23 @@ class TestBot(unittest.TestCase):
 
         self.bot.scan_new_contests()
 
-        self.bot.client.search_tweets.assert_called_once_with('test1', 50, language=None)
+        self.bot.client.search_tweets.assert_called_once_with('test1', 50)
+        self.assertEqual(len(self.bot.post_queue), 2)
+
+    def test_scan_new_contests_with_language(self):
+        Config.get_config()['search']['queries'] = [OrderedDict({'test1': {'lang': 'el'}})]
+        posts = list()
+        for i in range(2):
+            posts.append({'id': i, 'full_text': 'test', 'retweet_count': 1,
+                          'user': {'id': random.randint(1, 1000), 'screen_name': 'test'}, 'retweeted': False,
+                          'created_at': 'Thu Oct 08 08:34:51 +0000 2015'})
+
+        self.bot.client = MagicMock()
+        self.bot.client.search_tweets.return_value = posts
+
+        self.bot.scan_new_contests()
+
+        self.bot.client.search_tweets.assert_called_once_with('test1', 50, language='el')
         self.assertEqual(len(self.bot.post_queue), 2)
 
     def test_check_new_mentions_empty(self):

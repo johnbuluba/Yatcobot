@@ -1,15 +1,15 @@
-consumer_key: null
-consumer_secret: null
-access_token_key: null
-access_token_secret: null
+consumer_key: test
+consumer_secret: test
+access_token_key: test
+access_token_secret: test
 
 min_ratelimit_percent: 10
 
 search:
   queries:
-    - RT to win
-    - Retweet and win
-    - Διαγωνισμός:
+    - test1
+    - test2
+    - test3:
         lang: el
   max_queue: 100
   max_quote_depth: 20
@@ -37,6 +37,4 @@ scheduler:
 notifiers:
   pushbullet:
     enabled: false
-    token: null
-
-
+    token: test

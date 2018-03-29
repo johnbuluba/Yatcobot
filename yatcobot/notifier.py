@@ -78,7 +78,7 @@ try:
 
         @classmethod
         def from_config(cls):
-            return cls(Config.get_config().notifiers.pushbullet.enabled)
+            return cls(Config.get_config().notifiers.pushbullet.token)
 
 except ImportError:
     logger.warning("Could not import pushbullet.py. Pushbullet notification is disabled")
