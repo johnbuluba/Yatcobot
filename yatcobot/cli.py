@@ -40,6 +40,5 @@ def main():
         create_logger(logging.INFO, args.logfile)
 
     Config.load(args.config)
-
     bot = Yatcobot(args.ignore_list)
     bot.run()

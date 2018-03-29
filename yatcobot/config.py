@@ -1,7 +1,78 @@
 import json
+import confuse
 
 
-class Config:
+class Config(confuse.AttrDict):
+
+    template = {
+        'consumer_key': confuse.String(),
+        'consumer_secret': confuse.String(),
+        'access_token_key': confuse.String(),
+        'access_token_secret': confuse.String(),
+        'min_ratelimit_percent': confuse.Integer(),
+
+        'search': {
+            'queries': confuse.TypeTemplate(list),
+            'priority_keywords': confuse.StrSeq(),
+            'max_queue': confuse.Integer(),
+            'max_quote_depth': confuse.Integer(),
+            'min_quote_similarity': confuse.Number(),
+        },
+
+        'actions': {
+            'follow': {
+                'enabled': confuse.TypeTemplate(bool),
+                'keywords': confuse.StrSeq(),
+                'max_following': confuse.Integer(),
+            },
+            'favorite': {
+                'enabled': confuse.TypeTemplate(bool),
+                'keywords': confuse.StrSeq()
+            },
+        },
+
+        'scheduler': {
+            'search_interval': confuse.Integer(),
+            'retweet_interval': confuse.Integer(),
+            'retweet_random_margin': confuse.Integer(),
+            'blocked_users_update_interval': confuse.Integer(),
+            'clear_queue_interval': confuse.Integer(),
+            'rate_limit_update_interval': confuse.Integer(),
+            'check_mentions_interval': confuse.Integer(),
+        },
+
+        'notifiers': {
+            'pushbullet': {
+                'enabled': confuse.TypeTemplate(bool),
+                'token': confuse.String()
+            }
+        }
+    }
+
+    _valid = None
+
+    @staticmethod
+    def get_config():
+        """
+        Gets the static config object
+        :return:
+        """
+        if Config._valid is None:
+            raise ValueError("Configuration not loaded")
+        return Config._valid
+
+    @staticmethod
+    def load(filename):
+        """
+        Loads a file and imports the settings
+        :param filename: the file to import
+        """
+        config = confuse.LazyConfig('Yatcobot', __name__)
+        config.set_file(filename)
+        Config._valid = config.get(Config.template)
+
+
+class ConfigJson:
     """Class that contains all  config variables. It loads user values from a json file """
 
     # Default values
@@ -42,8 +113,6 @@ class Config:
             if value == "":
                 value = None
             setattr(Config, key, value)
-        b = Config.search_language
-        a = 5
 
     @staticmethod
     def save_user_tokens(filename, token, secret):

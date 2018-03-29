@@ -59,6 +59,7 @@ target/
 
 .idea/
 config.json
+config.yaml
 ignorelist
 log
 

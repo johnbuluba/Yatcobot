@@ -72,13 +72,13 @@ try:
 
         @staticmethod
         def is_enabled():
-            if Config.pushbullet_token:
+            if Config.get_config().notifiers.pushbullet.enabled:
                 return True
             return False
 
         @classmethod
         def from_config(cls):
-            return cls(Config.pushbullet_token)
+            return cls(Config.get_config().notifiers.pushbullet.enabled)
 
 except ImportError:
     logger.warning("Could not import pushbullet.py. Pushbullet notification is disabled")
