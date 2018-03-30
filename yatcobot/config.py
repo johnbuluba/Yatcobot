@@ -28,6 +28,12 @@ class Config:
                     'by_keywords': {
                         'enabled': confuse.TypeTemplate(bool),
                         'keywords': confuse.StrSeq()
+                    },
+                    'by_age': {
+                        'enabled': confuse.TypeTemplate(bool),
+                    },
+                    'by_retweets_count': {
+                        'enabled': confuse.TypeTemplate(bool),
                     }
                 }
             },

@@ -23,6 +23,10 @@ twitter:
       by_keywords:
         enabled: true
         keywords: ["ps4", "pc"]
+      by_age:
+        enabled: true
+      by_retweets_count:
+        enabled: true
 
   actions:
     follow:
