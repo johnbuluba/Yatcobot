@@ -7,7 +7,7 @@ from pip.req import parse_requirements
 requirements = parse_requirements('requirements.txt', session='hack')
 requirements = [str(ir.req) for ir in requirements]
 root_path = path.abspath(path.dirname(__file__))
-with open(path.join(root_path, 'README.md'), encoding='utf-8') as f:
+with open(path.join(root_path, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
 
