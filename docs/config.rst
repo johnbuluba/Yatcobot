@@ -118,6 +118,8 @@ Example config with default values:
           token: my_pushbullet_token
         
 
+----
+
 
 Global
 ======
@@ -228,6 +230,8 @@ Tweets with more retweets will get priority
 
 **enabled** if this plugin is enabled
 
+----
+
 
 Actions
 =======
@@ -261,8 +265,11 @@ These keywords are searched inside the tweet's text to determinate if
 it is needed to favorite the original post.
 
 
+----
+
+
 Scheduler
-========
+=========
 
 Intervals of bot tasks
 
@@ -302,6 +309,9 @@ check_mentions_interval
 How often we check if the user is mentioned in a tweet. We check this
 because many contests mention the winners in a tweet, so we can
 notify the user for a possible win.
+
+
+----
 
 
 Notifiers
