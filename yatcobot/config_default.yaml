@@ -42,7 +42,7 @@ twitter:
       # Filter out tweets that have less retweets than `number`
       min_retweets:
         # If this filter method is enabled
-        enabled: enabled
+        enabled: true
         # If a tweet has less retweets than this number, dont retweet
         number: 20
     #Plugins to sort tweets
