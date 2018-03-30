@@ -57,6 +57,7 @@ Before starting you must get api keys from twitter. You can get these keys from 
 You must create a config named `config.yaml` and must at least set the api keys. A minimal config.yaml is
 
 .. code-block:: yaml
+
     twitter:
         consumer_key: your_consumer_key
         consumer_secret: your_consumer_secret
@@ -94,7 +95,9 @@ Documentation
 =============
 For more info visit our docs: `<https://readthedocs.org/projects/yatcobot/>`_.
 
+
 ----
+
 
 Donate
 ======
