@@ -30,7 +30,7 @@ Notification
 
 ----
 
-You can visit <https://readthedocs.org/projects/yatcobot/>`_ for extended documentation or
+You can read the `documentation <https://yatcobot.readthedocs.io/en/master/>`_ for extended documentation or
 follow these steps for a quick start
 
 Installation
@@ -40,13 +40,13 @@ The easiest way to install is::
 
     pip install yatcobot
 
-For more installation methods see (See more at :doc:`installation`)
+See more at `Installation <https://yatcobot.readthedocs.io/en/master/installation.html/>`_
 
 
 Configuration
 =============
 Before starting you must get api keys from twitter. You can get these keys from `here <https://apps.twitter.com/>`_.
-(See more at :doc:`api_keys`)
+(See more at `How to get twitter api keys <https://yatcobot.readthedocs.io/en/master/api_keys.html/>`_)
 
 You must create a config named `config.yaml` and must at least set the api keys. A minimal config.yaml is
 
@@ -69,7 +69,7 @@ Or you can specify the path of config with:
 
     yatcobot --config=/path/to/config.yaml
 
-For more command line options (See more at :doc:`cli`)
+See more at `Command Line Arguments <https://yatcobot.readthedocs.io/en/master/cli.html/>`_
 
 
 Now just wait for all the **free gifts!**
