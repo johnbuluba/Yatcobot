@@ -107,7 +107,6 @@ class RateABC(ABC):
 
 
 class RateByKeywords(RateABC):
-
     config_name = 'by_keywords'
 
     def get_rates(self, queue):
@@ -135,7 +134,6 @@ class RateByKeywords(RateABC):
 
 
 class RateByRetweetsCount(RateABC):
-
     config_name = 'by_retweets_count'
 
     def get_rates(self, queue):
@@ -152,7 +150,6 @@ class RateByRetweetsCount(RateABC):
 
 
 class RateByAge(RateABC):
-
     config_name = 'by_age'
 
     def get_rates(self, queue):
@@ -166,6 +163,7 @@ class RateByAge(RateABC):
             rates.append(Score(post['id'], seconds))
 
         return self.normalize_scores(rates)
+
 
 # ----------------------------------------------------------------------------------------------------------------------
 

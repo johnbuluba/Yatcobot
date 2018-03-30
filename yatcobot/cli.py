@@ -1,10 +1,10 @@
 import argparse
 import logging
 import os
+
 from yatcobot import create_logger
 from yatcobot.bot import Yatcobot
 from yatcobot.config import Config
-
 
 logger = logging.getLogger(__name__)
 

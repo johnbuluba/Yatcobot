@@ -1,4 +1,5 @@
 import os.path
+
 import confuse
 import pkg_resources
 import yaml

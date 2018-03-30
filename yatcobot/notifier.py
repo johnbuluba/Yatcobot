@@ -1,6 +1,8 @@
 import logging
 from abc import ABCMeta, abstractmethod, abstractstaticmethod, abstractclassmethod
 
+from pushbullet import PushBullet
+
 from .config import Config
 
 logger = logging.getLogger(__name__)
@@ -57,29 +59,20 @@ class AbstractNotifier(metaclass=ABCMeta):
         """
 
 
-# Define pushbullet only if the user doesnt have the apropriate library, prevent crash and just disable feature
-try:
-    from pushbullet import PushBullet
+class PushbulletNotifier(AbstractNotifier):
 
+    def __init__(self, api_key):
+        self.pb = PushBullet(api_key)
 
-    class PushbulletNotifier(AbstractNotifier):
+    def notify(self, title, message):
+        self.pb.push_note(title, message)
 
-        def __init__(self, api_key):
-            self.pb = PushBullet(api_key)
+    @staticmethod
+    def is_enabled():
+        if Config.get_config().notifiers.pushbullet.enabled:
+            return True
+        return False
 
-        def notify(self, title, message):
-            self.pb.push_note(title, message)
-
-        @staticmethod
-        def is_enabled():
-            if Config.get_config().notifiers.pushbullet.enabled:
-                return True
-            return False
-
-        @classmethod
-        def from_config(cls):
-            return cls(Config.get_config().notifiers.pushbullet.token)
-
-except ImportError:
-    logger.warning("Could not import pushbullet.py. Pushbullet notification is disabled")
-    pass
+    @classmethod
+    def from_config(cls):
+        return cls(Config.get_config().notifiers.pushbullet.token)
