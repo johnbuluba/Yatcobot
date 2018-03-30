@@ -13,4 +13,4 @@ bumpversion --no-tag --message '[ci skip] Travis bump version: {current_version}
 
 git push --tags "https://${GH_TOKEN}@github.com/buluba89/Yatcobot.git" $TRAVIS_BRANCH
 
-curl -H "Content-Type: application/json" --data '{"source_type": "Branch", "source_name": "$TRAVIS_BRANCH"}' -X POST https://registry.hub.docker.com/u/buluba89/yatcobot/trigger/$DH_TOKEN/
+curl -H "Content-Type: application/json" --data '{"source_type": "docker_tag", "source_name": "$TRAVIS_BRANCH"}' -X POST https://registry.hub.docker.com/u/buluba89/yatcobot/trigger/$DH_TOKEN/
