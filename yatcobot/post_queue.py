@@ -61,7 +61,7 @@ class PostQueue(OrderedDict):
             score = 0
             text = post['full_text'].lower()
 
-            for keyword in Config.get_config().search.priority_keywords:
+            for keyword in Config.get_config().search.sort.by_keywords.keywords:
                 keyword = keyword.lower()
                 score += text.count(keyword)
 

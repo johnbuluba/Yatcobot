@@ -1,40 +1,48 @@
-consumer_key: test
-consumer_secret: test
-access_token_key: test
-access_token_secret: test
+twitter:
+  consumer_key: test
+  consumer_secret: test
+  access_token_key: test
+  access_token_secret: test
 
-min_ratelimit_percent: 10
+  min_ratelimit_percent: 10
 
-search:
-  queries:
-    - test1
-    - test2
-    - test3:
-      lang: el
-  max_queue: 100
-  max_quote_depth: 20
-  min_quote_similarity: 0.5
-  priority_keywords: ["ps4", "pc"]
+  search:
+    max_queue: 100
+    max_quote_depth: 20
+    min_quote_similarity: 0.5
+    queries:
+      - test1
+      - test2
+      - test3:
+        lang: el
+    filter:
+      min_retweets:
+        enabled: false
+        number: 20
+    sort:
+      by_keywords:
+        enabled: true
+        keywords: ["ps4", "pc"]
 
-actions:
-  follow:
-    enabled: true
-    keywords: ["follow", "follower"]
-    max_following: 1950
-  favorite:
-    enabled: true
-    keywords: ["fav", "favorite"]
+  actions:
+    follow:
+      enabled: true
+      keywords: ["follow", "follower"]
+      max_following: 1950
+    favorite:
+      enabled: true
+      keywords: ["fav", "favorite"]
 
-scheduler:
-  search_interval: 5400
-  retweet_interval: 600
-  retweet_random_margin: 60
-  blocked_users_update_interval: 300
-  clear_queue_interval: 60
-  rate_limit_update_interval: 60
-  check_mentions_interval: 600
+  scheduler:
+    search_interval: 5400
+    retweet_interval: 600
+    retweet_random_margin: 60
+    blocked_users_update_interval: 300
+    clear_queue_interval: 60
+    rate_limit_update_interval: 60
+    check_mentions_interval: 600
 
-notifiers:
-  pushbullet:
-    enabled: false
-    token: test
+  notifiers:
+    pushbullet:
+      enabled: false
+      token: test

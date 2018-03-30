@@ -1,86 +1,95 @@
-# Client settings
+twitter:
 
-# consumer key for twitter api
-consumer_key: null
-# consumer secret for twitter api
-consumer_secret: null
-# access token key for twitter api
-access_token_key: null
-# access token secret for twitter api
-access_token_secret: null
+  # Client settings
+  # consumer key for twitter api
+  consumer_key: null
+  # consumer secret for twitter api
+  consumer_secret: null
+  # access token key for twitter api
+  access_token_key: null
+  # access token secret for twitter api
+  access_token_secret: null
 
-# The bot will stop when api calls remaining are under
-# min_ratelimit_percent of the max that twitter allows
-min_ratelimit_percent: 10
+  # The bot will stop when api calls remaining are under
+  # min_ratelimit_percent of the max that twitter allows
+  min_ratelimit_percent: 10
 
 
-# Search for contest settings
-search:
+  # Search for contest settings
+  search:
 
-  # Queries to use for searching giveaways.
-  # You can set the language for a specific query like this
-  # - query
-  # - query with language filter:
-  #   lang: en
-  queries:
-    - RT to win
-    - Retweet and win
-    - Giveaway retweet
+    # Queries to use for searching giveaways.
+    # You can set the language for a specific query like this
+    # - query
+    # - query with language filter:
+    #   lang: en
+    queries:
+      - RT to win
+      - Retweet and win
+      - Giveaway retweet
+    # Max tweets that holds the bot in memory to post
+    max_queue: 100
 
-  # Max tweets that holds the bot in memory to post
-  max_queue: 100
+    # The maximum quotes that will be recursively search
+    # for the original tweet
+    max_quote_depth: 20
+    # Some tweets are quotes of another tweet
+    # This is the mimimum similary between the quote and the post
+    min_quote_similarity: 0.5
 
-  # The maximum quotes that will be recursively search
-  # for the original tweet
-  max_quote_depth: 20
-  # Some tweets are quotes of another tweet
-  # This is the mimimum similary between the quote and the post
-  min_quote_similarity: 0.5
-  # Keywords that if they appear in a post it will get
-  # priority for retweet
-  priority_keywords: ["pc", "iphone"]
+    #Plugins to filter tweets
+    filter:
+      min_retweets:
+        enabled: false
+        number: 20
+    #Plugins to sort tweets
+    sort:
+      by_keywords:
+        enabled: true
+        keywords: ["ps4", "pc"]
 
-# Actions that some giveaways require to enter
-actions:
-  # Follow the user that posts the giveaway
-  follow:
-    # If this action is enabled
-    enabled: true
-    # Keywords to search in post for follow action
-    keywords: ["follow", "follower"]
-    # When max_following is reached, will unfollow oldest follows
-    max_following: 1950
-  # Favorite the post
-  favorite:
-    # If this action is enabled
-    enabled: true
-    # Keywords to search in post for favorite action
-    keywords: ["fav", "favorite"]
 
-# Intervals of bot tasks
-scheduler:
-  # How often will search for new posts
-  search_interval: 5400
-  # How often will retweet
-  retweet_interval: 600
-  # A random margin from retweet interval to avoid bot detection
-  retweet_random_margin: 60
-  # Update blocked users list so posts of them are not retweeted
-  blocked_users_update_interval: 300
-  # How often will delete oldest posts in queue
-  clear_queue_interval: 60
-  # How often will update the remaining api rate limits
-  rate_limit_update_interval: 60
-  # How often will check for new mentions
-  check_mentions_interval: 600
+  # Actions that some giveaways require to enter
+  actions:
+    # Follow the user that posts the giveaway
+    follow:
+      # If this action is enabled
+      enabled: true
+      # Keywords to search in post for follow action
+      keywords: ["follow", "follower"]
+      # When max_following is reached, will unfollow oldest follows
+      max_following: 1950
+    # Favorite the post
+    favorite:
+      # If this action is enabled
+      enabled: true
+      # Keywords to search in post for favorite action
+      keywords: ["fav", "favorite"]
 
-# Notifiers will notify when somenone mentions the user.(Possible win)
-notifiers:
-  # Pushbullet notifier
-  pushbullet:
-    # If the notifier is enabled
-    enabled: false
-    # Pushbullet api token
-    token: my_pushbullet_token
+  # Intervals of bot tasks
+  scheduler:
+    # How often will search for new posts
+    search_interval: 5400
+    # How often will retweet
+    retweet_interval: 600
+    # A random margin from retweet interval to avoid bot detection
+    retweet_random_margin: 60
+    # Update blocked users list so posts of them are not retweeted
+    blocked_users_update_interval: 300
+    # How often will delete oldest posts in queue
+    clear_queue_interval: 60
+    # How often will update the remaining api rate limits
+    rate_limit_update_interval: 60
+    # How often will check for new mentions
+    check_mentions_interval: 600
+
+  # Notifiers will notify when somenone mentions the user.(Possible win)
+  notifiers:
+    # Pushbullet notifier
+    pushbullet:
+      # If the notifier is enabled
+      enabled: false
+      # Pushbullet api token
+      token: my_pushbullet_token
 
 

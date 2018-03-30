@@ -1,4 +1,3 @@
-import json
 import os.path
 import confuse
 import pkg_resources
@@ -7,46 +6,59 @@ import yaml
 
 class Config:
     template = {
-        'consumer_key': confuse.String(),
-        'consumer_secret': confuse.String(),
-        'access_token_key': confuse.String(),
-        'access_token_secret': confuse.String(),
-        'min_ratelimit_percent': confuse.Integer(),
+        'twitter': {
+            'consumer_key': confuse.String(),
+            'consumer_secret': confuse.String(),
+            'access_token_key': confuse.String(),
+            'access_token_secret': confuse.String(),
+            'min_ratelimit_percent': confuse.Integer(),
 
-        'search': {
-            'queries': confuse.TypeTemplate(list),
-            'priority_keywords': confuse.StrSeq(),
-            'max_queue': confuse.Integer(),
-            'max_quote_depth': confuse.Integer(),
-            'min_quote_similarity': confuse.Number(),
-        },
-
-        'actions': {
-            'follow': {
-                'enabled': confuse.TypeTemplate(bool),
-                'keywords': confuse.StrSeq(),
-                'max_following': confuse.Integer(),
+            'search': {
+                'queries': confuse.TypeTemplate(list),
+                'max_queue': confuse.Integer(),
+                'max_quote_depth': confuse.Integer(),
+                'min_quote_similarity': confuse.Number(),
+                'filter': {
+                    'min_retweets': {
+                        'enabled': confuse.TypeTemplate(bool),
+                        'number': confuse.Integer()
+                    }
+                },
+                'sort': {
+                    'by_keywords': {
+                        'enabled': confuse.TypeTemplate(bool),
+                        'keywords': confuse.StrSeq()
+                    }
+                }
             },
-            'favorite': {
-                'enabled': confuse.TypeTemplate(bool),
-                'keywords': confuse.StrSeq()
+
+            'actions': {
+                'follow': {
+                    'enabled': confuse.TypeTemplate(bool),
+                    'keywords': confuse.StrSeq(),
+                    'max_following': confuse.Integer(),
+                },
+                'favorite': {
+                    'enabled': confuse.TypeTemplate(bool),
+                    'keywords': confuse.StrSeq()
+                },
             },
-        },
 
-        'scheduler': {
-            'search_interval': confuse.Integer(),
-            'retweet_interval': confuse.Integer(),
-            'retweet_random_margin': confuse.Integer(),
-            'blocked_users_update_interval': confuse.Integer(),
-            'clear_queue_interval': confuse.Integer(),
-            'rate_limit_update_interval': confuse.Integer(),
-            'check_mentions_interval': confuse.Integer(),
-        },
+            'scheduler': {
+                'search_interval': confuse.Integer(),
+                'retweet_interval': confuse.Integer(),
+                'retweet_random_margin': confuse.Integer(),
+                'blocked_users_update_interval': confuse.Integer(),
+                'clear_queue_interval': confuse.Integer(),
+                'rate_limit_update_interval': confuse.Integer(),
+                'check_mentions_interval': confuse.Integer(),
+            },
 
-        'notifiers': {
-            'pushbullet': {
-                'enabled': confuse.TypeTemplate(bool),
-                'token': confuse.String()
+            'notifiers': {
+                'pushbullet': {
+                    'enabled': confuse.TypeTemplate(bool),
+                    'token': confuse.String()
+                }
             }
         }
     }
@@ -61,7 +73,7 @@ class Config:
         """
         if Config._valid is None:
             raise ValueError("Configuration not loaded")
-        return Config._valid
+        return Config._valid.twitter
 
     @staticmethod
     def load(filename=None):

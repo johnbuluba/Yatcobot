@@ -40,7 +40,12 @@ class TestConfig(unittest.TestCase):
         self.assertEqual(Config.get_config().search.max_queue, 100)
         self.assertEqual(Config.get_config().search.max_quote_depth, 20)
         self.assertEqual(Config.get_config().search.min_quote_similarity, 0.5)
-        self.assertEqual(Config.get_config().search.priority_keywords, ["ps4", "pc"])
+        # Filter
+        self.assertEqual(Config.get_config().search.filter.min_retweets.enabled, False)
+        self.assertEqual(Config.get_config().search.filter.min_retweets.number, 20)
+        # Sort
+        self.assertEqual(Config.get_config().search.sort.by_keywords.enabled, True)
+        self.assertEqual(Config.get_config().search.sort.by_keywords.keywords, ["ps4", "pc"])
 
         # Actions
         self.assertEqual(Config.get_config().actions.follow.enabled, True)

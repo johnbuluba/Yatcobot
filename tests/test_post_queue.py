@@ -29,7 +29,7 @@ class TestPostQueueSorter(unittest.TestCase):
             previous = id
 
     def test_get_keywords_score(self):
-        Config.get_config()['search']['priority_keywords'] = ["Test"]
+        Config.get_config()['search']['sort']['by_keywords']['keywords'] = ["Test"]
         posts = {
             1: create_post(id=1, full_text="Test"),
             2: create_post(id=2, full_text="test"),
