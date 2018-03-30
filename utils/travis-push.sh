@@ -9,6 +9,6 @@ setup_git() {
 
 setup_git
 
-bumpversion --verbose --message '[ci skip] Travis bump version {new_version}' patch
+bumpversion --message '[ci skip] Travis bump version {new_version}' patch
 
 git push --tags "https://${GH_TOKEN}@github.com/buluba89/Yatcobot.git" $TRAVIS_BRANCH
