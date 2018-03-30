@@ -101,6 +101,8 @@ class Yatcobot():
             for post in results:
                 self._insert_post_to_queue(post)
 
+        # Filter queue based on configure filters
+        self.post_queue.filter()
         # Sort the queue based on some features
         self.post_queue.sort()
 
