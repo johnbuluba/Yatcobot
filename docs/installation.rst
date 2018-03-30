@@ -16,7 +16,7 @@ To use from source:
 
 Run using:
 
-::
+.. code-block:: bash
 
     cd /path/to/repo/
     python3 yatcobot.py

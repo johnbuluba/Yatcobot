@@ -39,17 +39,27 @@ twitter:
 
     #Plugins to filter tweets
     filter:
+      # Filter out tweets that have less retweets than `number`
       min_retweets:
-        enabled: false
+        # If this filter method is enabled
+        enabled: enabled
+        # If a tweet has less retweets than this number, dont retweet
         number: 20
     #Plugins to sort tweets
     sort:
+      # Give priority to posts that contain some words
       by_keywords:
+        # If this sorting method is enabled
         enabled: true
+        # Keywords to search
         keywords: ["ps4", "pc"]
+      # Give priority to newer posts
       by_age:
+        # If this sorting method is enabled
         enabled: true
+      # Give priority to posts with more retweets
       by_retweets_count:
+        # If this sorting method is enabled
         enabled: true
 
 

@@ -56,12 +56,12 @@ Before starting you must get api keys from twitter. You can get these keys from 
 You must create a config named `config.yaml` and must at least set the api keys. A minimal config.yaml is
 
 .. code-block:: yaml
-
-    consumer_key: your_consumer_key
-    consumer_secret: your_consumer_secret
-    access_token_key: your_access_token
-    access_token_secret: your_access_token_secret
-
+    twitter:
+        consumer_key: your_consumer_key
+        consumer_secret: your_consumer_secret
+        access_token_key: your_access_token
+        access_token_secret: your_access_token_secret
+    
 
 
 Run
