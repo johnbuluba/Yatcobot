@@ -261,7 +261,7 @@ These keywords are searched inside the tweet's text to determinate if
 it is needed to favorite the original post.
 
 
-Schduler
+Scheduler
 ========
 
 Intervals of bot tasks

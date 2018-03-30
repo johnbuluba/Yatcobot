@@ -5,9 +5,7 @@ twitter:
   access_token_key: your_access_token_key_here
   access_token_secret: your_access_token_secret_here
 
-
-  min_ratelimit_percent: 10
-
+#  min_ratelimit_percent: 10
 
 #  search:
 #    queries:
