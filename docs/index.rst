@@ -19,8 +19,3 @@ Welcome to Yatcobot's documentation!
 
 
 .. include:: getting_started.rst
-
-.. |Build Status| image:: https://travis-ci.org/buluba89/Yatcobot.svg?branch=master
-   :target: https://travis-ci.org/buluba89/Yatcobot
-.. |codecov.io| image:: https://codecov.io/gh/buluba89/Yatcobot/branch/master/graph/badge.svg
-  :target: https://codecov.io/gh/buluba89/Yatcobot

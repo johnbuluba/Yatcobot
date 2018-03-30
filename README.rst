@@ -1,6 +1,7 @@
-===============
-Yatcobot
-===============
+.. figure:: https://thumb.ibb.co/hLfUvS/Screenshot_from_2018_03_30_04_47_49.png
+  :height: 100px
+  :alt: logo
+  :align: right
 
 *The best bot for retweeting twitter giveaways!*
 
@@ -16,14 +17,18 @@ Yatcobot
 Features:
 ---------
 
-Search for new giveaways
-  Search and queue tweets to be retweet
-Retweet
-  `Obviously...`
-Advanced sort
-   Prioritize tweets found based on parameters like user defined keywords, age and popularity
-Notification
-   Can notify you using pushbullet when someone mentions you so you can quickly get your precious gift
+- **Search for new giveaways** 
+  *Search and queue tweets to retweet, with a customizable way*
+
+- **Retweet** 
+  *Obviously...*
+
+- **Advanced sort** 
+  *Prioritize tweets found based on parameters like user defined keywords, age and popularity*
+
+- **Notification**
+  *Can notify you using pushbullet when someone mentions you so you can quickly get your precious gift*
+
 
 .. WARNING::
   Your account may be banned for using this kind of bot, so dont use your primary account
@@ -75,10 +80,13 @@ See more at `Command Line Arguments <https://yatcobot.readthedocs.io/en/master/c
 Now just wait for all the **free gifts!**
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+----
+
 Documentation
 =============
-For more info visit our docs: `<https://readthedocs.org/projects/yatcobot/>`_.
+For more info visit our docs: `documentation <https://yatcobot.readthedocs.io/en/master/>`_ .
 
+----
 
 Donate
 ======
@@ -113,3 +121,7 @@ Please donate to support the development if you find this software useful (`or i
    :target: https://travis-ci.org/buluba89/Yatcobot
 .. |codecov.io| image:: https://codecov.io/gh/buluba89/Yatcobot/branch/master/graph/badge.svg
   :target: https://codecov.io/gh/buluba89/Yatcobot
+.. |logo| image:: https://thumb.ibb.co/hLfUvS/Screenshot_from_2018_03_30_04_47_49.png
+  :height: 100px
+  :alt: logo
+  :scale: 50 %
