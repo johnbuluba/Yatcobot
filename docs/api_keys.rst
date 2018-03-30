@@ -1,6 +1,4 @@
-.. _api_keys_guide:
-
-Twitter api keys
+How to get twitter api keys
 ================
 
 Comming soon
