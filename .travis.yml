@@ -1,12 +1,20 @@
 language: python
 python:
-  - "3.4"
-  - "3.5"
-  - "3.6"
-before_install:
-- pip3 install codecov pipenv
+- '3.4'
+- '3.5'
+- '3.6'
 install:
-  - "pipenv install -d"
+- pip3 install codecov pipenv
+- pipenv install -d
 after_success:
-  - codecov
+- codecov
+
 script: coverage run -m unittest discover
+
+deploy:
+  provider: pypi
+  user: buluba89
+  password:
+    secure: Cy1UdB/6MmYzIOk3HkNdBzS2rkGZZGpJ9BEPfr3wmAxBo+ZucbRgUHzQ1VHt5H0wJ7dnjpSWq5malGIgEgcIlg2YTgiNNEChQYGfnvonuk3He6Qs3oHGdkeujJPj+KoJhBshL1wCI2IfZNZNlEfN9flIS6UTNhF5Hn3hj+AyR5KG7CTQ8SuNrUotBZcatE+xkWxprhXVOZzaBUYkzVvrGiNIoX3SmnkedoK/i3YouAj/jl+bC+A+0W/MbYzHxYzJWqbK0qezC1jemRF2CRA8sqgwG/YRTaDX9AI7WLLOz5ygwYmmWotRqcaB1MHrAC45sYcg/bEJRLE7dWjeNsjTTW4JWHDCPN/CWVnQT5Akv5hJGuFUPxQ2qJ+O256AEgkMS8XXAyJKJQzJGriCi30OnJXvnE917ofBcdyA6Fqb1hKWsm3wNO9Z+vIrL5IaOBsdgB3NVRGt75Pl8fBtcCUcdn/iRGrp+qywTwYNJKh12hzBgwY95NGY56ubav2mlZxZIyCw07Y059RDfZISVgEJGpMEP8pXLxtC7TwCCeEvpvbp5MHiLqK2doAJCrrY7Bsb/HWQ/TfP8su8FIYnQWKkfTUxKtn0/yhNooz9w9MzVduwBX0VOl8a2TcLGOtkwOcsHLn0hW65KhqQnffn48HOFWww2LpbimPGW4SEGyF2D9g=
+  on:
+    tags: true

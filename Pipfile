@@ -20,6 +20,7 @@ sphinx = "*"
 sphinx-autobuild = "*"
 recommonmark = {git = "https://github.com/rtfd/recommonmark.git", editable=true}
 sphinx-rtd-theme = "*"
+bumpversion = "*"
 
 [requires]
 python_version = "3.6"
