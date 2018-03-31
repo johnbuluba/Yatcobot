@@ -5,7 +5,7 @@ from statistics import mean, stdev
 
 from dateutil import tz
 
-from .config import Config
+from .config import TwitterConfig
 
 Score = namedtuple('Score', ('id', 'score'))
 
@@ -19,18 +19,18 @@ class PostQueue(OrderedDict):
         self.filter_methods = list()
 
         # Add rating methods
-        if Config.get_config().search.sort.by_keywords.enabled:
+        if TwitterConfig.get().search.sort.by_keywords.enabled:
             self.rating_methods.append(RateByKeywords())
 
-        if Config.get_config().search.sort.by_age.enabled:
+        if TwitterConfig.get().search.sort.by_age.enabled:
             self.rating_methods.append(RateByAge())
 
-        if Config.get_config().search.sort.by_retweets_count.enabled:
+        if TwitterConfig.get().search.sort.by_retweets_count.enabled:
             self.rating_methods.append(RateByRetweetsCount())
 
         # Add filter methods
 
-        if Config.get_config().search.filter.min_retweets.enabled:
+        if TwitterConfig.get().search.filter.min_retweets.enabled:
             self.filter_methods.append(FilterMinRetweets())
 
     def filter(self):
@@ -122,7 +122,7 @@ class RateByKeywords(RateABC):
             rate = 0
             text = post['full_text'].lower()
 
-            for keyword in Config.get_config().search.sort.by_keywords.keywords:
+            for keyword in TwitterConfig.get().search.sort.by_keywords.keywords:
                 keyword = keyword.lower()
                 rate += text.count(keyword)
 
@@ -186,7 +186,7 @@ class FilterMinRetweets(FilterABC):
         ids_to_remove = list()
 
         for post_id, post in queue.items():
-            if post['retweet_count'] < Config.get_config().search.filter.min_retweets.number:
+            if post['retweet_count'] < TwitterConfig.get().search.filter.min_retweets.number:
                 ids_to_remove.append(post_id)
 
         for post_id in ids_to_remove:

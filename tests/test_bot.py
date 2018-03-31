@@ -7,7 +7,7 @@ from collections import OrderedDict
 from unittest.mock import patch, MagicMock
 
 from tests.helper_func import create_post, load_fixture_config
-from yatcobot.bot import Yatcobot, Config, PeriodicScheduler
+from yatcobot.bot import Yatcobot, TwitterConfig, PeriodicScheduler
 from yatcobot.client import TwitterClientRetweetedException
 
 NotficationService = patch('yatcobot.bot.NotificationService').start()
@@ -20,7 +20,7 @@ class TestBot(unittest.TestCase):
 
     @patch('yatcobot.bot.TwitterClient')
     @patch('yatcobot.bot.IgnoreList')
-    @patch('yatcobot.bot.Config')
+    @patch('yatcobot.bot.TwitterConfig')
     def setUp(self, config_mock, ignore_list_mock, client_mock):
         self.config = config_mock
         self.client = client_mock
@@ -81,16 +81,16 @@ class TestBot(unittest.TestCase):
         self.assertEqual(r, quoted_post_full)
 
     def test_clear_queue_empty(self):
-        Config.get_config()['search']['max_queue'] = 60
+        TwitterConfig.get()['search']['max_queue'] = 60
         self.bot.post_queue = MagicMock()
         self.bot.post_queue.__len__.return_value = 0
         self.bot.clear_queue()
         self.assertFalse(self.bot.post_queue.popitem.called)
 
     def test_clear_queue_full(self):
-        Config.get_config()['search']['max_queue'] = 60
+        TwitterConfig.get()['search']['max_queue'] = 60
         self.bot.post_queue = MagicMock()
-        self.bot.post_queue.__len__.return_value = Config.get_config()['search']['max_queue'] + 1
+        self.bot.post_queue.__len__.return_value = TwitterConfig.get()['search']['max_queue'] + 1
 
         self.bot.clear_queue()
         self.assertTrue(self.bot.post_queue.popitem.called)
@@ -189,7 +189,7 @@ class TestBot(unittest.TestCase):
         self.assertNotIn(post['id'], self.bot.post_queue)
 
     def test_scan_new_contests(self):
-        Config.get_config()['search']['queries'] = ['test1']
+        TwitterConfig.get()['search']['queries'] = ['test1']
         posts = list()
         for i in range(2):
             posts.append({'id': i, 'full_text': 'test', 'retweet_count': 1,
@@ -205,9 +205,9 @@ class TestBot(unittest.TestCase):
         self.assertEqual(len(self.bot.post_queue), 2)
 
     def test_scan_new_contests_with_language(self):
-        Config.get_config()['search']['queries'] = [OrderedDict()]
-        Config.get_config()['search']['queries'][0]['test1'] = None
-        Config.get_config()['search']['queries'][0]['lang'] = 'el'
+        TwitterConfig.get()['search']['queries'] = [OrderedDict()]
+        TwitterConfig.get()['search']['queries'][0]['test1'] = None
+        TwitterConfig.get()['search']['queries'][0]['lang'] = 'el'
 
         posts = list()
         for i in range(2):

@@ -15,14 +15,14 @@ class TestCli(unittest.TestCase):
 
     def setUp(self):
         yatcobot.cli.Yatcobot = MagicMock()
-        yatcobot.cli.Config = MagicMock()
+        yatcobot.cli.TwitterConfig = MagicMock()
 
     def test_simple_start(self):
         sys.argv = [self.program_name]
 
         main()
 
-        yatcobot.cli.Config.load.assert_called_once_with('config.yaml')
+        yatcobot.cli.TwitterConfig.load.assert_called_once_with('config.yaml')
         yatcobot.cli.Yatcobot.assert_called_once_with('ignorelist')
         self.assertTrue(yatcobot.cli.Yatcobot.return_value.run.called)
 
@@ -31,7 +31,7 @@ class TestCli(unittest.TestCase):
 
         main()
 
-        yatcobot.cli.Config.load.assert_called_once_with('test.yaml')
+        yatcobot.cli.TwitterConfig.load.assert_called_once_with('test.yaml')
         yatcobot.cli.Yatcobot.assert_called_once_with('ignorelist')
         self.assertTrue(yatcobot.cli.Yatcobot.return_value.run.called)
 
@@ -40,7 +40,7 @@ class TestCli(unittest.TestCase):
 
         main()
 
-        yatcobot.cli.Config.load.assert_called_once_with('config.yaml')
+        yatcobot.cli.TwitterConfig.load.assert_called_once_with('config.yaml')
         yatcobot.cli.Yatcobot.assert_called_once_with('test')
         self.assertTrue(yatcobot.cli.Yatcobot.return_value.run.called)
 
@@ -49,7 +49,7 @@ class TestCli(unittest.TestCase):
         yatcobot.cli.create_logger = MagicMock()
         main()
 
-        yatcobot.cli.Config.load.assert_called_once_with('config.yaml')
+        yatcobot.cli.TwitterConfig.load.assert_called_once_with('config.yaml')
         yatcobot.cli.Yatcobot.assert_called_once_with('ignorelist')
         yatcobot.cli.create_logger.assert_called_once_with(logging.INFO, 'test')
         self.assertTrue(yatcobot.cli.Yatcobot.return_value.run.called)
@@ -59,7 +59,7 @@ class TestCli(unittest.TestCase):
         yatcobot.cli.create_logger = MagicMock()
         main()
 
-        yatcobot.cli.Config.load.assert_called_once_with('config.yaml')
+        yatcobot.cli.TwitterConfig.load.assert_called_once_with('config.yaml')
         yatcobot.cli.Yatcobot.assert_called_once_with('ignorelist')
         yatcobot.cli.create_logger.assert_called_once_with(logging.DEBUG, None)
         self.assertTrue(yatcobot.cli.Yatcobot.return_value.run.called)

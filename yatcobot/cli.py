@@ -4,7 +4,7 @@ import os
 
 from yatcobot import create_logger
 from yatcobot.bot import Yatcobot
-from yatcobot.config import Config
+from yatcobot.config import TwitterConfig
 
 logger = logging.getLogger(__name__)
 
@@ -29,6 +29,6 @@ def main():
         logger.error("Config file format changed, please update your config to the new yaml format!")
         exit(1)
 
-    Config.load(args.config)
+    TwitterConfig.load(args.config)
     bot = Yatcobot(args.ignore_list)
     bot.run()

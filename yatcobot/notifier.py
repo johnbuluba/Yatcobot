@@ -3,7 +3,7 @@ from abc import ABCMeta, abstractmethod, abstractstaticmethod, abstractclassmeth
 
 from pushbullet import PushBullet
 
-from .config import Config
+from .config import TwitterConfig, NotifiersConfig
 
 logger = logging.getLogger(__name__)
 
@@ -69,10 +69,10 @@ class PushbulletNotifier(AbstractNotifier):
 
     @staticmethod
     def is_enabled():
-        if Config.get_config().notifiers.pushbullet.enabled:
+        if NotifiersConfig.get().pushbullet.enabled:
             return True
         return False
 
     @classmethod
     def from_config(cls):
-        return cls(Config.get_config().notifiers.pushbullet.token)
+        return cls(NotifiersConfig.get().pushbullet.token)

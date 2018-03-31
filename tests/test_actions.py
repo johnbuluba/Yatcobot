@@ -5,7 +5,7 @@ from unittest.mock import patch
 
 from tests.helper_func import load_fixture_config
 from yatcobot.actions import Favorite, Follow
-from yatcobot.config import Config
+from yatcobot.config import TwitterConfig
 
 logging.disable(logging.ERROR)
 
@@ -13,7 +13,7 @@ logging.disable(logging.ERROR)
 class TestFollow(unittest.TestCase):
 
     @patch('yatcobot.bot.TwitterClient')
-    @patch('yatcobot.bot.Config')
+    @patch('yatcobot.bot.TwitterConfig')
     def setUp(self, config_mock, client_mock):
         self.config = config_mock
         self.client = client_mock
@@ -21,7 +21,7 @@ class TestFollow(unittest.TestCase):
         load_fixture_config()
 
     def test_follow(self):
-        Config.get_config()['actions']['follow']['keywords'] = [' follow ']
+        TwitterConfig.get()['actions']['follow']['keywords'] = [' follow ']
 
         post = (
             {'id': 0, 'full_text': 'test follow tests', 'user': {'id': random.randint(1, 1000), 'screen_name': 'test'},
@@ -31,7 +31,7 @@ class TestFollow(unittest.TestCase):
         self.client.follow.assert_called_once_with(post['user']['screen_name'])
 
     def test_no_follow(self):
-        Config.get_config()['actions']['follow']['keywords'] = [' follow ']
+        TwitterConfig.get()['actions']['follow']['keywords'] = [' follow ']
 
         post = (
             {'id': 0, 'full_text': 'test tests', 'user': {'id': random.randint(1, 1000), 'screen_name': 'test'},
@@ -41,36 +41,36 @@ class TestFollow(unittest.TestCase):
         self.assertFalse(self.client.follow.called)
 
     def test_follow_with_remove_oldest(self):
-        Config.get_config()['actions']['follow']['keywords'] = [' follow ']
+        TwitterConfig.get()['actions']['follow']['keywords'] = [' follow ']
 
         post = (
             {'id': 0, 'full_text': 'test follow tests', 'user': {'id': random.randint(1, 1000), 'screen_name': 'test'},
              'retweeted': False})
 
-        follows = [x for x in range(Config.get_config()['actions']['follow']['max_following'] + 1)]
+        follows = [x for x in range(TwitterConfig.get()['actions']['follow']['max_following'] + 1)]
         self.client.get_friends_ids.return_value = follows
 
         self.action.process(post)
         self.client.follow.assert_called_once_with(post['user']['screen_name'])
-        self.client.unfollow.assert_called_with(Config.get_config()['actions']['follow']['max_following'])
+        self.client.unfollow.assert_called_with(TwitterConfig.get()['actions']['follow']['max_following'])
 
     def test_remove_oldest_follow_empty(self):
-        follows = [x for x in range(Config.get_config()['actions']['follow']['max_following'] - 1)]
+        follows = [x for x in range(TwitterConfig.get()['actions']['follow']['max_following'] - 1)]
         self.client.get_friends_ids.return_value = follows
         self.action.remove_oldest_follow()
         self.assertFalse(self.client.unfollow.called)
 
     def test_remove_oldest_follow_full(self):
-        follows = [x for x in range(Config.get_config()['actions']['follow']['max_following'] + 1)]
+        follows = [x for x in range(TwitterConfig.get()['actions']['follow']['max_following'] + 1)]
         self.client.get_friends_ids.return_value = follows
         self.action.remove_oldest_follow()
-        self.client.unfollow.assert_called_with(Config.get_config()['actions']['follow']['max_following'])
+        self.client.unfollow.assert_called_with(TwitterConfig.get()['actions']['follow']['max_following'])
 
 
 class TestFavorite(unittest.TestCase):
 
     @patch('yatcobot.bot.TwitterClient')
-    @patch('yatcobot.bot.Config')
+    @patch('yatcobot.bot.TwitterConfig')
     def setUp(self, config_mock, client_mock):
         self.config = config_mock
         self.client = client_mock
@@ -79,7 +79,7 @@ class TestFavorite(unittest.TestCase):
 
     def test_favorite(self):
         self.action = Favorite(self.client)
-        Config.get_config()['actions']['favorite']['keywords'] = [' favorite ']
+        TwitterConfig.get()['actions']['favorite']['keywords'] = [' favorite ']
 
         post = (
             {'id': 0, 'full_text': 'test favorite tests',

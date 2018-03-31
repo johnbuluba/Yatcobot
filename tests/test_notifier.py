@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import patch, MagicMock
 
 from tests.helper_func import load_fixture_config
-from yatcobot.config import Config
+from yatcobot.config import TwitterConfig, NotifiersConfig
 from yatcobot.notifier import NotificationService, PushbulletNotifier, AbstractNotifier
 
 
@@ -63,17 +63,17 @@ class TestPushbulletNotifier(unittest.TestCase):
         load_fixture_config()
 
     def test_is_enabled_disabled(self):
-        Config.get_config()['notifiers']['pushbullet']['enabled'] = False
+        NotifiersConfig.get()['pushbullet']['enabled'] = False
 
         self.assertFalse(PushbulletNotifier.is_enabled())
 
     def test_is_enabled_enabled(self):
-        Config.get_config()['notifiers']['pushbullet']['enabled'] = True
+        NotifiersConfig.get()['pushbullet']['enabled'] = True
 
         self.assertTrue(PushbulletNotifier.is_enabled())
 
     def test_notify(self):
-        Config.get_config()['notifiers']['pushbullet']['token'] = 'test'
+        NotifiersConfig.get()['pushbullet']['token'] = 'test'
 
         pushbullet_notifier = PushbulletNotifier.from_config()
         self.PushBullet.assert_called_once_with("test")

@@ -60,12 +60,11 @@ class Config:
                 'rate_limit_update_interval': confuse.Integer(),
                 'check_mentions_interval': confuse.Integer(),
             },
-
-            'notifiers': {
-                'pushbullet': {
-                    'enabled': confuse.TypeTemplate(bool),
-                    'token': confuse.String()
-                }
+        },
+        'notifiers': {
+            'pushbullet': {
+                'enabled': confuse.TypeTemplate(bool),
+                'token': confuse.String()
             }
         }
     }
@@ -73,14 +72,14 @@ class Config:
     _valid = None
 
     @staticmethod
-    def get_config():
+    def get():
         """
         Gets the static config object
         :return:
         """
         if Config._valid is None:
             raise ValueError("Configuration not loaded")
-        return Config._valid.twitter
+        return Config._valid
 
     @staticmethod
     def load(filename=None):
@@ -97,3 +96,17 @@ class Config:
         if filename is not None and os.path.isfile(filename):
             config.set_file(filename)
         Config._valid = config.get(Config.template)
+
+
+class TwitterConfig(Config):
+
+    @staticmethod
+    def get():
+        return super(TwitterConfig, TwitterConfig).get().twitter
+
+
+class NotifiersConfig(Config):
+
+    @staticmethod
+    def get():
+        return super(NotifiersConfig, NotifiersConfig).get().notifiers

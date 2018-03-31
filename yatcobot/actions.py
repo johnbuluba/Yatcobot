@@ -1,7 +1,7 @@
 import logging
 from abc import ABC, abstractmethod
 
-from .config import Config
+from .config import TwitterConfig
 from .utils import create_keyword_mutations
 
 logger = logging.getLogger(__name__)
@@ -25,7 +25,7 @@ class Follow(ActionABC):
 
     def process(self, post):
         text = post['full_text']
-        keywords = sum((create_keyword_mutations(x) for x in Config.get_config().actions.follow.keywords), [])
+        keywords = sum((create_keyword_mutations(x) for x in TwitterConfig.get().actions.follow.keywords), [])
         if any(x in text.lower() for x in keywords):
             self.remove_oldest_follow()
             self.client.follow(post['user']['screen_name'])
@@ -38,7 +38,7 @@ class Follow(ActionABC):
 
         follows = self.client.get_friends_ids()
 
-        if len(follows) > Config.get_config().actions.follow.max_following:
+        if len(follows) > TwitterConfig.get().actions.follow.max_following:
             r = self.client.unfollow(follows[-1])
             logger.info('Unfollowed: {0}'.format(r['screen_name']))
 
@@ -50,7 +50,7 @@ class Favorite(ActionABC):
 
     def process(self, post):
         text = post['full_text']
-        keywords = sum((create_keyword_mutations(x) for x in Config.get_config().actions.favorite.keywords), [])
+        keywords = sum((create_keyword_mutations(x) for x in TwitterConfig.get().actions.favorite.keywords), [])
         if any(x in text.lower() for x in keywords):
             r = self.client.favorite(post['id'])
             logger.info("Favorite: {0}".format(post['id']))

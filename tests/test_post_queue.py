@@ -27,8 +27,8 @@ class TestPostQueueSorter(unittest.TestCase):
             self.assertLessEqual(post['score'], previous['score'])
 
     def test_filter_queue(self):
-        Config.get_config()['search']['filter']['min_retweets']['enabled'] = True
-        Config.get_config()['search']['filter']['min_retweets']['number'] = 5
+        TwitterConfig.get()['search']['filter']['min_retweets']['enabled'] = True
+        TwitterConfig.get()['search']['filter']['min_retweets']['number'] = 5
 
         posts = dict()
         for i in range(10):
@@ -50,7 +50,7 @@ class TestRateByRetweetCount(unittest.TestCase):
         self.method = RateByRetweetsCount()
 
     def test_get_retweets_rate(self):
-        Config.get_config()['search']['sort']['by_retweets_count']['enabled'] = True
+        TwitterConfig.get()['search']['sort']['by_retweets_count']['enabled'] = True
 
         posts = dict()
         for i in range(10):
@@ -77,8 +77,8 @@ class TestRateByKeywords(unittest.TestCase):
         self.method = RateByKeywords()
 
     def test_get_keywords_rate(self):
-        Config.get_config()['search']['sort']['by_keywords']['enabled'] = True
-        Config.get_config()['search']['sort']['by_keywords']['keywords'] = ["Test"]
+        TwitterConfig.get()['search']['sort']['by_keywords']['enabled'] = True
+        TwitterConfig.get()['search']['sort']['by_keywords']['keywords'] = ["Test"]
 
         posts = {
             1: create_post(id=1, full_text="Test"),
@@ -127,8 +127,8 @@ class TestFilterMinRetweets(unittest.TestCase):
         self.method = FilterMinRetweets()
 
     def test_filter_by_min_retweets(self):
-        Config.get_config()['search']['filter']['min_retweets']['enabled'] = True
-        Config.get_config()['search']['filter']['min_retweets']['number'] = 10
+        TwitterConfig.get()['search']['filter']['min_retweets']['enabled'] = True
+        TwitterConfig.get()['search']['filter']['min_retweets']['number'] = 10
 
         posts = {
             1: create_post(id=1, retweets=1),

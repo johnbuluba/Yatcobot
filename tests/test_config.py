@@ -6,7 +6,8 @@ from collections import OrderedDict
 import confuse
 
 from tests.helper_func import load_fixture_config
-from yatcobot.bot import Config
+from yatcobot.bot import TwitterConfig
+from yatcobot.config import NotifiersConfig, Config
 
 logging.disable(logging.ERROR)
 
@@ -17,52 +18,66 @@ class TestConfig(unittest.TestCase):
         with self.assertRaises(confuse.ConfigTypeError):
             Config.load()
 
+    def test_access_before_load(self):
+        Config._valid = None
+        with self.assertRaises(ValueError):
+            Config.get()
+
+
+class TestTwitterConfig(unittest.TestCase):
+
     def test_load_values(self):
         load_fixture_config()
 
         # Global settings
-        self.assertEqual(Config.get_config().consumer_key, "test")
-        self.assertEqual(Config.get_config().consumer_secret, "test")
-        self.assertEqual(Config.get_config().access_token_key, "test")
-        self.assertEqual(Config.get_config().access_token_secret, "test")
-        self.assertEqual(Config.get_config().min_ratelimit_percent, 10)
+        self.assertEqual(TwitterConfig.get().consumer_key, "test")
+        self.assertEqual(TwitterConfig.get().consumer_secret, "test")
+        self.assertEqual(TwitterConfig.get().access_token_key, "test")
+        self.assertEqual(TwitterConfig.get().access_token_secret, "test")
+        self.assertEqual(TwitterConfig.get().min_ratelimit_percent, 10)
 
         # Search settings
-        self.assertIsInstance(Config.get_config().search.queries, list)
-        self.assertEqual(len(Config.get_config().search.queries), 3)
-        self.assertEqual(Config.get_config().search.queries[0], "test1")
-        self.assertEqual(Config.get_config().search.queries[1], "test2")
-        self.assertIsInstance(Config.get_config().search.queries[2], OrderedDict)
-        self.assertIn("test3", Config.get_config().search.queries[2])
-        self.assertIn("lang", Config.get_config().search.queries[2])
-        self.assertEqual(Config.get_config().search.queries[2]["test3"], None)
-        self.assertEqual(Config.get_config().search.queries[2]["lang"], "el")
-        self.assertEqual(Config.get_config().search.max_queue, 100)
-        self.assertEqual(Config.get_config().search.max_quote_depth, 20)
-        self.assertEqual(Config.get_config().search.min_quote_similarity, 0.5)
+        self.assertIsInstance(TwitterConfig.get().search.queries, list)
+        self.assertEqual(len(TwitterConfig.get().search.queries), 3)
+        self.assertEqual(TwitterConfig.get().search.queries[0], "test1")
+        self.assertEqual(TwitterConfig.get().search.queries[1], "test2")
+        self.assertIsInstance(TwitterConfig.get().search.queries[2], OrderedDict)
+        self.assertIn("test3", TwitterConfig.get().search.queries[2])
+        self.assertIn("lang", TwitterConfig.get().search.queries[2])
+        self.assertEqual(TwitterConfig.get().search.queries[2]["test3"], None)
+        self.assertEqual(TwitterConfig.get().search.queries[2]["lang"], "el")
+        self.assertEqual(TwitterConfig.get().search.max_queue, 100)
+        self.assertEqual(TwitterConfig.get().search.max_quote_depth, 20)
+        self.assertEqual(TwitterConfig.get().search.min_quote_similarity, 0.5)
         # Filter
-        self.assertEqual(Config.get_config().search.filter.min_retweets.enabled, False)
-        self.assertEqual(Config.get_config().search.filter.min_retweets.number, 20)
+        self.assertEqual(TwitterConfig.get().search.filter.min_retweets.enabled, False)
+        self.assertEqual(TwitterConfig.get().search.filter.min_retweets.number, 20)
         # Sort
-        self.assertEqual(Config.get_config().search.sort.by_keywords.enabled, True)
-        self.assertEqual(Config.get_config().search.sort.by_keywords.keywords, ["ps4", "pc"])
+        self.assertEqual(TwitterConfig.get().search.sort.by_keywords.enabled, True)
+        self.assertEqual(TwitterConfig.get().search.sort.by_keywords.keywords, ["ps4", "pc"])
 
         # Actions
-        self.assertEqual(Config.get_config().actions.follow.enabled, True)
-        self.assertEqual(Config.get_config().actions.follow.keywords, ["follow", "follower"])
-        self.assertEqual(Config.get_config().actions.follow.max_following, 1950)
-        self.assertEqual(Config.get_config().actions.favorite.enabled, True)
-        self.assertEqual(Config.get_config().actions.favorite.keywords, ["fav", "favorite"])
+        self.assertEqual(TwitterConfig.get().actions.follow.enabled, True)
+        self.assertEqual(TwitterConfig.get().actions.follow.keywords, ["follow", "follower"])
+        self.assertEqual(TwitterConfig.get().actions.follow.max_following, 1950)
+        self.assertEqual(TwitterConfig.get().actions.favorite.enabled, True)
+        self.assertEqual(TwitterConfig.get().actions.favorite.keywords, ["fav", "favorite"])
 
         # Scheduler
-        self.assertEqual(Config.get_config().scheduler.search_interval, 5400)
-        self.assertEqual(Config.get_config().scheduler.retweet_interval, 600)
-        self.assertEqual(Config.get_config().scheduler.retweet_random_margin, 60)
-        self.assertEqual(Config.get_config().scheduler.blocked_users_update_interval, 300)
-        self.assertEqual(Config.get_config().scheduler.clear_queue_interval, 60)
-        self.assertEqual(Config.get_config().scheduler.rate_limit_update_interval, 60)
-        self.assertEqual(Config.get_config().scheduler.check_mentions_interval, 600)
+        self.assertEqual(TwitterConfig.get().scheduler.search_interval, 5400)
+        self.assertEqual(TwitterConfig.get().scheduler.retweet_interval, 600)
+        self.assertEqual(TwitterConfig.get().scheduler.retweet_random_margin, 60)
+        self.assertEqual(TwitterConfig.get().scheduler.blocked_users_update_interval, 300)
+        self.assertEqual(TwitterConfig.get().scheduler.clear_queue_interval, 60)
+        self.assertEqual(TwitterConfig.get().scheduler.rate_limit_update_interval, 60)
+        self.assertEqual(TwitterConfig.get().scheduler.check_mentions_interval, 600)
+
+
+class TestNotifiersConfig(unittest.TestCase):
+
+    def test_load_values(self):
+        load_fixture_config()
 
         # Notifiers
-        self.assertEqual(Config.get_config().notifiers.pushbullet.enabled, False)
-        self.assertEqual(Config.get_config().notifiers.pushbullet.token, "test")
+        self.assertEqual(NotifiersConfig.get().pushbullet.enabled, False)
+        self.assertEqual(NotifiersConfig.get().pushbullet.token, "test")

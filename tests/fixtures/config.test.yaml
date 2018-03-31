@@ -46,7 +46,7 @@ twitter:
     rate_limit_update_interval: 60
     check_mentions_interval: 600
 
-  notifiers:
-    pushbullet:
-      enabled: false
-      token: test
+notifiers:
+  pushbullet:
+    enabled: false
+    token: test

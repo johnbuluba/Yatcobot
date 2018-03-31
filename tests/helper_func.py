@@ -2,7 +2,7 @@ import random
 import string
 import os
 
-from yatcobot.config import Config
+from yatcobot.config import TwitterConfig, Config
 
 
 def get_random_string(length=10):

@@ -5,7 +5,7 @@ import time
 
 from TwitterAPI import TwitterAPI, constants
 
-from .config import Config
+from .config import TwitterConfig
 
 logger = logging.getLogger(__name__)
 
@@ -62,7 +62,7 @@ class RateLimiter(dict):
         endpoint_limits = self[self._get_internal_endpoint_name(endpoint)]
 
         # if over threshold sleep untill reset
-        if endpoint_limits['percent'] < Config.get_config().min_ratelimit_percent:
+        if endpoint_limits['percent'] < TwitterConfig.get().min_ratelimit_percent:
 
             reset_time = endpoint_limits['reset']
             now = int(datetime.datetime.now().strftime('%s'))

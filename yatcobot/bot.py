@@ -4,7 +4,7 @@ from collections import OrderedDict
 
 from .actions import Favorite, Follow
 from .client import TwitterClient, TwitterClientRetweetedException
-from .config import Config
+from .config import TwitterConfig
 from .ignorelist import IgnoreList
 from .notifier import NotificationService
 from .post_queue import PostQueue
@@ -20,10 +20,10 @@ class Yatcobot():
 
         self.ignore_list = IgnoreList(ignore_list_file)
         self.post_queue = PostQueue()
-        self.client = TwitterClient(Config.get_config()['consumer_key'],
-                                    Config.get_config()['consumer_secret'],
-                                    Config.get_config()['access_token_key'],
-                                    Config.get_config()['access_token_secret'])
+        self.client = TwitterClient(TwitterConfig.get()['consumer_key'],
+                                    TwitterConfig.get()['consumer_secret'],
+                                    TwitterConfig.get()['access_token_key'],
+                                    TwitterConfig.get()['access_token_secret'])
         self.scheduler = PeriodicScheduler()
         self.notification = NotificationService()
         self.actions = [Follow(self.client), Favorite(self.client)]
@@ -62,7 +62,7 @@ class Yatcobot():
     def clear_queue(self):
         """Removes the extraneous posts from the post_queue"""
 
-        to_delete = len(self.post_queue) - Config.get_config().search.max_queue
+        to_delete = len(self.post_queue) - TwitterConfig.get().search.max_queue
 
         if to_delete > 0:
             for i in range(to_delete):
@@ -84,7 +84,7 @@ class Yatcobot():
 
         logger.info("=== SCANNING FOR NEW CONTESTS ===")
 
-        for search_query in Config.get_config().search.queries:
+        for search_query in TwitterConfig.get().search.queries:
 
             if isinstance(search_query, str):
                 results = self.client.search_tweets(search_query, 50)
@@ -137,13 +137,13 @@ class Yatcobot():
     def run(self):
         """Run the bot as a daemon. This is blocking command"""
 
-        self.scheduler.enter(Config.get_config().scheduler.clear_queue_interval, 1, self.clear_queue)
-        self.scheduler.enter(Config.get_config().scheduler.rate_limit_update_interval, 2, self.client.update_ratelimits)
-        self.scheduler.enter(Config.get_config().scheduler.blocked_users_update_interval, 3, self.update_blocked_users)
-        self.scheduler.enter(Config.get_config().scheduler.check_mentions_interval, 4, self.check_new_mentions)
-        self.scheduler.enter(Config.get_config().scheduler.search_interval, 5, self.scan_new_contests)
-        self.scheduler.enter_random(Config.get_config().scheduler.retweet_interval,
-                                    Config.get_config().scheduler.retweet_random_margin, 6, self.enter_contest)
+        self.scheduler.enter(TwitterConfig.get().scheduler.clear_queue_interval, 1, self.clear_queue)
+        self.scheduler.enter(TwitterConfig.get().scheduler.rate_limit_update_interval, 2, self.client.update_ratelimits)
+        self.scheduler.enter(TwitterConfig.get().scheduler.blocked_users_update_interval, 3, self.update_blocked_users)
+        self.scheduler.enter(TwitterConfig.get().scheduler.check_mentions_interval, 4, self.check_new_mentions)
+        self.scheduler.enter(TwitterConfig.get().scheduler.search_interval, 5, self.scan_new_contests)
+        self.scheduler.enter_random(TwitterConfig.get().scheduler.retweet_interval,
+                                    TwitterConfig.get().scheduler.retweet_random_margin, 6, self.enter_contest)
 
         # Init the program
         self.scheduler.run()
@@ -167,7 +167,7 @@ class Yatcobot():
         :param post: The post to check if its a quote
         :return: If it isnt a quote the argument, otherwise the original tweet
         """
-        for i in range(Config.get_config().search.max_quote_depth):
+        for i in range(TwitterConfig.get().search.max_quote_depth):
             # If it hasnt quote return the post
             if 'quoted_status' not in post:
                 return post
@@ -175,7 +175,7 @@ class Yatcobot():
             quote = post['quoted_status']
             diff = difflib.SequenceMatcher(None, post['full_text'], quote['full_text']).ratio()
             # If the texts are similar continue
-            if diff >= Config.get_config().search.min_quote_similarity:
+            if diff >= TwitterConfig.get().search.min_quote_similarity:
                 logger.debug('{} is a quote, following to next post. Depth from original post {}'.format(post['id'], i))
                 quote = self.client.get_tweet(quote['id'])
                 # If its a quote of quote, get next quote and continue

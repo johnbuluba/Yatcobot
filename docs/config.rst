@@ -108,14 +108,14 @@ Example config with default values:
         # How often will check for new mentions
         check_mentions_interval: 600
     
-      # Notifiers will notify when somenone mentions the user.(Possible win)
-      notifiers:
-        # Pushbullet notifier
-        pushbullet:
-          # If the notifier is enabled
-          enabled: false
-          # Pushbullet api token
-          token: my_pushbullet_token
+    # Notifiers will notify when somenone mentions the user.(Possible win)
+    notifiers:
+      # Pushbullet notifier
+      pushbullet:
+        # If the notifier is enabled
+        enabled: false
+        # Pushbullet api token
+        token: my_pushbullet_token
         
 
 ----
