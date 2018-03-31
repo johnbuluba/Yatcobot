@@ -27,9 +27,13 @@ def main():
     # Check for old config
     if args.config.endswith('.json') or (os.path.isfile('config.json') and not os.path.isfile('config.yaml')):
         logger.error("Config file format changed, please update your config to the new yaml format!")
+        logger.error("Visit documentation for more info: https://yatcobot.readthedocs.io/en/master/config.html")
         exit(1)
 
+    logger.info("Loading configuration")
     TwitterConfig.load(args.config)
+    logger.info("Configuration loaded")
+    logger.info("Starting")
     print_logo()
     bot = Yatcobot(args.ignore_list)
     bot.run()

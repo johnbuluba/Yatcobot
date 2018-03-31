@@ -15,7 +15,7 @@ logging.disable(logging.ERROR)
 class TestConfig(unittest.TestCase):
 
     def test_load_without_user_config(self):
-        with self.assertRaises(confuse.ConfigTypeError):
+        with self.assertRaises(confuse.NotFoundError):
             Config.load()
 
     def test_access_before_load(self):

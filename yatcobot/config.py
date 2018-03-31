@@ -1,8 +1,12 @@
 import os.path
+import logging
 
 import confuse
 import pkg_resources
 import yaml
+
+
+logger = logging.getLogger(__name__)
 
 
 class Config:
@@ -89,12 +93,21 @@ class Config:
         """
         config = confuse.LazyConfig('Yatcobot', __name__)
 
-        # Add default config (using this way because egg is breaking the default way)
-        default_config_text = pkg_resources.resource_string("yatcobot", "config_default.yaml")
-        config.add(yaml.load(default_config_text, Loader=confuse.Loader))
+        # Add default config when in egg (using this way because egg is breaking the default way)
+        if len(config.sources) == 0:
+            default_config_text = pkg_resources.resource_string("yatcobot", "config_default.yaml")
+            default_config = confuse.ConfigSource(yaml.load(default_config_text, Loader=confuse.Loader),
+                                                  'pkg/config_default.yaml',
+                                                  True)
+            config.add(default_config)
 
+        # Add user specified config
         if filename is not None and os.path.isfile(filename):
             config.set_file(filename)
+
+        logger.info('Loading config files (From highest priority to lowest):')
+        for i, config_source in enumerate(config.sources):
+            logger.info('{}: Path: {}'.format(i, config_source.filename))
         Config._valid = config.get(Config.template)
 
 

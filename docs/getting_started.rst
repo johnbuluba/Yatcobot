@@ -66,6 +66,20 @@ You must create a config named `config.yaml` and must at least set the api keys.
     
 You can edit config.sample.yaml that is placed in the root of the project (`dont forget to rename it to config.yaml`) or view the sample `on github <https://github.com/buluba89/Yatcobot/blob/master/config.sample.yaml>`_
 
+Config file is loaded automatically from specific paths. The paths that are searched for config.yaml are (from highest priority to lowest):
+
+1. *./config.yaml*
+    Search for config in the current working directory
+2. *~/.config/Yatcobot/config.yaml*
+    Search in config folder. If for example your username is `user` the full path will be `/home/user/.config/Yatcobot/config.yaml`
+3.  *default*
+    The default config that is packaged with the bot.
+
+Also you can define another config with the **--config** argument, which will have the highest priority
+
+Higher priority configs override settings that are defined in the lower. So in your config you only need to define the changes.
+(See more at :doc:`config`)
+
 Run
 ===
 In the directory where your config.yaml run:

@@ -2,13 +2,13 @@ twitter:
 
   # Client settings
   # consumer key for twitter api
-  consumer_key: null
+  #consumer_key: your_consumer_key_here
   # consumer secret for twitter api
-  consumer_secret: null
+  #consumer_secret: your_consumer_secrete_her
   # access token key for twitter api
-  access_token_key: null
+  #access_token_key: your_access_token_key_here
   # access token secret for twitter api
-  access_token_secret: null
+  #access_token_secret: your_access_token_secret_here
 
   # The bot will stop when api calls remaining are under
   # min_ratelimit_percent of the max that twitter allows

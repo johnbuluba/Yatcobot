@@ -53,7 +53,7 @@ Example config with default values:
           # Filter out tweets that have less retweets than `number`
           min_retweets:
             # If this filter method is enabled
-            enabled: enabled
+            enabled: true
             # If a tweet has less retweets than this number, dont retweet
             number: 20
         #Plugins to sort tweets
@@ -117,6 +117,21 @@ Example config with default values:
         # Pushbullet api token
         token: my_pushbullet_token
         
+
+----
+
+Config file is loaded automatically from specific paths. The paths that are searched for config.yaml are (from highest priority to lowest):
+
+1. *./config.yaml*
+    Search for config in the current working directory
+2. *~/.config/Yatcobot/config.yaml*
+    Search in config folder. If for example your username is `user` the full path will be `/home/user/.config/Yatcobot/config.yaml`
+3.  *default*
+    The default config that is packaged with the bot.
+
+Also you can define another config with the **--config** argument, which will have the highest priority
+
+Higher priority configs override settings that are defined in the lower. So in your config you only need to define the changes.
 
 ----
 
