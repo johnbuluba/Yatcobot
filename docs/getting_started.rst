@@ -72,7 +72,8 @@ Config file is loaded automatically from specific paths. The paths that are sear
     Search for config in the current working directory
 2. *~/.config/Yatcobot/config.yaml*
     Search in config folder. If for example your username is `user` the full path will be `/home/user/.config/Yatcobot/config.yaml`
-3.  *default*
+
+3. *default*
     The default config that is packaged with the bot.
 
 Also you can define another config with the **--config** argument, which will have the highest priority
