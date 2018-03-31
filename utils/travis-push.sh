@@ -17,5 +17,6 @@ if [ "$TRAVIS_BRANCH" == "dev" ]; then
     curl -H "Content-Type: application/json" --data '{ "docker_tag" : "dev"}' -X POST https://registry.hub.docker.com/u/buluba89/yatcobot/trigger/$DH_TOKEN/
 elif [ "$TRAVIS_BRANCH" == "master" ]; then
     curl -H "Content-Type: application/json" --data '{ "docker_tag" : "latest"}' -X POST https://registry.hub.docker.com/u/buluba89/yatcobot/trigger/$DH_TOKEN/
+    sleep 30
     curl -H "Content-Type: application/json" --data '{ "docker_tag" : "alpine"}' -X POST https://registry.hub.docker.com/u/buluba89/yatcobot/trigger/$DH_TOKEN/
 fi
