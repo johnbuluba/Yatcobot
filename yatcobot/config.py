@@ -48,6 +48,7 @@ class Config:
                     'enabled': confuse.TypeTemplate(bool),
                     'keywords': confuse.StrSeq(),
                     'max_following': confuse.Integer(),
+                    'multiple': confuse.TypeTemplate(bool)
                 },
                 'favorite': {
                     'enabled': confuse.TypeTemplate(bool),

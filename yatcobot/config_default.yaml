@@ -73,6 +73,9 @@ twitter:
       keywords: ["follow", "follower"]
       # When max_following is reached, will unfollow oldest follows
       max_following: 1950
+      # Follow multiple account from a single post
+      # Experimental feature, please open issue with example post id if unusual behavior is observed
+      multiple: false
     # Favorite the post
     favorite:
       # If this action is enabled

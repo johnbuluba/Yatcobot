@@ -33,6 +33,7 @@ twitter:
       enabled: true
       keywords: ["follow", "follower"]
       max_following: 1950
+      multiple: false
     favorite:
       enabled: true
       keywords: ["fav", "favorite"]

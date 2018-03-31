@@ -1,8 +1,12 @@
+import json
 import random
 import string
 import os
 
-from yatcobot.config import TwitterConfig, Config
+from yatcobot.config import Config
+
+
+tests_path = path = os.path.dirname(os.path.abspath(__file__))
 
 
 def get_random_string(length=10):
@@ -28,8 +32,16 @@ def create_post(id=None, userid=None, retweets=None, favorites=None, user_follow
             'created_at': date, 'user': user}
 
 
+def get_fixture(filename, raw=False):
+    with open(tests_path + '/fixtures/' + filename) as f:
+        response = f.read()
+    if raw:
+        return response
+
+    return json.loads(response)
+
+
 def load_fixture_config():
     tests_path = os.path.dirname(os.path.abspath(__file__))
     config_path = os.path.join(tests_path, 'fixtures', 'config.test.yaml')
     Config.load(config_path)
-

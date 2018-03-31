@@ -1,0 +1,205 @@
+{
+  "created_at": "Tue Mar 27 11:37:06 +0000 2018",
+  "id": 978596771252195328,
+  "id_str": "978596771252195328",
+  "full_text": "\ud83c\udf81 Giveaway \ud83c\udf81\n\n\ud83c\udf81 AK47 Neon Revolution\ud83c\udf81\n\n\u2705 Retweet + Like\n\u2705 Follow @RealSpxctator\n\u2705 Follow @Rushmello_csgo\n\u2705 Bonus: Tag a Friend\n\n\ud83d\udd25 5 days \ud83d\udd25 https://t.co/JJ98dJGoTz",
+  "truncated": false,
+  "display_text_range": [
+    0,
+    138
+  ],
+  "entities": {
+    "hashtags": [],
+    "symbols": [],
+    "user_mentions": [
+      {
+        "screen_name": "RealSpxctator",
+        "name": "Spxctator.",
+        "id": 781415617224069120,
+        "id_str": "781415617224069120",
+        "indices": [
+          65,
+          79
+        ]
+      },
+      {
+        "screen_name": "Rushmello_csgo",
+        "name": "R\u0489u\u0489s\u0489h\u0489y\u0489",
+        "id": 3412077461,
+        "id_str": "3412077461",
+        "indices": [
+          89,
+          104
+        ]
+      }
+    ],
+    "urls": [],
+    "media": [
+      {
+        "id": 978596078030225409,
+        "id_str": "978596078030225409",
+        "indices": [
+          139,
+          162
+        ],
+        "media_url": "http://pbs.twimg.com/media/DZSr8rmVAAEsC2o.jpg",
+        "media_url_https": "https://pbs.twimg.com/media/DZSr8rmVAAEsC2o.jpg",
+        "url": "https://t.co/JJ98dJGoTz",
+        "display_url": "pic.twitter.com/JJ98dJGoTz",
+        "expanded_url": "https://twitter.com/RealSpxctator/status/978596771252195328/photo/1",
+        "type": "photo",
+        "sizes": {
+          "small": {
+            "w": 680,
+            "h": 383,
+            "resize": "fit"
+          },
+          "thumb": {
+            "w": 150,
+            "h": 150,
+            "resize": "crop"
+          },
+          "large": {
+            "w": 2048,
+            "h": 1152,
+            "resize": "fit"
+          },
+          "medium": {
+            "w": 1200,
+            "h": 675,
+            "resize": "fit"
+          }
+        }
+      }
+    ]
+  },
+  "extended_entities": {
+    "media": [
+      {
+        "id": 978596078030225409,
+        "id_str": "978596078030225409",
+        "indices": [
+          139,
+          162
+        ],
+        "media_url": "http://pbs.twimg.com/media/DZSr8rmVAAEsC2o.jpg",
+        "media_url_https": "https://pbs.twimg.com/media/DZSr8rmVAAEsC2o.jpg",
+        "url": "https://t.co/JJ98dJGoTz",
+        "display_url": "pic.twitter.com/JJ98dJGoTz",
+        "expanded_url": "https://twitter.com/RealSpxctator/status/978596771252195328/photo/1",
+        "type": "photo",
+        "sizes": {
+          "small": {
+            "w": 680,
+            "h": 383,
+            "resize": "fit"
+          },
+          "thumb": {
+            "w": 150,
+            "h": 150,
+            "resize": "crop"
+          },
+          "large": {
+            "w": 2048,
+            "h": 1152,
+            "resize": "fit"
+          },
+          "medium": {
+            "w": 1200,
+            "h": 675,
+            "resize": "fit"
+          }
+        }
+      }
+    ]
+  },
+  "source": "<a href=\"http://twitter.com\" rel=\"nofollow\">Twitter Web Client</a>",
+  "in_reply_to_status_id": null,
+  "in_reply_to_status_id_str": null,
+  "in_reply_to_user_id": null,
+  "in_reply_to_user_id_str": null,
+  "in_reply_to_screen_name": null,
+  "user": {
+    "id": 781415617224069120,
+    "id_str": "781415617224069120",
+    "name": "Spxctator.",
+    "screen_name": "RealSpxctator",
+    "location": "Photographer \u2022 Blogger \u2022 Gamer",
+    "description": "\u2022 Your Daily Dose of Bullshit \u2022 Founder of @SpxcRTs, @Spxclan, @Spxcgames & @Spxcmemes \u2022 https://t.co/OXC2Ez46Gx \u2022",
+    "url": "https://t.co/3IevUcEgBx",
+    "entities": {
+      "url": {
+        "urls": [
+          {
+            "url": "https://t.co/3IevUcEgBx",
+            "expanded_url": "http://steamcommunity.com/id/spxctator",
+            "display_url": "steamcommunity.com/id/spxctator",
+            "indices": [
+              0,
+              23
+            ]
+          }
+        ]
+      },
+      "description": {
+        "urls": [
+          {
+            "url": "https://t.co/OXC2Ez46Gx",
+            "expanded_url": "https://discord.gg/BrEjuXT",
+            "display_url": "discord.gg/BrEjuXT",
+            "indices": [
+              89,
+              112
+            ]
+          }
+        ]
+      }
+    },
+    "protected": false,
+    "followers_count": 14138,
+    "friends_count": 546,
+    "listed_count": 18,
+    "created_at": "Thu Sep 29 08:49:35 +0000 2016",
+    "favourites_count": 39993,
+    "utc_offset": null,
+    "time_zone": null,
+    "geo_enabled": false,
+    "verified": false,
+    "statuses_count": 17126,
+    "lang": "en",
+    "contributors_enabled": false,
+    "is_translator": false,
+    "is_translation_enabled": false,
+    "profile_background_color": "000000",
+    "profile_background_image_url": "http://abs.twimg.com/images/themes/theme1/bg.png",
+    "profile_background_image_url_https": "https://abs.twimg.com/images/themes/theme1/bg.png",
+    "profile_background_tile": false,
+    "profile_image_url": "http://pbs.twimg.com/profile_images/954661072077692928/i03sVHbA_normal.jpg",
+    "profile_image_url_https": "https://pbs.twimg.com/profile_images/954661072077692928/i03sVHbA_normal.jpg",
+    "profile_banner_url": "https://pbs.twimg.com/profile_banners/781415617224069120/1521450774",
+    "profile_link_color": "FFD700",
+    "profile_sidebar_border_color": "000000",
+    "profile_sidebar_fill_color": "000000",
+    "profile_text_color": "000000",
+    "profile_use_background_image": false,
+    "has_extended_profile": false,
+    "default_profile": false,
+    "default_profile_image": false,
+    "following": false,
+    "follow_request_sent": false,
+    "notifications": false,
+    "translator_type": "none"
+  },
+  "geo": null,
+  "coordinates": null,
+  "place": null,
+  "contributors": null,
+  "is_quote_status": false,
+  "retweet_count": 1038,
+  "favorite_count": 1017,
+  "favorited": false,
+  "retweeted": false,
+  "possibly_sensitive": false,
+  "possibly_sensitive_appealable": false,
+  "lang": "en"
+}

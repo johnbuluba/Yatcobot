@@ -3,7 +3,7 @@ import random
 import unittest
 from unittest.mock import patch
 
-from tests.helper_func import load_fixture_config
+from tests.helper_func import load_fixture_config, get_fixture
 from yatcobot.actions import Favorite, Follow
 from yatcobot.config import TwitterConfig
 
@@ -17,8 +17,8 @@ class TestFollow(unittest.TestCase):
     def setUp(self, config_mock, client_mock):
         self.config = config_mock
         self.client = client_mock
-        self.action = Follow(self.client)
         load_fixture_config()
+        self.action = Follow(self.client)
 
     def test_follow(self):
         TwitterConfig.get()['actions']['follow']['keywords'] = [' follow ']
@@ -66,6 +66,17 @@ class TestFollow(unittest.TestCase):
         self.action.remove_oldest_follow()
         self.client.unfollow.assert_called_with(TwitterConfig.get()['actions']['follow']['max_following'])
 
+    def test_multiple_follows(self):
+        TwitterConfig.get()['actions']['follow']['multiple'] = True
+
+        post = get_fixture('post_multiple_mentions.json')
+
+        self.action.process(post)
+
+        self.assertEqual(self.client.follow.call_count, 2)
+        for user in post['entities']['user_mentions']:
+            self.client.follow.assert_any_call(user['screen_name'])
+
 
 class TestFavorite(unittest.TestCase):
 
@@ -89,3 +100,4 @@ class TestFavorite(unittest.TestCase):
         self.action.process(post)
 
         self.client.favorite.assert_called_once_with(post['id'])
+

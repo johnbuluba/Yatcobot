@@ -84,6 +84,9 @@ Example config with default values:
           keywords: ["follow", "follower"]
           # When max_following is reached, will unfollow oldest follows
           max_following: 1950
+          # Follow multiple accounts from a single post
+          # Experimental feature, please open issue with example post id if unusual behavior is observed
+          multiple: false          
         # Favorite the post
         favorite:
           # If this action is enabled
@@ -265,6 +268,19 @@ keywords
 ^^^^^^^^
 These keywords are searched inside the tweet's text to determinate if
 it is needed to follow the original poster.
+
+max_following
+^^^^^^^^^^^^^
+After this number of following users is reached, will start to unfollow the oldest follows
+
+
+multiple
+^^^^^^^^
+When this option is enabled, all users that are mentioned in the post will be followed
+
+
+**Warning**: `this is an experimental feature. Please open issue with example post id if unusual behavior is observed`
+
 
 
 favorite
