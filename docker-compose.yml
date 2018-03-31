@@ -2,7 +2,7 @@ version: '3'
 
 services:
   yatcobot:
-    image: buluba89/yatcobot:dev
+    image: buluba89/yatcobot:alpine
     volumes:
       - bot-data:/yatcobot
       - ./config.yaml:/yatcobot/config.yaml
