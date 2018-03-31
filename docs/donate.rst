@@ -6,6 +6,8 @@ Please donate to support the development if you find this software useful (`or i
 
 |Flattr this git repo|
 
+|Donate with Patreon|
+
 |Donate with Paypal|
 
 |Donate with Bitcoin|
