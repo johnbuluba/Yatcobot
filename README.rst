@@ -56,12 +56,15 @@ Before starting you must get api keys from twitter. You can get these keys from 
 You must create a config named `config.yaml` and must at least set the api keys. A minimal config.yaml is
 
 .. code-block:: yaml
+
     twitter:
         consumer_key: your_consumer_key
         consumer_secret: your_consumer_secret
         access_token_key: your_access_token
         access_token_secret: your_access_token_secret
     
+
+You can edit config.sample.yaml that is placed in the root of the project (`dont forget to rename it to config.yaml`) or view the sample `on github <https://github.com/buluba89/Yatcobot/blob/master/config.sample.yaml>`_
 
 
 Run
@@ -134,3 +137,8 @@ Please donate to support the development if you find this software useful (`or i
   :height: 100px
   :alt: logo
   :scale: 50 %
+
+Licence
+=======
+
+This program is released under GPL v2

@@ -64,7 +64,7 @@ You must create a config named `config.yaml` and must at least set the api keys.
         access_token_key: your_access_token
         access_token_secret: your_access_token_secret
     
-
+You can edit config.sample.yaml that is placed in the root of the project (`dont forget to rename it to config.yaml`) or view the sample `on github <https://github.com/buluba89/Yatcobot/blob/master/config.sample.yaml>`_
 
 Run
 ===
@@ -140,4 +140,6 @@ Please donate to support the development if you find this software useful (`or i
    :target: https://travis-ci.org/buluba89/Yatcobot
 .. |codecov.io| image:: https://codecov.io/gh/buluba89/Yatcobot/branch/master/graph/badge.svg
   :target: https://codecov.io/gh/buluba89/Yatcobot
+
+
 
