@@ -30,5 +30,37 @@ def main():
         exit(1)
 
     TwitterConfig.load(args.config)
+    print_logo()
     bot = Yatcobot(args.ignore_list)
     bot.run()
+
+
+def print_logo():
+    logger.info(
+        '''
+
+                                                                                                
+                                  .:clcllcll;.                                  
+                                ;xc.        .ld'                                
+                              .k:     .'..     xd                               
+                              x;    cdcc:cx,    xc                              
+                             .WolllxO 0oko.XolllxO                              
+                              X,...;0.llo,,O....lO                              
+                             l0x    .lllclc     0O;                             
+                            OOkOk'            :OOdXl                            
+                         .dkK;K' col,.    .;ld, oO:Xdo                          
+                         ,o.kWl    :XdX0XOdK.   .xNc.k.                         
+                           ,l:    :kO:kOXd:0o,    cl'                           
+                                 :O    kl   .K.                                 
+                                 .llllllllllll.                                 
+                                                                                
+                                                   ';                           
+                       cd                          o0                   'O      
+ 'K.    Oc  cOlcdO.   cXKccc    dxccok'  .xdccxk.  oXcclkk   ,koclkl   ;ONccc.  
+  ;K.  Ok   .',;;Xl    Ok      dX    .   OO    0k  oX    Kl .N:   .W;   oK      
+   lK.dO   .No'..Xl    Ok      xX    ..  OO    OO  oK    Kl .W;   .W;   oK      
+    oX0    .No,:l0O.   oK;,;.  .Ok;,lK;  .0d,,x0.  oNo;,xK.  :0c,:Ox    ;N:,,.  
+    ;X.      .'.  '.    .''.     ..'.      .''.     . .'.      .'.       .''. 
+        
+        '''
+    )
