@@ -40,10 +40,9 @@ def main():
 
 
 def print_logo():
+    # Figlet font: Standard
     logger.info(
-        '''
-
-                                                                                                
+        '''                                                        
                                   .:clcllcll;.                                  
                                 ;xc.        .ld'                                
                               .k:     .'..     xd                               
@@ -58,13 +57,11 @@ def print_logo():
                                  :O    kl   .K.                                 
                                  .llllllllllll.                                 
                                                                                 
-                                                   ';                           
-                       cd                          o0                   'O      
- 'K.    Oc  cOlcdO.   cXKccc    dxccok'  .xdccxk.  oXcclkk   ,koclkl   ;ONccc.  
-  ;K.  Ok   .',;;Xl    Ok      dX    .   OO    0k  oX    Kl .N:   .W;   oK      
-   lK.dO   .No'..Xl    Ok      xX    ..  OO    OO  oK    Kl .W;   .W;   oK      
-    oX0    .No,:l0O.   oK;,;.  .Ok;,lK;  .0d,,x0.  oNo;,xK.  :0c,:Ox    ;N:,,.  
-    ;X.      .'.  '.    .''.     ..'.      .''.     . .'.      .'.       .''. 
-        
-        '''
+                                 _            _           _
+                     _   _  __ _| |_ ___ ___ | |__   ___ | |_
+                    | | | |/ _` | __/ __/ _ \| '_ \ / _ \| __|
+                    | |_| | (_| | || (_| (_) | |_) | (_) | |_
+                     \__, |\__,_|\__\___\___/|_.__/ \___/ \__|
+                     |___/
+ '''
     )
