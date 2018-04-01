@@ -161,7 +161,7 @@ class TagFriend(ActionABC):
         elif amount in ['three', '3']:
             return 3
         elif amount in ['four', '4']:
-            return 3
+            return 4
 
         raise ValueError('Could not determinate how many tags are needed')
 

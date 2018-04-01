@@ -120,6 +120,9 @@ class TestTagFriend(unittest.TestCase):
         post['full_text'] = " Testestset asdasda testesadst astagaring!"
         self.assertFalse(self.action.tag_needed(post))
 
+        post['full_text'] = " Testestset tag testesadst astagaring!"
+        self.assertFalse(self.action.tag_needed(post))
+
     def test_friends_required(self):
 
         post = {'full_text': 'friend test test! #test tag or not a friend and tag a friend'}
@@ -158,9 +161,16 @@ class TestTagFriend(unittest.TestCase):
         self.assertEqual(self.client.update.call_count, 2)
 
     def test_process_with_error_cannot_find_substring(self):
-        post = {'full_text': 'sdfsdfsj tag three two friend'}
+        post = {'full_text': 'sdfsdfsj tag three two friend', 'id': 'test'}
+        self.action.process(post)
         self.assertFalse(self.client.update.called)
 
     def test_process_with_error_cannot_find_number(self):
-        post = {'full_text': 'sdfsdfsj tag three two friend'}
+        post = {'full_text': 'sdfsdfsj tag three two friend', 'id': 'test'}
+        self.action.process(post)
+        self.assertFalse(self.client.update.called)
+
+    def test_process_with_error_not_enough_friends(self):
+        post = {'full_text': 'sdfsdfsj tag four friend', 'id': 'test'}
+        self.action.process(post)
         self.assertFalse(self.client.update.called)
