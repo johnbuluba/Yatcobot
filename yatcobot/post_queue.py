@@ -45,6 +45,13 @@ class PostQueue(OrderedDict):
         Will sort the queue based on the options provided in config
 
         """
+        # If len < 2, StatisticsError('variance requires at least two data points')
+        if len(self) < 2:
+            # Set a predefined score
+            for x in self.values():
+                x['score'] = 1
+            return
+
         combined_rates = self.combine_rates(*(method.get_rates(self) for method in self.rating_methods))
 
         sorted_rates = sorted((x for x in combined_rates.items()), key=lambda x: x[1], reverse=True)

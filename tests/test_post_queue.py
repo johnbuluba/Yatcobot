@@ -26,6 +26,20 @@ class TestPostQueueSorter(unittest.TestCase):
         for post in queue.values():
             self.assertLessEqual(post['score'], previous['score'])
 
+    def test_sort_queue_len_1(self):
+        """If less than 2, raises StatisticsError('variance requires at least two data points')"""
+        posts = dict()
+        post = create_post()
+        posts[post['id']] = post
+
+        queue = PostQueue(posts)
+
+        queue.sort()
+
+        key, previous = queue.popitem(last=False)
+        for post in queue.values():
+            self.assertLessEqual(post['score'], previous['score'])
+
     def test_filter_queue(self):
         TwitterConfig.get()['search']['filter']['min_retweets']['enabled'] = True
         TwitterConfig.get()['search']['filter']['min_retweets']['number'] = 5
