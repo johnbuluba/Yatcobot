@@ -308,7 +308,7 @@ tag_friend
 
 enabled
 ^^^^^^^
-If the tag firend action is enabled
+If the tag friend action is enabled
 
 friends
 ^^^^^^^^

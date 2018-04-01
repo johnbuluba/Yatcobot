@@ -138,7 +138,7 @@ class TestTagFriend(unittest.TestCase):
 
         post = get_fixture('post_tag_one_friend.json')
         self.action.process(post)
-        self.client.update.assert_called_once()
+        self.assertEqual(self.client.update.call_count, 1)
 
 
 
