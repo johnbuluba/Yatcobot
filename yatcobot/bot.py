@@ -2,7 +2,7 @@ import difflib
 import logging
 from collections import OrderedDict
 
-from .actions import Favorite, Follow
+from .actions import Favorite, Follow, TagFriend
 from .client import TwitterClient, TwitterClientRetweetedException
 from .config import TwitterConfig
 from .ignorelist import IgnoreList
@@ -26,7 +26,7 @@ class Yatcobot():
                                     TwitterConfig.get()['access_token_secret'])
         self.scheduler = PeriodicScheduler()
         self.notification = NotificationService()
-        self.actions = [Follow(self.client), Favorite(self.client)]
+        self.actions = [Follow(self.client), Favorite(self.client), TagFriend(self.client)]
         self.last_mention = None
 
     def enter_contest(self):

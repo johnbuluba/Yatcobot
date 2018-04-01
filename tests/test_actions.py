@@ -4,7 +4,7 @@ import unittest
 from unittest.mock import patch
 
 from tests.helper_func import load_fixture_config, get_fixture
-from yatcobot.actions import Favorite, Follow, TagFriendAction
+from yatcobot.actions import Favorite, Follow, TagFriend
 from yatcobot.config import TwitterConfig
 
 logging.disable(logging.ERROR)
@@ -110,7 +110,7 @@ class TestTagFriend(unittest.TestCase):
         load_fixture_config()
         self.config = config_mock
         self.client = client_mock
-        self.action = TagFriendAction(self.client)
+        self.action = TagFriend(self.client)
 
     def test_tag_needed(self):
 
@@ -134,12 +134,30 @@ class TestTagFriend(unittest.TestCase):
         post = {'full_text': 'hsdfsfsffrient sntagf friend and TAG two friends sfsdf'}
         self.assertEqual(self.action.get_friends_required(post), 2)
 
+        post = {'full_text': 'hsdfsfsffrient sntagf friend and TAG 3 friends sfsdf'}
+        self.assertEqual(self.action.get_friends_required(post), 3)
+
+        post = {'full_text': 'hsdfsfsffrient sntagf friend and TAG THREE friends sfsdf'}
+        self.assertEqual(self.action.get_friends_required(post), 3)
+
+        with self.assertRaises(ValueError):
+            post = {'full_text': 'sdfsdfsj tag sdfjshd friend'}
+            self.action.get_friends_required(post)
+
+        with self.assertRaises(ValueError):
+            post = {'full_text': 'sdfsdfsj tag three two friend'}
+            self.action.get_friends_required(post)
+
     def test_process(self):
 
         post = get_fixture('post_tag_one_friend.json')
         self.action.process(post)
         self.assertEqual(self.client.update.call_count, 1)
 
+    def test_process_with_error_cannot_find_substring(self):
+        post = {'full_text': 'sdfsdfsj tag three two friend'}
+        self.assertFalse(self.client.update.called)
 
-
-
+    def test_process_with_error_cannot_find_number(self):
+        post = {'full_text': 'sdfsdfsj tag three two friend'}
+        self.assertFalse(self.client.update.called)

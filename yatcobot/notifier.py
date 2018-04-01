@@ -3,7 +3,7 @@ from abc import ABCMeta, abstractmethod, abstractstaticmethod, abstractclassmeth
 
 from pushbullet import PushBullet
 
-from .config import TwitterConfig, NotifiersConfig
+from .config import NotifiersConfig
 
 logger = logging.getLogger(__name__)
 

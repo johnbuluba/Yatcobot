@@ -1,10 +1,9 @@
-import os.path
 import logging
 
 import confuse
+import os.path
 import pkg_resources
 import yaml
-
 
 logger = logging.getLogger(__name__)
 

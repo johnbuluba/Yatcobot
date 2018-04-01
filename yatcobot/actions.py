@@ -1,7 +1,8 @@
 import logging
+import random
 from abc import ABC, abstractmethod
 from itertools import product
-import random
+
 from .config import TwitterConfig
 from .utils import create_keyword_mutations
 
@@ -79,7 +80,7 @@ class Favorite(ActionABC):
             logger.info("Favorite: {0}".format(post['id']))
 
 
-class TagFriendAction(ActionABC):
+class TagFriend(ActionABC):
     """
     Tag one ore more friends in the comments
     """
@@ -102,8 +103,8 @@ class TagFriendAction(ActionABC):
             self.tag_friends(post, number)
         except ValueError:
             logger.error('Error tagging friend for post {}. Please please open an issue with this message on github'
-                         . format(post['id']))
-        except TagFriendAction.NotEnoughFriends:
+                         .format(post['id']))
+        except TagFriend.NotEnoughFriends:
             logger.error('Not enough friends are defined for tagging on post: {}, {} are needed. Define more friends'
                          .format(post['id'], number))
 
@@ -157,7 +158,7 @@ class TagFriendAction(ActionABC):
             return 1
         elif amount in ['two', '2']:
             return 2
-        elif amount in ['three', 3]:
+        elif amount in ['three', '3']:
             return 3
 
         raise ValueError('Could not determinate how many tags are needed')
@@ -165,7 +166,7 @@ class TagFriendAction(ActionABC):
     def tag_friends(self, post, number):
 
         if len(TwitterConfig.get().actions.tag_friend.friends) < number:
-            raise TagFriendAction.NotEnoughFriends('Not enough friends')
+            raise TagFriend.NotEnoughFriends('Not enough friends')
 
         # Copy friends list
         friends = list(TwitterConfig.get().actions.tag_friend.friends)
