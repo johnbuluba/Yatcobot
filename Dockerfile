@@ -2,11 +2,20 @@ FROM python:3
 
 MAINTAINER buluba89
 
-ADD . /build
+RUN mkdir /build &&\
+    pip3 install pipenv
+
+ADD Pipfile* /build/
 
 RUN cd /build &&\
-    pip3 install pipenv &&\
-    pipenv install --system &&\
+    pipenv install --system
+
+
+ADD requirements.txt README.rst setup.py /build/
+
+ADD yatcobot /build/yatcobot
+
+RUN cd /build &&\
     python setup.py install
 
 
