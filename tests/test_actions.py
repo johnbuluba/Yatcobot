@@ -149,10 +149,13 @@ class TestTagFriend(unittest.TestCase):
             self.action.get_friends_required(post)
 
     def test_process(self):
-
         post = get_fixture('post_tag_one_friend.json')
         self.action.process(post)
         self.assertEqual(self.client.update.call_count, 1)
+
+        post = get_fixture('post_tag_friend.json')
+        self.action.process(post)
+        self.assertEqual(self.client.update.call_count, 2)
 
     def test_process_with_error_cannot_find_substring(self):
         post = {'full_text': 'sdfsdfsj tag three two friend'}

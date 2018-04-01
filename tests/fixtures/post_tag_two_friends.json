@@ -1,0 +1,217 @@
+{
+  "created_at": "Thu Mar 29 15:38:02 +0000 2018",
+  "id": 979382181062692870,
+  "id_str": "979382181062692870",
+  "full_text": "WEEKLY GIVEAWAY! Win: AK-47 | Point Disarray \ud83d\ude0d\n\n\u2705 Follow @csgogpc\n\u2705 Retweet &amp; Like\n\u2705 Tag 2 Friends\n\nWinner will be announced in 72h! Good luck \u270c\ufe0f \n#CSGOGiveaway #csgoskins #CSGO https://t.co/hYCssx8V2J",
+  "truncated": false,
+  "display_text_range": [
+    0,
+    181
+  ],
+  "entities": {
+    "hashtags": [
+      {
+        "text": "CSGOGiveaway",
+        "indices": [
+          151,
+          164
+        ]
+      },
+      {
+        "text": "csgoskins",
+        "indices": [
+          165,
+          175
+        ]
+      },
+      {
+        "text": "CSGO",
+        "indices": [
+          176,
+          181
+        ]
+      }
+    ],
+    "symbols": [],
+    "user_mentions": [
+      {
+        "screen_name": "csgogpc",
+        "name": "CSGOgpc.com",
+        "id": 971871371604234241,
+        "id_str": "971871371604234241",
+        "indices": [
+          57,
+          65
+        ]
+      }
+    ],
+    "urls": [],
+    "media": [
+      {
+        "id": 979382111361781760,
+        "id_str": "979382111361781760",
+        "indices": [
+          182,
+          205
+        ],
+        "media_url": "http://pbs.twimg.com/media/DZd2118XUAACgHa.jpg",
+        "media_url_https": "https://pbs.twimg.com/media/DZd2118XUAACgHa.jpg",
+        "url": "https://t.co/hYCssx8V2J",
+        "display_url": "pic.twitter.com/hYCssx8V2J",
+        "expanded_url": "https://twitter.com/csgogpc/status/979382181062692870/photo/1",
+        "type": "photo",
+        "sizes": {
+          "small": {
+            "w": 680,
+            "h": 255,
+            "resize": "fit"
+          },
+          "thumb": {
+            "w": 150,
+            "h": 150,
+            "resize": "crop"
+          },
+          "large": {
+            "w": 1600,
+            "h": 600,
+            "resize": "fit"
+          },
+          "medium": {
+            "w": 1200,
+            "h": 450,
+            "resize": "fit"
+          }
+        }
+      }
+    ]
+  },
+  "extended_entities": {
+    "media": [
+      {
+        "id": 979382111361781760,
+        "id_str": "979382111361781760",
+        "indices": [
+          182,
+          205
+        ],
+        "media_url": "http://pbs.twimg.com/media/DZd2118XUAACgHa.jpg",
+        "media_url_https": "https://pbs.twimg.com/media/DZd2118XUAACgHa.jpg",
+        "url": "https://t.co/hYCssx8V2J",
+        "display_url": "pic.twitter.com/hYCssx8V2J",
+        "expanded_url": "https://twitter.com/csgogpc/status/979382181062692870/photo/1",
+        "type": "photo",
+        "sizes": {
+          "small": {
+            "w": 680,
+            "h": 255,
+            "resize": "fit"
+          },
+          "thumb": {
+            "w": 150,
+            "h": 150,
+            "resize": "crop"
+          },
+          "large": {
+            "w": 1600,
+            "h": 600,
+            "resize": "fit"
+          },
+          "medium": {
+            "w": 1200,
+            "h": 450,
+            "resize": "fit"
+          }
+        }
+      }
+    ]
+  },
+  "source": "<a href=\"http://twitter.com\" rel=\"nofollow\">Twitter Web Client</a>",
+  "in_reply_to_status_id": null,
+  "in_reply_to_status_id_str": null,
+  "in_reply_to_user_id": null,
+  "in_reply_to_user_id_str": null,
+  "in_reply_to_screen_name": null,
+  "user": {
+    "id": 971871371604234241,
+    "id_str": "971871371604234241",
+    "name": "CSGOgpc.com",
+    "screen_name": "csgogpc",
+    "location": "Giveaways & Affiliate Codes",
+    "description": "Official twitter of https://t.co/D2xTsNGjKM  - Promo codes for each CSGO gambling site, you play! | business inquiries: DM's or csgogpc@gmail.com",
+    "url": "https://t.co/d7eVYZSnm2",
+    "entities": {
+      "url": {
+        "urls": [
+          {
+            "url": "https://t.co/d7eVYZSnm2",
+            "expanded_url": "http://csgogpc.com/",
+            "display_url": "csgogpc.com",
+            "indices": [
+              0,
+              23
+            ]
+          }
+        ]
+      },
+      "description": {
+        "urls": [
+          {
+            "url": "https://t.co/D2xTsNGjKM",
+            "expanded_url": "http://csgogpc.com",
+            "display_url": "csgogpc.com",
+            "indices": [
+              20,
+              43
+            ]
+          }
+        ]
+      }
+    },
+    "protected": false,
+    "followers_count": 1875,
+    "friends_count": 47,
+    "listed_count": 0,
+    "created_at": "Thu Mar 08 22:12:46 +0000 2018",
+    "favourites_count": 290,
+    "utc_offset": null,
+    "time_zone": null,
+    "geo_enabled": false,
+    "verified": false,
+    "statuses_count": 87,
+    "lang": "de",
+    "contributors_enabled": false,
+    "is_translator": false,
+    "is_translation_enabled": false,
+    "profile_background_color": "000000",
+    "profile_background_image_url": "http://abs.twimg.com/images/themes/theme1/bg.png",
+    "profile_background_image_url_https": "https://abs.twimg.com/images/themes/theme1/bg.png",
+    "profile_background_tile": false,
+    "profile_image_url": "http://pbs.twimg.com/profile_images/977181537648234503/NdqTKddK_normal.jpg",
+    "profile_image_url_https": "https://pbs.twimg.com/profile_images/977181537648234503/NdqTKddK_normal.jpg",
+    "profile_banner_url": "https://pbs.twimg.com/profile_banners/971871371604234241/1521813670",
+    "profile_link_color": "FAB81E",
+    "profile_sidebar_border_color": "000000",
+    "profile_sidebar_fill_color": "000000",
+    "profile_text_color": "000000",
+    "profile_use_background_image": false,
+    "has_extended_profile": false,
+    "default_profile": false,
+    "default_profile_image": false,
+    "following": true,
+    "follow_request_sent": false,
+    "notifications": false,
+    "translator_type": "none"
+  },
+  "geo": null,
+  "coordinates": null,
+  "place": null,
+  "contributors": null,
+  "is_quote_status": false,
+  "retweet_count": 778,
+  "favorite_count": 745,
+  "favorited": false,
+  "retweeted": true,
+  "possibly_sensitive": false,
+  "possibly_sensitive_appealable": false,
+  "lang": "en"
+}

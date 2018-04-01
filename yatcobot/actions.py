@@ -154,11 +154,13 @@ class TagFriend(ActionABC):
 
         amount = substring[1]
 
-        if amount in ['a', 'one', '1']:
+        if amount in ['a', 'one', '1', 'your']:
             return 1
         elif amount in ['two', '2']:
             return 2
         elif amount in ['three', '3']:
+            return 3
+        elif amount in ['four', '4']:
             return 3
 
         raise ValueError('Could not determinate how many tags are needed')

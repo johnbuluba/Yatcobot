@@ -5,7 +5,7 @@ from yatcobot.config import TwitterConfig, Config
 
 parser = argparse.ArgumentParser(description='Download a tweet to json')
 parser.add_argument('tweet_id', metavar='id', type=int)
-parser.add_argument('--config', '-c', dest='config', default='../config.json', help='Path of the config file')
+parser.add_argument('--config', '-c', dest='config', default='../config.yaml', help='Path of the config file')
 
 args = parser.parse_args()
 
