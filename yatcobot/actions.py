@@ -179,6 +179,7 @@ class TagFriend(ActionABC):
         for friend in friends[:number]:
             text += '@{} '.format(friend)
 
+        logger.info('Responding to {} with text:{}'.format(post['id'], text.replace('\n', ' ')))
         self.client.update(text, post['id'])
 
     def find_all(self, p, s):

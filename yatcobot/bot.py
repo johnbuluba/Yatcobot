@@ -26,7 +26,15 @@ class Yatcobot():
                                     TwitterConfig.get()['access_token_secret'])
         self.scheduler = PeriodicScheduler()
         self.notification = NotificationService()
-        self.actions = [Follow(self.client), Favorite(self.client), TagFriend(self.client)]
+
+        self.actions = list()
+        if TwitterConfig.get().actions.follow.enabled:
+            self.actions.append(Follow(self.client))
+        if TwitterConfig.get().actions.favorite.enabled:
+            self.actions.append(Favorite(self.client))
+        if TwitterConfig.get().actions.tag_friend.enabled:
+            self.actions.append(TagFriend(self.client))
+
         self.last_mention = None
 
     def enter_contest(self):
