@@ -5,6 +5,7 @@ import os
 from yatcobot import create_logger
 from yatcobot.bot import Yatcobot
 from yatcobot.config import TwitterConfig
+from yatcobot.notifier import MailNotifier
 
 logger = logging.getLogger(__name__)
 
@@ -14,6 +15,7 @@ def main():
     parser.add_argument('--config', '-c', dest='config', default='config.yaml', help='Path of the config file')
     parser.add_argument('--ignore_list', '-i', dest='ignore_list', default='ignorelist', help='Path of the ignore file')
     parser.add_argument('--log', dest='logfile', default=None, help='Path of log file')
+    parser.add_argument('--test-mail', action='store_true', dest='test_mail', default=False, help='Test mail settings')
     parser.add_argument('--debug', dest='debug', action='store_true', help='Enable debug')
 
     args = parser.parse_args()
@@ -33,6 +35,12 @@ def main():
     logger.info("Loading configuration")
     TwitterConfig.load(args.config)
     logger.info("Configuration loaded")
+
+    # Test mail settings and exit
+    if args.test_mail:
+        MailNotifier.from_config().test()
+        exit(1)
+
     logger.info("Starting")
     print_logo()
     bot = Yatcobot(args.ignore_list)

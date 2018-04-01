@@ -116,5 +116,21 @@ notifiers:
     enabled: false
     # Pushbullet api token
     token: my_pushbullet_token
+  # Email notifier
+  mail:
+    # If the notifier is enabled
+    enabled: false
+    # Email provider smpt server
+    host: smtp.provider.com
+    # Port
+    port: 25
+    # Use tls
+    tls: false
+    # Email username
+    username: sender_address@provider.com
+    # Email password
+    password: my_secure_password
+    # Notification recipient
+    recipient: sender_address@provider.com
 
 

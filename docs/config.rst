@@ -126,6 +126,22 @@ Example config with default values:
         enabled: false
         # Pushbullet api token
         token: my_pushbullet_token
+      # Email notifier
+      mail:
+        # If the notifier is enabled
+        enabled: false
+        # Email provider smpt server
+        host: smtp.provider.com
+        # Port
+        port: 25
+        # Use tls
+        tls: false
+        # Email username
+        username: sender_address@provider.com
+        # Email password
+        password: my_secure_password
+        # Notification recipient
+        recipient: sender_address@provider.com
         
 
 ----
@@ -380,4 +396,40 @@ if this notifier is enabled
 token
 ^^^^^
 the pushbullet api token
+
+mail
+Mail notifications !
+
+enabled
+^^^^^^^
+if this notifier is enabled
+
+host
+^^^^
+the hostname of the smtp server
+
+port
+^^^^
+port of the smtp server
+
+tls
+^^^
+enable tsl encryption
+
+username
+^^^^^^^^
+username to login to the smtp server
+
+
+password
+^^^^^^^^
+password for login
+
+
+recipient
+^^^^^^^^^
+email address of the notification recipient
+
+
+
 

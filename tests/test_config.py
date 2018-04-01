@@ -82,6 +82,15 @@ class TestNotifiersConfig(unittest.TestCase):
     def test_load_values(self):
         load_fixture_config()
 
-        # Notifiers
+        # Pushbullet
         self.assertEqual(NotifiersConfig.get().pushbullet.enabled, False)
         self.assertEqual(NotifiersConfig.get().pushbullet.token, "test")
+
+        # Email
+        self.assertEqual(NotifiersConfig.get().mail.enabled, False)
+        self.assertEqual(NotifiersConfig.get().mail.host, 'smtp.provider.com')
+        self.assertEqual(NotifiersConfig.get().mail.port, 25)
+        self.assertEqual(NotifiersConfig.get().mail.tls, False)
+        self.assertEqual(NotifiersConfig.get().mail.username, 'sender_address@provider.com')
+        self.assertEqual(NotifiersConfig.get().mail.password, 'my_secure_password')
+        self.assertEqual(NotifiersConfig.get().mail.recipient, 'sender_address@provider.com')

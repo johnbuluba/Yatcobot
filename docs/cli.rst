@@ -20,6 +20,7 @@ during launch
                             Path of the ignore file
       --log LOGFILE         Path of log file
       --debug               Enable debug
+      --test-mail           Test mail settings
 
 
 -h, --help
@@ -57,3 +58,7 @@ during launch
 --debug
 
     Enables verbose output. Used for debug purposes
+
+--test-mail
+
+    Send a test email to your mail notfication recipient

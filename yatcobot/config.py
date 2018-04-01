@@ -70,6 +70,15 @@ class Config:
             },
         },
         'notifiers': {
+            'mail': {
+                'enabled': confuse.TypeTemplate(bool),
+                'host': confuse.String(),
+                'port': confuse.Integer(),
+                'tls': confuse.TypeTemplate(bool),
+                'username': confuse.String(),
+                'password': confuse.String(),
+                'recipient': confuse.String()
+            },
             'pushbullet': {
                 'enabled': confuse.TypeTemplate(bool),
                 'token': confuse.String()

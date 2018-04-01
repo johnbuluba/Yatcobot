@@ -5,6 +5,10 @@ twitter:
   access_token_key: your_access_token_key_here
   access_token_secret: your_access_token_secret_here
 
+# These are all the available options
+# You dont need to uncomment all
+# Just the ones you want to override
+
 #  min_ratelimit_percent: 10
 
 #  search:
@@ -55,6 +59,13 @@ twitter:
 #  pushbullet:
 #    enabled: false
 #    token: my_pushbullet_token
-
+#  mail:
+#    enabled: false
+#    host: smtp.provider.com
+#    port: 25
+#    tls: false
+#    username: sender_address@provider.com
+#    password: my_secure_password
+#    recipient: sender_address@provider.com
 
 

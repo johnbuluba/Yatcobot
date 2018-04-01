@@ -16,7 +16,7 @@ class ActionABC(ABC):
 
     @abstractmethod
     def process(self, post):
-        raise NotImplementedError("Action must implement process")
+        """Action must implement process"""
 
 
 class Follow(ActionABC):

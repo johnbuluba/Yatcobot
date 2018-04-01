@@ -63,3 +63,13 @@ class TestCli(unittest.TestCase):
         yatcobot.cli.Yatcobot.assert_called_once_with('ignorelist')
         yatcobot.cli.create_logger.assert_called_once_with(logging.DEBUG, None)
         self.assertTrue(yatcobot.cli.Yatcobot.return_value.run.called)
+
+    def test_email(self):
+        sys.argv = [self.program_name, '--test-mail']
+        notifier_mock = MagicMock()
+        yatcobot.cli.MailNotifier = notifier_mock
+
+        with self.assertRaises(SystemExit):
+            main()
+
+        self.assertEqual(notifier_mock.from_config.return_value.test.call_count, 1)

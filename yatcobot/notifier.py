@@ -1,5 +1,7 @@
 import logging
-from abc import ABCMeta, abstractmethod, abstractstaticmethod, abstractclassmethod
+import smtplib
+from email.mime.text import MIMEText
+from abc import ABCMeta, abstractmethod
 
 from pushbullet import PushBullet
 
@@ -43,7 +45,7 @@ class AbstractNotifier(metaclass=ABCMeta):
         """Sends the message to the user"""
 
     @staticmethod
-    @abstractstaticmethod
+    @abstractmethod
     def is_enabled():
         """
         Returns if its enabled or not
@@ -51,7 +53,7 @@ class AbstractNotifier(metaclass=ABCMeta):
         """
 
     @classmethod
-    @abstractclassmethod
+    @abstractmethod
     def from_config(cls):
         """
         Instatiates a Notifier class using parameters from config
@@ -76,3 +78,49 @@ class PushbulletNotifier(AbstractNotifier):
     @classmethod
     def from_config(cls):
         return cls(NotifiersConfig.get().pushbullet.token)
+
+
+class MailNotifier(AbstractNotifier):
+
+    def __init__(self, host, port, tls, username, password, recipient):
+        self.host = host
+        self.port = port
+        self.tls = tls
+        self.username = username
+        self.password = password
+        self.recipient = recipient
+
+    def notify(self, title, message):
+        msg = MIMEText(message)
+        msg['Subject'] = title
+        msg['From'] = self.username
+        msg['To'] = self.recipient
+
+        with smtplib.SMTP(self.host, self.port) as server:
+            if self.tls:
+                server.starttls()
+            server.login(self.username, self.password)
+            server.send_message(msg)
+            logger.info('Email Notifier: sent notification to {}'.format(self.recipient))
+
+    def test(self):
+        """
+        Method to send a test email
+        """
+        self.notify('Yatcobot', 'If you see this, email services works!')
+
+    @staticmethod
+    def is_enabled():
+        if NotifiersConfig.get().mail.enabled:
+            return True
+        return False
+
+    @classmethod
+    def from_config(cls):
+        return cls(NotifiersConfig.get().mail.host,
+                   NotifiersConfig.get().mail.port,
+                   NotifiersConfig.get().mail.tls,
+                   NotifiersConfig.get().mail.username,
+                   NotifiersConfig.get().mail.password,
+                   NotifiersConfig.get().mail.recipient,
+                   )

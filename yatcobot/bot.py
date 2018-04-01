@@ -14,7 +14,7 @@ from .scheduler import PeriodicScheduler
 logger = logging.getLogger(__name__)
 
 
-class Yatcobot():
+class Yatcobot:
 
     def __init__(self, ignore_list_file):
 
