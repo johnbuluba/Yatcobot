@@ -1,6 +1,7 @@
 import logging
 from abc import ABC, abstractmethod
-
+from itertools import product
+import random
 from .config import TwitterConfig
 from .utils import create_keyword_mutations
 
@@ -76,3 +77,113 @@ class Favorite(ActionABC):
         if any(x in text.lower() for x in keywords):
             r = self.client.favorite(post['id'])
             logger.info("Favorite: {0}".format(post['id']))
+
+
+class TagFriendAction(ActionABC):
+    """
+    Tag one ore more friends in the comments
+    """
+
+    class NotEnoughFriends(Exception):
+        pass
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if TwitterConfig.get().actions.tag_friend.enabled:
+            logger.warning('Experimental feature actions.tag_friend is enabled.')
+            logger.warning('If unwanted behavior is observed, please open an issue on github along with the post id!')
+
+    def process(self, post):
+        if not self.tag_needed(post):
+            return
+        try:
+            number = self.get_friends_required(post)
+            self.tag_friends(post, number)
+        except ValueError:
+            logger.error('Error tagging friend for post {}. Please please open an issue with this message on github'
+                         . format(post['id']))
+        except TagFriendAction.NotEnoughFriends:
+            logger.error('Not enough friends are defined for tagging on post: {}, {} are needed. Define more friends'
+                         .format(post['id'], number))
+
+    def tag_needed(self, post):
+        text = post['full_text'].lower()
+
+        tag_keywords = sum((create_keyword_mutations(x) for x in ['tag']), [])
+        if not any(x in text for x in tag_keywords):
+            return False
+
+        friend_keywords = sum((create_keyword_mutations(x) for x in ['friend', 'friends']), [])
+        if not any(x in text for x in friend_keywords):
+            return False
+
+        return True
+
+    def get_friends_required(self, post):
+        text = post['full_text'].lower().replace('\n', ' ').replace('\r', '')
+
+        # Create keyword mutations
+        tag_keywords = sum((create_keyword_mutations(x) for x in ['tag']), [])
+        friend_keywords = sum((create_keyword_mutations(x) for x in ['friend', 'friends']), [])
+
+        # Find all occurrences of the keywords
+        tag_keywords_found = sorted(set(i for x in tag_keywords for i in self.find_all(x, text)))
+        friend_keywords_found = sorted(set(i for x in friend_keywords for i in self.find_all(x, text)))
+
+        # Remove indexes of friend keyword that are before any tag keyword
+        friend_keywords_found = [x for x in friend_keywords_found if x > min(tag_keywords_found)]
+
+        # Create all combinations between occurances
+        indexes = list(product(tag_keywords_found, friend_keywords_found))
+
+        # Find where the two keywords are closest
+        closest_pair = [x for x in sorted(indexes, key=lambda x: x[1] - x[0]) if x[1] - x[0] > 0]
+        if len(closest_pair) == 0:
+            raise ValueError("Could not find substring")
+
+        closest_pair = closest_pair[0]
+
+        substring = text[closest_pair[0]: closest_pair[1]]
+
+        substring = substring.split(' ')
+
+        if len(substring) != 2:
+            raise ValueError('Could not find how many tag are needed')
+
+        amount = substring[1]
+
+        if amount in ['a', 'one', '1']:
+            return 1
+        elif amount in ['two', '2']:
+            return 2
+        elif amount in ['three', 3]:
+            return 3
+
+        raise ValueError('Could not determinate how many tags are needed')
+
+    def tag_friends(self, post, number):
+
+        if len(TwitterConfig.get().actions.tag_friend.friends) < number:
+            raise TagFriendAction.NotEnoughFriends('Not enough friends')
+
+        # Copy friends list
+        friends = list(TwitterConfig.get().actions.tag_friend.friends)
+
+        # Randomize order
+        random.shuffle(friends)
+
+        text = '@{}\n'.format(post['user']['screen_name'])
+
+        for friend in friends[:number]:
+            text += '@{} '.format(friend)
+
+        self.client.update(text, post['id'])
+
+    def find_all(self, p, s):
+        """Yields all the positions of
+        the pattern p in the string s."""
+        i = s.find(p)
+        while i != -1:
+            yield i
+            i = s.find(p, i + 1)

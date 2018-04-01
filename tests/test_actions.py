@@ -4,7 +4,7 @@ import unittest
 from unittest.mock import patch
 
 from tests.helper_func import load_fixture_config, get_fixture
-from yatcobot.actions import Favorite, Follow
+from yatcobot.actions import Favorite, Follow, TagFriendAction
 from yatcobot.config import TwitterConfig
 
 logging.disable(logging.ERROR)
@@ -100,4 +100,46 @@ class TestFavorite(unittest.TestCase):
         self.action.process(post)
 
         self.client.favorite.assert_called_once_with(post['id'])
+
+
+class TestTagFriend(unittest.TestCase):
+
+    @patch('yatcobot.bot.TwitterClient')
+    @patch('yatcobot.bot.TwitterConfig')
+    def setUp(self, config_mock, client_mock):
+        load_fixture_config()
+        self.config = config_mock
+        self.client = client_mock
+        self.action = TagFriendAction(self.client)
+
+    def test_tag_needed(self):
+
+        post = get_fixture('post_tag_one_friend.json')
+        self.assertTrue(self.action.tag_needed(post))
+
+        post['full_text'] = " Testestset asdasda testesadst astagaring!"
+        self.assertFalse(self.action.tag_needed(post))
+
+    def test_friends_required(self):
+
+        post = {'full_text': 'friend test test! #test tag or not a friend and tag a friend'}
+        self.assertEqual(self.action.get_friends_required(post), 1)
+
+        post = {'full_text': 'sfdsfsdhkjtag sdfskhsf friend tag ONE friend asdfsd sfsfd'}
+        self.assertEqual(self.action.get_friends_required(post), 1)
+
+        post = {'full_text': 'sfdsfsdhkjtag sdfskhsf friend tag 1 FRIEND asdfsd sfsfd'}
+        self.assertEqual(self.action.get_friends_required(post), 1)
+
+        post = {'full_text': 'hsdfsfsffrient sntagf friend and TAG two friends sfsdf'}
+        self.assertEqual(self.action.get_friends_required(post), 2)
+
+    def test_process(self):
+
+        post = get_fixture('post_tag_one_friend.json')
+        self.action.process(post)
+        self.client.update.assert_called_once()
+
+
+
 

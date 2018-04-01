@@ -44,6 +44,21 @@ class TestTwitterClient(unittest.TestCase):
         self.assertEqual(len(r), 4)
 
     @requests_mock.mock()
+    def test_update(self, m):
+        with open(self.tests_path + '/fixtures/statuses_update_reply.json') as f:
+            response = f.read()
+        m.post('https://api.twitter.com/1.1/statuses/update.json', text=response)
+        self.client.update('test', 2)
+
+        self.assertTrue(m.called)
+        self.assertEqual(m.call_count, 1)
+
+        history = m.request_history[0]
+        self.assertEqual(history.method, 'POST')
+        self.assertIn('test', history.text)
+        self.assertIn('2', history.text)
+
+    @requests_mock.mock()
     def test_retweet(self, m):
         with open(self.tests_path + '/fixtures/statuses_retweet.json') as f:
             response = f.read()

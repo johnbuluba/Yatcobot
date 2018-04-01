@@ -15,6 +15,7 @@ logging.disable(logging.ERROR)
 class TestConfig(unittest.TestCase):
 
     def test_load_without_user_config(self):
+        Config._valid = None
         with self.assertRaises(confuse.NotFoundError):
             Config.load()
 
@@ -58,10 +59,13 @@ class TestTwitterConfig(unittest.TestCase):
 
         # Actions
         self.assertEqual(TwitterConfig.get().actions.follow.enabled, True)
+        self.assertEqual(TwitterConfig.get().actions.follow.multiple, False)
         self.assertEqual(TwitterConfig.get().actions.follow.keywords, ["follow", "follower"])
         self.assertEqual(TwitterConfig.get().actions.follow.max_following, 1950)
         self.assertEqual(TwitterConfig.get().actions.favorite.enabled, True)
         self.assertEqual(TwitterConfig.get().actions.favorite.keywords, ["fav", "favorite"])
+        self.assertEqual(TwitterConfig.get().actions.tag_friend.enabled, True)
+        self.assertEqual(TwitterConfig.get().actions.tag_friend.friends, ["friend1", "friend2", "friend3"])
 
         # Scheduler
         self.assertEqual(TwitterConfig.get().scheduler.search_interval, 5400)

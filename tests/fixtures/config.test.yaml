@@ -37,6 +37,10 @@ twitter:
     favorite:
       enabled: true
       keywords: ["fav", "favorite"]
+    tag_friend:
+      enabled: true
+      friends: ["friend1", "friend2", "friend3"]
+
 
   scheduler:
     search_interval: 5400

@@ -93,6 +93,13 @@ Example config with default values:
           enabled: true
           # Keywords to search in post for favorite action
           keywords: ["fav", "favorite"]
+        #This action allows to tag friends when requested
+        tag_friend:
+          # If this action is enabled
+          enabled: false
+          # Friends usernames to tag. Bot will randomly pick the required number
+          # Usually maximum number of required tags is 3, so better define here 3 or more
+          friends: ["friend1", "friend2", "friend3"]        
     
       # Intervals of bot tasks
       scheduler:
@@ -294,6 +301,18 @@ keywords
 ^^^^^^^^
 These keywords are searched inside the tweet's text to determinate if
 it is needed to favorite the original post.
+
+
+tag_friend
+----------
+
+enabled
+^^^^^^^
+If the tag firend action is enabled
+
+friends
+^^^^^^^^
+The usernames of friends that will be tagged. A random username from this list is selected every time, so the more you add the better. **At least 3 are recomended** (giveaways dont ask more than 3 tags usually)
 
 
 ----

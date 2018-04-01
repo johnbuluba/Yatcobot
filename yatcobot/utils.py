@@ -14,4 +14,6 @@ def create_keyword_mutations(keyword):
     mutations.append('{},'.format(keyword))
     mutations.append('.{}'.format(keyword))
     mutations.append('{}.'.format(keyword))
+    mutations.append('{}!'.format(keyword))
+    mutations.append('!{}'.format(keyword))
     return mutations

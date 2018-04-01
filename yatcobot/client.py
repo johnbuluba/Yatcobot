@@ -119,6 +119,13 @@ class TwitterClient:
     def get_tweet(self, post_id):
         return self._api_call('statuses/show/:{}'.format(post_id))
 
+    def update(self, status, reply_id=None):
+        data = dict()
+        data['status'] = status
+        if reply_id is not None:
+            data['in_reply_to_status_id'] = reply_id
+        return self._api_call('statuses/update', parameters=data)
+
     def retweet(self, post_id):
         return self._api_call('statuses/retweet/:{}'.format(post_id))
 

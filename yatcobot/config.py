@@ -54,6 +54,10 @@ class Config:
                     'enabled': confuse.TypeTemplate(bool),
                     'keywords': confuse.StrSeq()
                 },
+                'tag_friend': {
+                    'enabled': confuse.TypeTemplate(bool),
+                    'friends': confuse.StrSeq(),
+                }
             },
 
             'scheduler': {

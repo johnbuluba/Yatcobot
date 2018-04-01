@@ -47,8 +47,21 @@ And run with
 For more command line options (See more at :doc:`cli`)
 
 
+Pip
+===
+
+Yatcobot is distributed as a pip package. To install with pip:
+
+.. code-block:: bash
+    
+    pip3 install yatcobot
+
+Pip installs the package in your PATH you can call *yatcobot* from anywhere
+
+
+
 Usage with Docker
------------------
+=================
 
 To run container use like below
 
