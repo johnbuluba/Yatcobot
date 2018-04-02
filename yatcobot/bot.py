@@ -57,7 +57,13 @@ class Yatcobot:
                 logger.info("Blocked user's tweet skipped")
                 return
             try:
-                self.client.retweet(post['id'])
+                # Get post to refresh retweeted value
+                post = self.client.get_tweet(post['id'])
+
+                if not post['retweeted']:
+                    self.client.retweet(post['id'])
+                else:
+                    logger.error("Alredy retweeted tweet with id {}".format(post['id']))
                 self.ignore_list.append(post['id'])
             except TwitterClientRetweetedException:
                 self.ignore_list.append(post['id'])
