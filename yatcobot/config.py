@@ -22,6 +22,7 @@ class Config:
                 'max_queue': confuse.Integer(),
                 'max_quote_depth': confuse.Integer(),
                 'min_quote_similarity': confuse.Number(),
+                'skip_retweeted': confuse.TypeTemplate(bool),
                 'filter': {
                     'min_retweets': {
                         'enabled': confuse.TypeTemplate(bool),

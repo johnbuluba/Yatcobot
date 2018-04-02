@@ -27,6 +27,11 @@ twitter:
       - RT to win
       - Retweet and win
       - Giveaway retweet
+
+    # Will skip all retweeted post until it finds a new one
+    # Be ware, that it may use many api calls
+    skip_retweeted: false
+
     # Max tweets that holds the bot in memory to post
     max_queue: 100
 

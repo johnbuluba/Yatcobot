@@ -120,7 +120,7 @@ class TestBot(unittest.TestCase):
                                       }
         queue_copy = self.bot.post_queue.copy()
         self.bot.client.get_tweet = lambda x: queue_copy[x]
-        
+
         self.bot.enter_contest()
 
         self.assertEqual(len(self.bot.post_queue), posts - 1)
@@ -166,6 +166,48 @@ class TestBot(unittest.TestCase):
         self.assertFalse(self.bot.client.retweet.called)
 
         self.assertIn(0, self.bot.ignore_list)
+
+    def test_enter_contest_skip_already_retweeted(self):
+        TwitterConfig.get()['search']['skip_retweeted'] = True
+        posts = 10
+        self.bot.ignore_list = list()
+        for i in range(posts):
+            self.bot.post_queue[i] = {'id': i,
+                                      'full_text': 'test', 'score': 0,
+                                      'user': {'id': random.randint(1, 1000)},
+                                      'retweeted': True
+                                      }
+        self.bot.post_queue[9]['retweeted'] = False
+        queue_copy = self.bot.post_queue.copy()
+        self.bot.client.get_tweet = lambda x: queue_copy[x]
+
+        self.bot.enter_contest()
+
+        self.assertEqual(len(self.bot.post_queue), 0)
+        self.assertTrue(self.bot.client.retweet.called)
+        self.bot.client.retweet.assert_called_with(9)
+
+        self.assertListEqual([x for x in range(10)], self.bot.ignore_list)
+
+    def test_enter_contest_skip_already_retweeted_all_retweeted(self):
+        TwitterConfig.get()['search']['skip_retweeted'] = True
+        posts = 10
+        self.bot.ignore_list = list()
+        for i in range(posts):
+            self.bot.post_queue[i] = {'id': i,
+                                      'full_text': 'test', 'score': 0,
+                                      'user': {'id': random.randint(1, 1000)},
+                                      'retweeted': True
+                                      }
+        queue_copy = self.bot.post_queue.copy()
+        self.bot.client.get_tweet = lambda x: queue_copy[x]
+
+        self.bot.enter_contest()
+
+        self.assertEqual(len(self.bot.post_queue), 0)
+        self.assertFalse(self.bot.client.retweet.called)
+
+        self.assertListEqual([x for x in range(10)], self.bot.ignore_list)
 
     def test_enter_contest_ignored_id(self):
         posts = 10

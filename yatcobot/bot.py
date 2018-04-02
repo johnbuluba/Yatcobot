@@ -44,34 +44,50 @@ class Yatcobot:
 
         logger.info("Queue length: {}".format(len(self.post_queue)))
 
-        if len(self.post_queue) > 0:
-
+        while len(self.post_queue) > 0:
             post_id, post = self.post_queue.popitem(last=False)
+            score = post['score']
+            # Get post to refresh retweeted value
+            post = self.client.get_tweet(post['id'])
+            post['score'] = score
 
-            text = post['full_text'].replace('\n', '')
-            text = (text[:75] + '..') if len(text) > 75 else text
-            logger.info("Retweeting: {0} {1}".format(post['id'], text))
-            logger.debug("Tweet score: {}".format(post['score']))
+            # If post not retweeted retweet
+            if not post['retweeted']:
+                break
 
-            if post['user']['id'] in self.ignore_list:
-                logger.info("Blocked user's tweet skipped")
-                return
-            try:
-                # Get post to refresh retweeted value
-                post = self.client.get_tweet(post['id'])
+            # Post already retweeted save it to ignore list
+            self.ignore_list.append(post['id'])
 
-                if not post['retweeted']:
-                    self.client.retweet(post['id'])
-                else:
-                    logger.error("Alredy retweeted tweet with id {}".format(post['id']))
-                self.ignore_list.append(post['id'])
-            except TwitterClientRetweetedException:
-                self.ignore_list.append(post['id'])
-                logger.error("Alredy retweeted tweet with id {}".format(post['id']))
-                return
+            # If skip enabled, get next post from queue
+            if TwitterConfig.get().search.skip_retweeted:
+                logger.info('Skipping already retweeted post with id {}'.format(post_id))
+                continue
 
-            for action in self.actions:
-                action.process(post)
+            logger.error("Alredy retweeted tweet with id {}".format(post['id']))
+            return
+        else:
+            logger.warning('Queue empty')
+            return
+
+        text = post['full_text'].replace('\n', '')
+        text = (text[:75] + '..') if len(text) > 75 else text
+        logger.info("Retweeting: {0} {1}".format(post['id'], text))
+        logger.debug("Tweet score: {}".format(post['score']))
+
+        if post['user']['id'] in self.ignore_list:
+            logger.info("Blocked user's tweet skipped")
+            return
+        try:
+            self.client.retweet(post['id'])
+            self.ignore_list.append(post['id'])
+
+        except TwitterClientRetweetedException:
+            self.ignore_list.append(post['id'])
+            logger.error("Alredy retweeted tweet with id {}".format(post['id']))
+            return
+
+        for action in self.actions:
+            action.process(post)
 
     def clear_queue(self):
         """Removes the extraneous posts from the post_queue"""
@@ -210,10 +226,6 @@ class Yatcobot:
 
         # Get original post, if it is quoted
         post = self._get_quoted_tweet(post)
-
-        # Filter retweeted
-        if post['retweeted']:
-            return
 
         # Filter ids in ignore list
         if post['id'] in self.ignore_list:

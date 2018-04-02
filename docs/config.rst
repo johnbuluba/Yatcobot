@@ -38,6 +38,11 @@ Example config with default values:
           - RT to win
           - Retweet and win
           - Giveaway retweet
+
+        # Will skip all retweeted post until it finds a new one
+        # Be ware, that it may use many api calls
+        skip_retweeted: false
+
         # Max tweets that holds the bot in memory to post
         max_queue: 100
     
@@ -197,6 +202,11 @@ For example
           # You can set a language option for a query
           - Διαγωνισμός:
             lang: el
+
+skip_retweeted
+--------------
+
+If enabled the bot will try to find a non retweeted post in the queue until it finds one and retweet it. Beware that for every check an api call is required, so it may be a burst of api calls reaching the ratelimit.
 
 
 max_queue

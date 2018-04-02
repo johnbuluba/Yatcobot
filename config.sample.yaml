@@ -17,6 +17,7 @@ twitter:
 #      - Retweet and win
 #      - Giveaway retweet:
 #        lang:en
+#    skip_retweeted: false
 #    max_queue: 100
 #    max_quote_depth: 20
 #    min_quote_similarity: 0.5
