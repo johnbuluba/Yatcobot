@@ -22,10 +22,10 @@ class TestBot(unittest.TestCase):
     @patch('yatcobot.bot.IgnoreList')
     @patch('yatcobot.bot.TwitterConfig')
     def setUp(self, config_mock, ignore_list_mock, client_mock):
+        load_fixture_config()
         self.config = config_mock
         self.client = client_mock
         self.bot = Yatcobot('test')
-        load_fixture_config()
 
     def test_get_original_tweet_no_retweet(self):
         post = {'id': 1000}
@@ -115,26 +115,55 @@ class TestBot(unittest.TestCase):
         posts = 10
         for i in range(posts):
             self.bot.post_queue[i] = {'id': i, 'full_text': 'test', 'score': 0,
-                                      'user': {'id': random.randint(1, 1000), 'screen_name': 'test'}}
-
+                                      'user': {'id': random.randint(1, 1000), 'screen_name': 'test'},
+                                      'retweeted': False
+                                      }
+        queue_copy = self.bot.post_queue.copy()
+        self.bot.client.get_tweet = lambda x: queue_copy[x]
+        
         self.bot.enter_contest()
 
         self.assertEqual(len(self.bot.post_queue), posts - 1)
         self.assertTrue(self.bot.client.retweet.called)
         self.bot.client.retweet.assert_called_with(0)
 
-    def test_enter_contest_alredy_retweeted(self):
+    def test_enter_contest_already_retweeted_found_from_failed_retweet(self):
         posts = 10
         self.bot.ignore_list = list()
         for i in range(posts):
-            self.bot.post_queue[i] = {'id': i, 'full_text': 'test', 'score': 0, 'user': {'id': random.randint(1, 1000)}}
+            self.bot.post_queue[i] = {'id': i,
+                                      'full_text': 'test', 'score': 0,
+                                      'user': {'id': random.randint(1, 1000)},
+                                      'retweeted': False
+                                      }
+        queue_copy = self.bot.post_queue.copy()
         self.bot.client.retweet.side_effect = TwitterClientRetweetedException()
+        self.bot.client.get_tweet = lambda x: queue_copy[x]
 
         self.bot.enter_contest()
 
         self.assertEqual(len(self.bot.post_queue), posts - 1)
         self.assertTrue(self.bot.client.retweet.called)
         self.bot.client.retweet.assert_called_with(0)
+
+        self.assertIn(0, self.bot.ignore_list)
+
+    def test_enter_contest_already_retweeted_found_from_getting_post(self):
+        posts = 10
+        self.bot.ignore_list = list()
+        for i in range(posts):
+            self.bot.post_queue[i] = {'id': i,
+                                      'full_text': 'test', 'score': 0,
+                                      'user': {'id': random.randint(1, 1000)},
+                                      'retweeted': True
+                                      }
+        queue_copy = self.bot.post_queue.copy()
+        self.bot.client.get_tweet = lambda x: queue_copy[x]
+
+        self.bot.enter_contest()
+
+        self.assertEqual(len(self.bot.post_queue), posts - 1)
+        self.assertFalse(self.bot.client.retweet.called)
 
         self.assertIn(0, self.bot.ignore_list)
 
