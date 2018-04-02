@@ -5,7 +5,7 @@
 
 *The best bot for retweeting twitter giveaways!*
 
-|Build Status| |codecov.io|
+|Build Status| |codecov.io| |Codeclimate maintainability|
 
 
 | Do you want **free** stuff?
@@ -149,6 +149,9 @@ Please donate to support the development if you find this software useful (`or i
    :target: https://travis-ci.org/buluba89/Yatcobot
 .. |codecov.io| image:: https://codecov.io/gh/buluba89/Yatcobot/branch/master/graph/badge.svg
   :target: https://codecov.io/gh/buluba89/Yatcobot
+.. |Codeclimate maintainability| image:: https://api.codeclimate.com/v1/badges/a99a88d28ad37a79dbf6/maintainability
+   :target: https://codeclimate.com/github/buluba89/Yatcobot/maintainability
+   :alt: Maintainability
 .. |logo| image:: https://thumb.ibb.co/hLfUvS/Screenshot_from_2018_03_30_04_47_49.png
   :height: 100px
   :alt: logo

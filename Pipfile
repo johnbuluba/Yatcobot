@@ -10,6 +10,7 @@ requests-oauthlib = ">=0.5.0"
 python-dateutil = ">=2.4.2"
 "pushbullet.py" = ">=0.8.1"
 confuse = "*"
+coverage = "==4.3"
 
 [dev-packages]
 requests-mock = "*"
