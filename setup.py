@@ -14,7 +14,7 @@ with open(path.join(root_path, 'README.rst'), encoding='utf-8') as f:
 setup(
     name='Yatcobot',
 
-    version='2.2.16',
+    version='2.2.17',
 
     description='The best bot for searching twitter contests and automatically retweet them',
 
