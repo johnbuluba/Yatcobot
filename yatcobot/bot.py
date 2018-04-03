@@ -2,7 +2,7 @@ import difflib
 import logging
 from collections import OrderedDict
 
-from .actions import Favorite, Follow, TagFriend
+from .actions import Favorite, Follow, TagFriend, ActionABC
 from .client import TwitterClient, TwitterClientRetweetedException
 from .config import TwitterConfig
 from .ignorelist import IgnoreList
@@ -27,13 +27,7 @@ class Yatcobot:
         self.scheduler = PeriodicScheduler()
         self.notification = NotificationService()
 
-        self.actions = list()
-        if TwitterConfig.get().actions.follow.enabled:
-            self.actions.append(Follow(self.client))
-        if TwitterConfig.get().actions.favorite.enabled:
-            self.actions.append(Favorite(self.client))
-        if TwitterConfig.get().actions.tag_friend.enabled:
-            self.actions.append(TagFriend(self.client))
+        self.actions = ActionABC.get_enabled(self.client)
 
         self.last_mention = None
 

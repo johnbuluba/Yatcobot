@@ -18,6 +18,20 @@ class ActionABC(ABC):
     def process(self, post):
         """Action must implement process"""
 
+    @staticmethod
+    @abstractmethod
+    def is_enabled():
+        """Action must implement is_enabled"""
+
+    @staticmethod
+    def get_enabled(client):
+        """Retuns a list of instances of actions that are enabled"""
+        enabled = list()
+        for cls in ActionABC.__subclasses__():
+            if cls.is_enabled():
+                enabled.append(cls(client))
+        return enabled
+
 
 class Follow(ActionABC):
     """
@@ -66,6 +80,10 @@ class Follow(ActionABC):
             self.client.follow(post['user']['screen_name'])
             logger.info("Follow: {0}".format(post['user']['screen_name']))
 
+    @staticmethod
+    def is_enabled():
+        return TwitterConfig.get().actions.follow.enabled
+
 
 class Favorite(ActionABC):
     """
@@ -78,6 +96,10 @@ class Favorite(ActionABC):
         if any(x in text.lower() for x in keywords):
             r = self.client.favorite(post['id'])
             logger.info("Favorite: {0}".format(post['id']))
+
+    @staticmethod
+    def is_enabled():
+        return TwitterConfig.get().actions.favorite.enabled
 
 
 class TagFriend(ActionABC):
@@ -186,3 +208,8 @@ class TagFriend(ActionABC):
         while i != -1:
             yield i
             i = s.find(p, i + 1)
+
+
+    @staticmethod
+    def is_enabled():
+        return TwitterConfig.get().actions.tag_friend.enabled

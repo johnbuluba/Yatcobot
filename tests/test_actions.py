@@ -4,10 +4,30 @@ import unittest
 from unittest.mock import patch
 
 from tests.helper_func import load_fixture_config, get_fixture
-from yatcobot.actions import Favorite, Follow, TagFriend
+from yatcobot.actions import Favorite, Follow, TagFriend, ActionABC
 from yatcobot.config import TwitterConfig
 
 logging.disable(logging.ERROR)
+
+
+class TestActionABC(unittest.TestCase):
+
+    @patch('yatcobot.bot.TwitterClient')
+    @patch('yatcobot.bot.TwitterConfig')
+    def setUp(self, config_mock, client_mock):
+        self.config = config_mock
+        self.client = client_mock
+        load_fixture_config()
+        self.action = Follow(self.client)
+
+    def test_get_enabled(self):
+        for action in TwitterConfig.get().actions.values():
+            action['enabled'] = True
+        self.assertEqual(len(ActionABC.get_enabled(self.client)), len(TwitterConfig.get().actions))
+
+        for action in TwitterConfig.get().actions.values():
+            action['enabled'] = False
+        self.assertEqual(len(ActionABC.get_enabled(self.client)), 0)
 
 
 class TestFollow(unittest.TestCase):
@@ -77,6 +97,13 @@ class TestFollow(unittest.TestCase):
         for user in post['entities']['user_mentions']:
             self.client.follow.assert_any_call(user['screen_name'])
 
+    def test_enabled(self):
+        TwitterConfig.get()['actions']['follow']['enabled'] = True
+        self.assertTrue(self.action.is_enabled())
+
+        TwitterConfig.get()['actions']['follow']['enabled'] = False
+        self.assertFalse(self.action.is_enabled())
+
 
 class TestFavorite(unittest.TestCase):
 
@@ -100,6 +127,13 @@ class TestFavorite(unittest.TestCase):
         self.action.process(post)
 
         self.client.favorite.assert_called_once_with(post['id'])
+
+    def test_enabled(self):
+        TwitterConfig.get()['actions']['favorite']['enabled'] = True
+        self.assertTrue(self.action.is_enabled())
+
+        TwitterConfig.get()['actions']['favorite']['enabled'] = False
+        self.assertFalse(self.action.is_enabled())
 
 
 class TestTagFriend(unittest.TestCase):
@@ -174,3 +208,10 @@ class TestTagFriend(unittest.TestCase):
         post = {'full_text': 'sdfsdfsj tag four friend', 'id': 'test'}
         self.action.process(post)
         self.assertFalse(self.client.update.called)
+
+    def test_enabled(self):
+        TwitterConfig.get()['actions']['tag_friend']['enabled'] = True
+        self.assertTrue(self.action.is_enabled())
+
+        TwitterConfig.get()['actions']['tag_friend']['enabled'] = False
+        self.assertFalse(self.action.is_enabled())
