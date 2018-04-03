@@ -4,8 +4,8 @@ import unittest
 from unittest.mock import patch
 
 from tests.helper_func import load_fixture_config, get_fixture
-from yatcobot.actions import Favorite, Follow, TagFriend, ActionABC
 from yatcobot.config import TwitterConfig
+from yatcobot.plugins.actions import Favorite, Follow, TagFriend, ActionABC
 
 logging.disable(logging.ERROR)
 

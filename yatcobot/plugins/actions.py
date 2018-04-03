@@ -1,15 +1,16 @@
 import logging
 import random
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from itertools import product
 
-from .config import TwitterConfig
-from .utils import create_keyword_mutations
+from yatcobot.config import TwitterConfig
+from yatcobot.plugins import PluginABC
+from yatcobot.utils import create_keyword_mutations
 
 logger = logging.getLogger(__name__)
 
 
-class ActionABC(ABC):
+class ActionABC(PluginABC):
 
     def __init__(self, client):
         self.client = client
@@ -157,7 +158,7 @@ class TagFriend(ActionABC):
         # Remove indexes of friend keyword that are before any tag keyword
         friend_keywords_found = [x for x in friend_keywords_found if x > min(tag_keywords_found)]
 
-        # Create all combinations between occurances
+        # Create all combinations between occurrences
         indexes = list(product(tag_keywords_found, friend_keywords_found))
 
         # Find where the two keywords are closest
