@@ -8,6 +8,7 @@ from unittest.mock import patch, MagicMock
 import requests_mock
 from freezegun import freeze_time
 
+from tests.helper_func import get_fixture, load_fixture_config
 from yatcobot.client import TwitterClient, TwitterClientException, TwitterClientRetweetedException, \
     RateLimiter, RateLimiterExpired
 
@@ -20,15 +21,14 @@ class TestTwitterClient(unittest.TestCase):
 
     @requests_mock.mock()
     def setUp(self, m):
-        with open(self.tests_path + '/fixtures/application_rate_limit_status.json') as f:
-            response = f.read()
+        load_fixture_config()
+        response = get_fixture('application_rate_limit_status.json', True)
         m.get('https://api.twitter.com/1.1/application/rate_limit_status.json', text=response)
         self.client = TwitterClient('Consumer Key', "Consumer Secret", "Access Key", "Access Secret")
 
     @requests_mock.mock()
     def test_search_tweets(self, m):
-        with open(self.tests_path + '/fixtures/search_tweets.json') as f:
-            response = f.read()
+        response = get_fixture('search_tweets.json', True)
         m.get('https://api.twitter.com/1.1/search/tweets.json?q=210462857140252672&result_type=mixed&count=50',
               text=response)
         r = self.client.search_tweets("210462857140252672", 50)
@@ -36,8 +36,7 @@ class TestTwitterClient(unittest.TestCase):
 
     @requests_mock.mock()
     def test_search_tweets_with_language(self, m):
-        with open(self.tests_path + '/fixtures/search_tweets.json') as f:
-            response = f.read()
+        response = get_fixture('search_tweets.json', True)
         m.get('https://api.twitter.com/1.1/search/tweets.json?&lang=en&q=210462857140252672&result_type=mixed&count=50',
               text=response)
         r = self.client.search_tweets("210462857140252672", 50, language="en")
@@ -45,8 +44,7 @@ class TestTwitterClient(unittest.TestCase):
 
     @requests_mock.mock()
     def test_update(self, m):
-        with open(self.tests_path + '/fixtures/statuses_update_reply.json') as f:
-            response = f.read()
+        response = get_fixture('statuses_update_reply.json', True)
         m.post('https://api.twitter.com/1.1/statuses/update.json', text=response)
         self.client.update('test', 2)
 
@@ -60,88 +58,77 @@ class TestTwitterClient(unittest.TestCase):
 
     @requests_mock.mock()
     def test_retweet(self, m):
-        with open(self.tests_path + '/fixtures/statuses_retweet.json') as f:
-            response = f.read()
+        response = get_fixture('statuses_retweet.json', True)
         m.post('https://api.twitter.com/1.1/statuses/retweet/241259202004267009.json', text=response)
         r = self.client.retweet("241259202004267009")
         self.assertEqual(r['retweeted_status']['id'], 241259202004267009)
 
     @requests_mock.mock()
     def test_retweet_already_retweeted(self, m):
-        with open(self.tests_path + '/fixtures/error_already_retweeted.json') as f:
-            response = f.read()
+        response = get_fixture('error_already_retweeted.json', True)
         m.post('https://api.twitter.com/1.1/statuses/retweet/241259202004267009.json', text=response)
         with self.assertRaises(TwitterClientRetweetedException):
             self.client.retweet("241259202004267009")
 
     @requests_mock.mock()
     def test_get_tweet(self, m):
-        with open(self.tests_path + '/fixtures/statuses_show.json') as f:
-            response = f.read()
+        response = get_fixture('statuses_show.json', True)
         m.get('https://api.twitter.com/1.1/statuses/show/210462857140252672.json', text=response)
         r = self.client.get_tweet("210462857140252672")
         self.assertEqual(r['id'], 210462857140252672)
 
     @requests_mock.mock()
     def test_get_friends_ids(self, m):
-        with open(self.tests_path + '/fixtures/friends_ids.json') as f:
-            response = f.read()
+        response = get_fixture('friends_ids.json', True)
         m.get('https://api.twitter.com/1.1/friends/ids.json', text=response)
         r = self.client.get_friends_ids()
         self.assertEqual(len(r), 31)
 
     @requests_mock.mock()
     def test_follow(self, m):
-        with open(self.tests_path + '/fixtures/friendship_create.json') as f:
-            response = f.read()
+        response = get_fixture('friendship_create.json', True)
         m.post('https://api.twitter.com/1.1/friendships/create.json', text=response)
         r = self.client.follow(1401881)
         self.assertEqual(r['id'], 1401881)
 
     @requests_mock.mock()
     def test_unfollow(self, m):
-        with open(self.tests_path + '/fixtures/friendship_create.json') as f:
-            response = f.read()
+        response = get_fixture('friendship_create.json', True)
         m.post('https://api.twitter.com/1.1/friendships/destroy.json', text=response)
         r = self.client.unfollow(1401881)
         self.assertEqual(r['id'], 1401881)
 
     @requests_mock.mock()
     def test_favorite(self, m):
-        with open(self.tests_path + '/fixtures/favorites_create.json') as f:
-            response = f.read()
+        response = get_fixture('favorites_create.json', True)
         m.post('https://api.twitter.com/1.1/favorites/create.json', text=response)
         r = self.client.favorite(243138128959913986)
         self.assertEqual(r['id'], 243138128959913986)
 
     @requests_mock.mock()
     def test_get_blocks(self, m):
-        with open(self.tests_path + '/fixtures/blocks_ids.json') as f:
-            response = f.read()
+        response = get_fixture('blocks_ids.json', True)
         m.get('https://api.twitter.com/1.1/blocks/ids.json', text=response)
         r = self.client.get_blocks()
         self.assertEqual(len(r), 1)
 
     @requests_mock.mock()
     def test_get_mentions_timeline(self, m):
-        with open(self.tests_path + '/fixtures/statuses_mentions_timeline.json') as f:
-            response = f.read()
+        response = get_fixture('statuses_mentions_timeline.json', True)
         m.get('https://api.twitter.com/1.1/statuses/mentions_timeline.json', text=response)
         r = self.client.get_mentions_timeline()
         self.assertEqual(len(r), 2)
 
     @requests_mock.mock()
     def test_get_mentions_timeline_since_id(self, m):
-        with open(self.tests_path + '/fixtures/statuses_mentions_timeline_since_id.json') as f:
-            response = f.read()
+        response = get_fixture('statuses_mentions_timeline_since_id.json', True)
         m.get('https://api.twitter.com/1.1/statuses/mentions_timeline.json?since_id=653965849364180992', text=response)
         r = self.client.get_mentions_timeline(since_id=653965849364180992)
         self.assertEqual(len(r), 1)
 
     @requests_mock.mock()
     def test_get_mentions_timeline_count_1(self, m):
-        with open(self.tests_path + '/fixtures/statuses_mentions_timeline_count_1.json') as f:
-            response = f.read()
+        response = get_fixture('statuses_mentions_timeline_count_1.json', True)
         m.get('https://api.twitter.com/1.1/statuses/mentions_timeline.json?count=1', text=response)
         r = self.client.get_mentions_timeline(count=1)
         self.assertEqual(len(r), 1)
@@ -149,9 +136,7 @@ class TestTwitterClient(unittest.TestCase):
     @requests_mock.mock()
     def test_update_ratelimits(self, m):
         # revert original function
-        with open(self.tests_path + '/fixtures/application_rate_limit_status.json') as f:
-            response = f.read()
-
+        response = get_fixture('application_rate_limit_status.json', True)
         m.get('https://api.twitter.com/1.1/application/rate_limit_status.json', text=response)
         self.client.update_ratelimits(False)
         self.assertEqual(len(self.client.ratelimiter), 80)
@@ -162,16 +147,14 @@ class TestTwitterClient(unittest.TestCase):
 
     @requests_mock.mock()
     def test_api_call_error(self, m):
-        with open(self.tests_path + '/fixtures/error.json') as f:
-            response = f.read()
+        response = get_fixture('error.json', True)
         m.get(requests_mock.ANY, text=response)
         with self.assertRaises(TwitterClientException):
             self.client._api_call('blocks/ids')
 
     @requests_mock.mock()
     def test_api_call_no_check_ratelimits(self, m):
-        with open(self.tests_path + '/fixtures/blocks_ids.json') as f:
-            response = f.read()
+        response = get_fixture('blocks_ids.json', True)
         m.get('https://api.twitter.com/1.1/blocks/ids.json', text=response)
         self.client.ratelimiter.check_limit = MagicMock()
 
@@ -180,8 +163,7 @@ class TestTwitterClient(unittest.TestCase):
 
     @requests_mock.mock()
     def test_api_call_decrease_remaining_calls(self, m):
-        with open(self.tests_path + '/fixtures/blocks_ids.json') as f:
-            response = f.read()
+        response = get_fixture('blocks_ids.json', True)
         m.get('https://api.twitter.com/1.1/blocks/ids.json', text=response)
         self.client.ratelimiter.check_limit = MagicMock()
 
@@ -374,6 +356,7 @@ class TestRatelimiter(unittest.TestCase):
                         '/followers/list': {'reset': 100, 'percent': 0, 'limit': 15, 'remaining': 0}}
 
     def setUp(self):
+        load_fixture_config()
         self.limiter = RateLimiter()
         self.limiter.update(self.ratelimits_full)
 
@@ -387,18 +370,14 @@ class TestRatelimiter(unittest.TestCase):
         self.assertEqual(self.limiter['/geo/search']['percent'], 0)
 
     def test_update_ratelimits(self):
-        with open(self.tests_path + '/fixtures/application_rate_limit_status.json') as f:
-            response = json.load(f)
-
+        response = get_fixture('application_rate_limit_status.json')
         ratelimiter = RateLimiter()
         ratelimiter.refresh_limits(response['resources'])
 
         self.assertEqual(len(ratelimiter), 80)
 
     def test_check_limit_with_no_more_remaining(self):
-        with open(self.tests_path + '/fixtures/application_rate_limit_status.json') as f:
-            response = json.load(f)
-
+        response = get_fixture('application_rate_limit_status.json')
         ratelimiter = RateLimiter()
         ratelimiter.refresh_limits(response['resources'])
 

@@ -37,7 +37,9 @@ Example config with default values:
         queries:
           - RT to win
           - Retweet and win
-          - Giveaway retweet
+          - Giveaway retweet:
+            lang: en
+          - "using #hashtags need quotes"
 
         # Will skip all retweeted post until it finds a new one
         # Be ware, that it may use many api calls
@@ -97,15 +99,25 @@ Example config with default values:
           # If this action is enabled
           enabled: true
           # Keywords to search in post for favorite action
-          keywords: ["fav", "favorite"]
+          keywords: ["fav", "favorite", "like"]
         #This action allows to tag friends when requested
         tag_friend:
           # If this action is enabled
           enabled: false
           # Friends usernames to tag. Bot will randomly pick the required number
           # Usually maximum number of required tags is 3, so better define here 3 or more
-          friends: ["friend1", "friend2", "friend3"]        
-    
+          friends: ["friend1", "friend2", "friend3"]
+          # keywords of tag to serach in post
+          tag_keywords: ["tag"]
+          # keywords of friend to search in post
+          friend_keywords: ["friend", "friends"]
+          # keywords of numbers to search in post
+          number_keywords:
+            1: ["one", "1", "a", "your"]
+            2: ["two", "2"]
+            3: ["three", "3"]
+            4: ["four", "4"]
+        
       # Intervals of bot tasks
       scheduler:
         # How often will search for new posts
@@ -339,6 +351,18 @@ If the tag friend action is enabled
 friends
 ^^^^^^^^
 The usernames of friends that will be tagged. A random username from this list is selected every time, so the more you add the better. **At least 3 are recomended** (giveaways dont ask more than 3 tags usually)
+
+tag_keywords
+^^^^^^^^^^^^
+Keywords for searching 'tag' in post. Useful for international posts
+
+friend_keywords:
+^^^^^^^^^^^^^^^^
+keywords for searching 'friend' in post. Useful for international posts
+
+number_keywords
+^^^^^^^^^^^^^^^
+keywords for mapping words to number for identifying how many friends to tag. Useful for international posts
 
 
 ----

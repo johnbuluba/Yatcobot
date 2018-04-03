@@ -7,7 +7,7 @@ import confuse
 
 from tests.helper_func import load_fixture_config
 from yatcobot.bot import TwitterConfig
-from yatcobot.config import NotifiersConfig, Config
+from yatcobot.config import NotifiersConfig, Config, NumberKeywordsTemplate
 
 logging.disable(logging.ERROR)
 
@@ -66,6 +66,8 @@ class TestTwitterConfig(unittest.TestCase):
         self.assertEqual(TwitterConfig.get().actions.favorite.keywords, ["fav", "favorite"])
         self.assertEqual(TwitterConfig.get().actions.tag_friend.enabled, True)
         self.assertEqual(TwitterConfig.get().actions.tag_friend.friends, ["friend1", "friend2", "friend3"])
+        self.assertEqual(TwitterConfig.get().actions.tag_friend.friend_keywords, ["friend", "friends"])
+        self.assertEqual(TwitterConfig.get().actions.tag_friend.tag_keywords, ["tag"])
 
         # Scheduler
         self.assertEqual(TwitterConfig.get().scheduler.search_interval, 5400)
@@ -75,6 +77,20 @@ class TestTwitterConfig(unittest.TestCase):
         self.assertEqual(TwitterConfig.get().scheduler.clear_queue_interval, 60)
         self.assertEqual(TwitterConfig.get().scheduler.rate_limit_update_interval, 60)
         self.assertEqual(TwitterConfig.get().scheduler.check_mentions_interval, 600)
+
+    def test_number_keywords_template(self):
+        data = confuse.ConfigSource.of({1: ["test"], 2: 'test'})
+        view = confuse.RootView([data])
+        view.set(data)
+        r = view.get(NumberKeywordsTemplate())
+
+        self.assertDictEqual(r, {1: ["test"], 2: ["test"]})
+
+        self.assertEqual(str(NumberKeywordsTemplate()), 'NumberKeywordsTemplate()')
+
+        view.set(confuse.ConfigSource.of({'not_int': ["test"], 2: 'test'}))
+        with self.assertRaises(confuse.ConfigTypeError):
+            r = view.get(NumberKeywordsTemplate())
 
 
 class TestNotifiersConfig(unittest.TestCase):

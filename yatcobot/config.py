@@ -8,6 +8,25 @@ import yaml
 logger = logging.getLogger(__name__)
 
 
+class NumberKeywordsTemplate(confuse.Template):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def value(self, view, template=None):
+        out = confuse.AttrDict()
+
+        for key, value in view.items():
+            if not isinstance(key, int):
+                self.fail('Number keywords must have integer keys', view, type_error=True)
+            out[key] = value.as_str_seq()
+
+        return out
+
+    def __repr__(self):
+        return 'NumberKeywordsTemplate()'
+
+
 class Config:
     template = {
         'twitter': {
@@ -57,6 +76,9 @@ class Config:
                 'tag_friend': {
                     'enabled': confuse.TypeTemplate(bool),
                     'friends': confuse.StrSeq(),
+                    'tag_keywords': confuse.StrSeq(),
+                    'friend_keywords': confuse.StrSeq(),
+                    'number_keywords': NumberKeywordsTemplate()
                 }
             },
 

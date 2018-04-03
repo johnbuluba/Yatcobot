@@ -125,8 +125,10 @@ class TagFriend(ActionABC):
         text = post['full_text'].lower().replace('\n', ' ').replace('\r', '')
 
         # Create keyword mutations
-        tag_keywords = sum((create_keyword_mutations(x) for x in ['tag']), [])
-        friend_keywords = sum((create_keyword_mutations(x) for x in ['friend', 'friends']), [])
+        tag_keywords = sum((create_keyword_mutations(x) for x in
+                            TwitterConfig.get().actions.tag_friend.tag_keywords), [])
+        friend_keywords = sum((create_keyword_mutations(x) for x in
+                               TwitterConfig.get().actions.tag_friend.friend_keywords), [])
 
         # Find all occurrences of the keywords
         tag_keywords_found = sorted(set(i for x in tag_keywords for i in self.find_all(x, text)))
@@ -154,14 +156,9 @@ class TagFriend(ActionABC):
 
         amount = substring[1]
 
-        if amount in ['a', 'one', '1', 'your']:
-            return 1
-        elif amount in ['two', '2']:
-            return 2
-        elif amount in ['three', '3']:
-            return 3
-        elif amount in ['four', '4']:
-            return 4
+        for number, keywords in TwitterConfig.get().actions.tag_friend.number_keywords.items():
+            if amount in keywords:
+                return number
 
         raise ValueError('Could not determinate how many tags are needed')
 

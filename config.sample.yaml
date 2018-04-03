@@ -17,6 +17,9 @@ twitter:
 #      - Retweet and win
 #      - Giveaway retweet:
 #        lang:en
+#      - "using #hashtags need quotes"
+#      - "per search options work with quotes too":
+#         lang: es
 #    skip_retweeted: false
 #    max_queue: 100
 #    max_quote_depth: 20
@@ -46,6 +49,13 @@ twitter:
 #    tag_friend:
 #      enabled: false
 #      friends: ["friend1", "friend2", "friend3"]
+#      tag_keywords: ["tag"]
+#      friend_keywords: ["friend", "friends"]
+#      number_keywords:
+#        1: ["one", "1", "a", "your"]
+#        2: ["two", "2"]
+#        3: ["three", "3"]
+#        4: ["four", "4"]
 #
 #  scheduler:
 #    search_interval: 5400

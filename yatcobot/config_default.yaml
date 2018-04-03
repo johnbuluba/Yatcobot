@@ -95,6 +95,16 @@ twitter:
       # Friends usernames to tag. Bot will randomly pick the required number
       # Usually maximum number of required tags is 3, so better define here 3 or more
       friends: ["friend1", "friend2", "friend3"]
+      # keywords of tag to serach in post
+      tag_keywords: ["tag"]
+      # keywords of friend to search in post
+      friend_keywords: ["friend", "friends"]
+      # keywords of numbers to search in post
+      number_keywords:
+        1: ["one", "1", "a", "your"]
+        2: ["two", "2"]
+        3: ["three", "3"]
+        4: ["four", "4"]
 
   # Intervals of bot tasks
   scheduler:
