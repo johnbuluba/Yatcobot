@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import patch, MagicMock
 
 from tests.helper_func import load_fixture_config
-from yatcobot.config import TwitterConfig, NotifiersConfig
+from yatcobot.config import NotifiersConfig
 from yatcobot.notifier import NotificationService, PushbulletNotifier, AbstractNotifier, MailNotifier
 
 
@@ -117,11 +117,8 @@ class TestEmailNotifier(unittest.TestCase):
         # TODO: More tests !
 
     def test_mail_test(self):
-
         mail_notifier = MailNotifier.from_config()
         mail_notifier.notify = MagicMock()
 
         mail_notifier.test()
         self.assertEqual(mail_notifier.notify.call_count, 1)
-
-

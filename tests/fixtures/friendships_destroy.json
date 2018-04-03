@@ -13,7 +13,6 @@
   "entities": {
     "description": {
       "urls": [
-
       ]
     }
   },
@@ -49,7 +48,6 @@
     "id_str": "239844310982459392",
     "entities": {
       "urls": [
-
       ],
       "media": [
         {
@@ -90,10 +88,8 @@
         }
       ],
       "hashtags": [
-
       ],
       "user_mentions": [
-
       ]
     },
     "in_reply_to_user_id_str": null,

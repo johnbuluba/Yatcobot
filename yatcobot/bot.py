@@ -2,7 +2,7 @@ import difflib
 import logging
 from collections import OrderedDict
 
-from .actions import Favorite, Follow, TagFriend, ActionABC
+from .actions import ActionABC
 from .client import TwitterClient, TwitterClientRetweetedException
 from .config import TwitterConfig
 from .ignorelist import IgnoreList

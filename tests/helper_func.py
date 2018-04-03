@@ -1,10 +1,9 @@
 import json
+import os
 import random
 import string
-import os
 
 from yatcobot.config import Config
-
 
 tests_path = path = os.path.dirname(os.path.abspath(__file__))
 

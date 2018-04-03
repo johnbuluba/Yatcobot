@@ -1,5 +1,4 @@
 import logging
-import os
 import unittest
 from collections import OrderedDict
 

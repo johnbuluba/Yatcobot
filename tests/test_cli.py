@@ -1,4 +1,3 @@
-import builtins
 import logging
 import sys
 import unittest

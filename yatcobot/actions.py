@@ -209,7 +209,6 @@ class TagFriend(ActionABC):
             yield i
             i = s.find(p, i + 1)
 
-
     @staticmethod
     def is_enabled():
         return TwitterConfig.get().actions.tag_friend.enabled

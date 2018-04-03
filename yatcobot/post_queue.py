@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from collections import namedtuple, OrderedDict
 from datetime import datetime
 from statistics import mean, stdev
@@ -15,23 +15,8 @@ class PostQueue(OrderedDict):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.rating_methods = list()
-        self.filter_methods = list()
-
-        # Add rating methods
-        if TwitterConfig.get().search.sort.by_keywords.enabled:
-            self.rating_methods.append(RateByKeywords())
-
-        if TwitterConfig.get().search.sort.by_age.enabled:
-            self.rating_methods.append(RateByAge())
-
-        if TwitterConfig.get().search.sort.by_retweets_count.enabled:
-            self.rating_methods.append(RateByRetweetsCount())
-
-        # Add filter methods
-
-        if TwitterConfig.get().search.filter.min_retweets.enabled:
-            self.filter_methods.append(FilterMinRetweets())
+        self.rating_methods = RateABC.get_enabled()
+        self.filter_methods = FilterABC.get_enabled()
 
     def filter(self):
         """
@@ -89,8 +74,9 @@ class RateABC(ABC):
 
     config_name = ''
 
+    @abstractmethod
     def get_rates(self, queue):
-        raise NotImplementedError('get_scores must be implemented')
+        """Must be implemented by RateABC classes"""
 
     def normalize_scores(self, scores):
         """
@@ -111,6 +97,20 @@ class RateABC(ABC):
             normalized_scores.append(Score(x.id, (x.score - m) / s))
 
         return normalized_scores
+
+    @staticmethod
+    @abstractmethod
+    def is_enabled():
+        """Action must implement is_enabled"""
+
+    @staticmethod
+    def get_enabled():
+        """Retuns a list of instances of actions that are enabled"""
+        enabled = list()
+        for cls in RateABC.__subclasses__():
+            if cls.is_enabled():
+                enabled.append(cls())
+        return enabled
 
 
 class RateByKeywords(RateABC):
@@ -139,6 +139,10 @@ class RateByKeywords(RateABC):
 
         return norm_scores
 
+    @staticmethod
+    def is_enabled():
+        return TwitterConfig.get().search.sort.by_keywords.enabled
+
 
 class RateByRetweetsCount(RateABC):
     config_name = 'by_retweets_count'
@@ -154,6 +158,10 @@ class RateByRetweetsCount(RateABC):
         norm_rates = self.normalize_scores(rates)
 
         return norm_rates
+
+    @staticmethod
+    def is_enabled():
+        return TwitterConfig.get().search.sort.by_retweets_count.enabled
 
 
 class RateByAge(RateABC):
@@ -171,6 +179,10 @@ class RateByAge(RateABC):
 
         return self.normalize_scores(rates)
 
+    @staticmethod
+    def is_enabled():
+        return TwitterConfig.get().search.sort.by_age.enabled
+
 
 # ----------------------------------------------------------------------------------------------------------------------
 
@@ -180,11 +192,27 @@ class FilterABC(ABC):
     Superclass of filtering methods for filtering the queue
     """
 
+    @abstractmethod
     def filter(self, queue):
         raise NotImplementedError('Subclasses must implement filter')
 
+    @staticmethod
+    @abstractmethod
+    def is_enabled():
+        """Action must implement is_enabled"""
+
+    @staticmethod
+    def get_enabled():
+        """Retuns a list of instances of actions that are enabled"""
+        enabled = list()
+        for cls in FilterABC.__subclasses__():
+            if cls.is_enabled():
+                enabled.append(cls())
+        return enabled
+
 
 class FilterMinRetweets(FilterABC):
+
     def filter(self, queue):
         """
         Removes all post that have less rewteets than min_retweets defined at config
@@ -198,3 +226,7 @@ class FilterMinRetweets(FilterABC):
 
         for post_id in ids_to_remove:
             del queue[post_id]
+
+    @staticmethod
+    def is_enabled():
+        return TwitterConfig.get().search.filter.min_retweets.enabled

@@ -147,7 +147,6 @@ class TestTagFriend(unittest.TestCase):
         self.action = TagFriend(self.client)
 
     def test_tag_needed(self):
-
         post = get_fixture('post_tag_one_friend.json')
         self.assertTrue(self.action.tag_needed(post))
 
@@ -158,7 +157,6 @@ class TestTagFriend(unittest.TestCase):
         self.assertFalse(self.action.tag_needed(post))
 
     def test_friends_required(self):
-
         post = {'full_text': 'friend test test! #test tag or not a friend and tag a friend'}
         self.assertEqual(self.action.get_friends_required(post), 1)
 

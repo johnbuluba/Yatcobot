@@ -1,7 +1,7 @@
 import logging
 import smtplib
-from email.mime.text import MIMEText
 from abc import ABCMeta, abstractmethod
+from email.mime.text import MIMEText
 
 from pushbullet import PushBullet
 

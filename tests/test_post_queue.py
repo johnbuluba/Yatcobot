@@ -56,6 +56,20 @@ class TestPostQueueSorter(unittest.TestCase):
             self.assertGreaterEqual(post['retweet_count'], 5)
 
 
+class TestRateABC(unittest.TestCase):
+
+    def setUp(self):
+        load_fixture_config()
+
+    def test_get_enabled(self):
+        for method in TwitterConfig.get().search.sort.values():
+            method['enabled'] = True
+        self.assertEqual(len(RateABC.get_enabled()), len(TwitterConfig.get().search.sort))
+
+        for method in TwitterConfig.get().search.sort.values():
+            method['enabled'] = False
+        self.assertEqual(len(RateABC.get_enabled()), 0)
+
 
 class TestRateByRetweetCount(unittest.TestCase):
 
@@ -75,13 +89,20 @@ class TestRateByRetweetCount(unittest.TestCase):
         rates = self.method.get_rates(queue)
 
         self.assertEqual(len(rates), len(posts))
-        
+
         sorted_rates = sorted(((x.id, x.score) for x in rates), key=lambda x: x[1], reverse=True)
-        
+
         previous = sorted_rates.pop(0)[0]
         for id, rate in sorted_rates:
             self.assertLessEqual(posts[id]['retweet_count'], posts[previous]['retweet_count'])
             previous = id
+
+    def test_enabled(self):
+        TwitterConfig.get()['search']['sort']['by_retweets_count']['enabled'] = True
+        self.assertTrue(self.method.is_enabled())
+
+        TwitterConfig.get()['search']['sort']['by_retweets_count']['enabled'] = False
+        self.assertFalse(self.method.is_enabled())
 
 
 class TestRateByKeywords(unittest.TestCase):
@@ -110,6 +131,13 @@ class TestRateByKeywords(unittest.TestCase):
         self.assertLess(rates[3], rates[2])
         self.assertGreater(rates[4], rates[2])
 
+    def test_enabled(self):
+        TwitterConfig.get()['search']['sort']['by_keywords']['enabled'] = True
+        self.assertTrue(self.method.is_enabled())
+
+        TwitterConfig.get()['search']['sort']['by_keywords']['enabled'] = False
+        self.assertFalse(self.method.is_enabled())
+
 
 class TestRateAge(unittest.TestCase):
 
@@ -132,6 +160,28 @@ class TestRateAge(unittest.TestCase):
         self.assertGreater(rates[1], rates[2])
         self.assertGreater(rates[2], rates[3])
         self.assertGreater(rates[3], rates[4])
+
+    def test_enabled(self):
+        TwitterConfig.get()['search']['sort']['by_age']['enabled'] = True
+        self.assertTrue(self.method.is_enabled())
+
+        TwitterConfig.get()['search']['sort']['by_age']['enabled'] = False
+        self.assertFalse(self.method.is_enabled())
+
+
+class TestFilterABC(unittest.TestCase):
+
+    def setUp(self):
+        load_fixture_config()
+
+    def test_get_enabled(self):
+        for method in TwitterConfig.get().search.filter.values():
+            method['enabled'] = True
+        self.assertEqual(len(FilterABC.get_enabled()), len(TwitterConfig.get().search.filter))
+
+        for method in TwitterConfig.get().search.filter.values():
+            method['enabled'] = False
+        self.assertEqual(len(FilterABC.get_enabled()), 0)
 
 
 class TestFilterMinRetweets(unittest.TestCase):
@@ -160,4 +210,9 @@ class TestFilterMinRetweets(unittest.TestCase):
         for post_id, post in queue.items():
             self.assertGreaterEqual(post['retweet_count'], 10)
 
+    def test_enabled(self):
+        TwitterConfig.get()['search']['filter']['min_retweets']['enabled'] = True
+        self.assertTrue(self.method.is_enabled())
 
+        TwitterConfig.get()['search']['filter']['min_retweets']['enabled'] = False
+        self.assertFalse(self.method.is_enabled())
