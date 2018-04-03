@@ -1,19 +1,22 @@
-def create_keyword_mutations(keyword):
+def create_keyword_mutations(*keywords):
     """
-    Given a keyword, create various mutations to be searched inside a post
-    :param keyword: the base keyword of the mutations
+    Given some keywords, create various mutations to be searched inside a post
+    :param keywords: one or more keywords to be used
+        as base of the mutations
     :return: list of mutation
     """
     mutations = list()
-    keyword = keyword.strip()
-    mutations.append(' {} '.format(keyword))
-    mutations.append('{} '.format(keyword))
-    mutations.append(' {}'.format(keyword))
-    mutations.append('#{}'.format(keyword))
-    mutations.append(',{}'.format(keyword))
-    mutations.append('{},'.format(keyword))
-    mutations.append('.{}'.format(keyword))
-    mutations.append('{}.'.format(keyword))
-    mutations.append('{}!'.format(keyword))
-    mutations.append('!{}'.format(keyword))
+
+    for keyword in keywords:
+        keyword = keyword.strip()
+        mutations.append(' {} '.format(keyword))
+        mutations.append('{} '.format(keyword))
+        mutations.append(' {}'.format(keyword))
+        mutations.append('#{}'.format(keyword))
+        mutations.append(',{}'.format(keyword))
+        mutations.append('{},'.format(keyword))
+        mutations.append('.{}'.format(keyword))
+        mutations.append('{}.'.format(keyword))
+        mutations.append('{}!'.format(keyword))
+        mutations.append('!{}'.format(keyword))
     return mutations

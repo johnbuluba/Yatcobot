@@ -35,7 +35,7 @@ class Follow(ActionABC):
 
     def process(self, post):
         text = post['full_text']
-        keywords = sum((create_keyword_mutations(x) for x in TwitterConfig.get().actions.follow.keywords), [])
+        keywords = create_keyword_mutations(*TwitterConfig.get().actions.follow.keywords)
         if any(x in text.lower() for x in keywords):
             self.remove_oldest_follow()
             self.follow(post)
@@ -74,7 +74,7 @@ class Favorite(ActionABC):
 
     def process(self, post):
         text = post['full_text']
-        keywords = sum((create_keyword_mutations(x) for x in TwitterConfig.get().actions.favorite.keywords), [])
+        keywords = create_keyword_mutations(*TwitterConfig.get().actions.favorite.keywords)
         if any(x in text.lower() for x in keywords):
             r = self.client.favorite(post['id'])
             logger.info("Favorite: {0}".format(post['id']))
@@ -111,11 +111,11 @@ class TagFriend(ActionABC):
     def tag_needed(self, post):
         text = post['full_text'].lower()
 
-        tag_keywords = sum((create_keyword_mutations(x) for x in ['tag']), [])
+        tag_keywords = create_keyword_mutations(*TwitterConfig.get().actions.tag_friend.tag_keywords)
         if not any(x in text for x in tag_keywords):
             return False
 
-        friend_keywords = sum((create_keyword_mutations(x) for x in ['friend', 'friends']), [])
+        friend_keywords = create_keyword_mutations(*TwitterConfig.get().actions.tag_friend.friend_keywords)
         if not any(x in text for x in friend_keywords):
             return False
 
@@ -125,10 +125,8 @@ class TagFriend(ActionABC):
         text = post['full_text'].lower().replace('\n', ' ').replace('\r', '')
 
         # Create keyword mutations
-        tag_keywords = sum((create_keyword_mutations(x) for x in
-                            TwitterConfig.get().actions.tag_friend.tag_keywords), [])
-        friend_keywords = sum((create_keyword_mutations(x) for x in
-                               TwitterConfig.get().actions.tag_friend.friend_keywords), [])
+        tag_keywords = create_keyword_mutations(*TwitterConfig.get().actions.tag_friend.tag_keywords)
+        friend_keywords = create_keyword_mutations(*TwitterConfig.get().actions.tag_friend.friend_keywords)
 
         # Find all occurrences of the keywords
         tag_keywords_found = sorted(set(i for x in tag_keywords for i in self.find_all(x, text)))
