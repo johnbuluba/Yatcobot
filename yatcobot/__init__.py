@@ -1,5 +1,7 @@
 import logging
 
+__version__ = '2.2.19'
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
