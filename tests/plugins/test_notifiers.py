@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch, MagicMock
 
 from tests.helper_func import load_fixture_config
-from yatcobot.config import NotifiersConfig
+from yatcobot.config import NotifiersConfig, Config
 from yatcobot.plugins.notifiers import PushbulletNotifier, MailNotifier
 
 
@@ -34,6 +34,12 @@ class TestPushbulletNotifier(unittest.TestCase):
         pushbullet_notifier.notify("test", "test")
 
         self.PushBullet.return_value.push_note.assert_called_once_with("test", "test")
+
+    def test_config(self):
+        template = Config.get_template()
+        self.assertIn(PushbulletNotifier.name, template['notifiers'])
+        self.assertIn('enabled', template['notifiers'][PushbulletNotifier.name])
+        self.assertIn('token', template['notifiers'][PushbulletNotifier.name])
 
 
 class TestEmailNotifier(unittest.TestCase):
@@ -78,3 +84,14 @@ class TestEmailNotifier(unittest.TestCase):
 
         mail_notifier.test()
         self.assertEqual(mail_notifier.notify.call_count, 1)
+
+    def test_config(self):
+        template = Config.get_template()
+        self.assertIn(MailNotifier.name, template['notifiers'])
+        self.assertIn('enabled', template['notifiers'][MailNotifier.name])
+        self.assertIn('host', template['notifiers'][MailNotifier.name])
+        self.assertIn('port', template['notifiers'][MailNotifier.name])
+        self.assertIn('tls', template['notifiers'][MailNotifier.name])
+        self.assertIn('username', template['notifiers'][MailNotifier.name])
+        self.assertIn('password', template['notifiers'][MailNotifier.name])
+        self.assertIn('recipient', template['notifiers'][MailNotifier.name])

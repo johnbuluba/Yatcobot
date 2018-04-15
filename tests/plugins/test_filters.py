@@ -1,7 +1,7 @@
 import unittest
 
 from tests.helper_func import load_fixture_config, create_post
-from yatcobot.config import TwitterConfig
+from yatcobot.config import TwitterConfig, Config
 from yatcobot.plugins.filters import FilterABC, FilterMinRetweets
 from yatcobot.post_queue import PostQueue
 
@@ -53,3 +53,9 @@ class TestFilterMinRetweets(unittest.TestCase):
 
         TwitterConfig.get()['search']['filter']['min_retweets']['enabled'] = False
         self.assertFalse(self.method.is_enabled())
+
+    def test_config(self):
+        template = Config.get_template()
+        self.assertIn(FilterMinRetweets.name, template['twitter']['search']['filter'])
+        self.assertIn('enabled', template['twitter']['search']['filter'][FilterMinRetweets.name])
+        self.assertIn('number', template['twitter']['search']['filter'][FilterMinRetweets.name])

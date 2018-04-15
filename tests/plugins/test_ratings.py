@@ -1,7 +1,7 @@
 import unittest
 
 from tests.helper_func import load_fixture_config, create_post
-from yatcobot.config import TwitterConfig
+from yatcobot.config import TwitterConfig, Config
 from yatcobot.plugins.ratings import RatingABC, RatingByRetweetsCount, RatingByKeywords, RatingByAge
 from yatcobot.post_queue import PostQueue
 
@@ -54,6 +54,11 @@ class TestRateByRetweetCount(unittest.TestCase):
         TwitterConfig.get()['search']['sort']['by_retweets_count']['enabled'] = False
         self.assertFalse(self.method.is_enabled())
 
+    def test_config(self):
+        template = Config.get_template()
+        self.assertIn(RatingByRetweetsCount.name, template['twitter']['search']['sort'])
+        self.assertIn('enabled', template['twitter']['search']['sort'][RatingByRetweetsCount.name])
+
 
 class TestRateByKeywords(unittest.TestCase):
 
@@ -88,6 +93,12 @@ class TestRateByKeywords(unittest.TestCase):
         TwitterConfig.get()['search']['sort']['by_keywords']['enabled'] = False
         self.assertFalse(self.method.is_enabled())
 
+    def test_config(self):
+        template = Config.get_template()
+        self.assertIn(RatingByKeywords.name, template['twitter']['search']['sort'])
+        self.assertIn('enabled', template['twitter']['search']['sort'][RatingByKeywords.name])
+        self.assertIn('keywords', template['twitter']['search']['sort'][RatingByKeywords.name])
+
 
 class TestRateAge(unittest.TestCase):
 
@@ -117,3 +128,8 @@ class TestRateAge(unittest.TestCase):
 
         TwitterConfig.get()['search']['sort']['by_age']['enabled'] = False
         self.assertFalse(self.method.is_enabled())
+
+    def test_config(self):
+        template = Config.get_template()
+        self.assertIn(RatingByAge.name, template['twitter']['search']['sort'])
+        self.assertIn('enabled', template['twitter']['search']['sort'][RatingByAge.name])
