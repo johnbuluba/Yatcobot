@@ -4,7 +4,7 @@ import unittest
 from unittest.mock import patch
 
 from tests.helper_func import load_fixture_config, get_fixture
-from yatcobot.config import TwitterConfig
+from yatcobot.config import TwitterConfig, Config
 from yatcobot.plugins.actions import Favorite, Follow, TagFriend, ActionABC
 
 logging.disable(logging.ERROR)
@@ -104,6 +104,14 @@ class TestFollow(unittest.TestCase):
         TwitterConfig.get()['actions']['follow']['enabled'] = False
         self.assertFalse(self.action.is_enabled())
 
+    def test_config(self):
+        template = Config.get_template()
+        self.assertIn(Follow.name, template['twitter']['actions'])
+        self.assertIn('enabled', template['twitter']['actions'][Follow.name])
+        self.assertIn('keywords', template['twitter']['actions'][Follow.name])
+        self.assertIn('max_following', template['twitter']['actions'][Follow.name])
+        self.assertIn('multiple', template['twitter']['actions'][Follow.name])
+
 
 class TestFavorite(unittest.TestCase):
 
@@ -134,6 +142,12 @@ class TestFavorite(unittest.TestCase):
 
         TwitterConfig.get()['actions']['favorite']['enabled'] = False
         self.assertFalse(self.action.is_enabled())
+
+    def test_config(self):
+        template = Config.get_template()
+        self.assertIn(Favorite.name, template['twitter']['actions'])
+        self.assertIn('enabled', template['twitter']['actions'][Favorite.name])
+        self.assertIn('keywords', template['twitter']['actions'][Favorite.name])
 
 
 class TestTagFriend(unittest.TestCase):
@@ -213,3 +227,12 @@ class TestTagFriend(unittest.TestCase):
 
         TwitterConfig.get()['actions']['tag_friend']['enabled'] = False
         self.assertFalse(self.action.is_enabled())
+
+    def test_config(self):
+        template = Config.get_template()
+        self.assertIn(TagFriend.name, template['twitter']['actions'])
+        self.assertIn('enabled', template['twitter']['actions'][TagFriend.name])
+        self.assertIn('friends', template['twitter']['actions'][TagFriend.name])
+        self.assertIn('tag_keywords', template['twitter']['actions'][TagFriend.name])
+        self.assertIn('friend_keywords', template['twitter']['actions'][TagFriend.name])
+        self.assertIn('number_keywords', template['twitter']['actions'][TagFriend.name])

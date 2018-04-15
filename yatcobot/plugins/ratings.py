@@ -3,6 +3,7 @@ from collections import namedtuple
 from datetime import datetime
 from statistics import mean, stdev
 
+import confuse
 from dateutil import tz
 
 from yatcobot.config import TwitterConfig
@@ -15,8 +16,6 @@ class RatingABC(PluginABC):
     """
     Superclass of rating methods that are used for sorting the queue
     """
-
-    config_name = ''
 
     @abstractmethod
     def get_rating(self, queue):
@@ -56,9 +55,20 @@ class RatingABC(PluginABC):
                 enabled.append(cls())
         return enabled
 
+    @staticmethod
+    def get_config_template():
+        """
+        Creates the config template for all rating plugins
+        :return: the config template
+        """
+        template = dict()
+        for cls in RatingABC.__subclasses__():
+            template[cls.name] = cls.get_config_template()
+        return template
+
 
 class RatingByKeywords(RatingABC):
-    config_name = 'by_keywords'
+    name = 'by_keywords'
 
     def get_rating(self, queue):
         """
@@ -87,9 +97,17 @@ class RatingByKeywords(RatingABC):
     def is_enabled():
         return TwitterConfig.get().search.sort.by_keywords.enabled
 
+    @staticmethod
+    def get_config_template():
+        template = {
+            'enabled': confuse.TypeTemplate(bool),
+            'keywords': confuse.StrSeq()
+        }
+        return template
+
 
 class RatingByRetweetsCount(RatingABC):
-    config_name = 'by_retweets_count'
+    name = 'by_retweets_count'
 
     def get_rating(self, queue):
         """
@@ -107,9 +125,16 @@ class RatingByRetweetsCount(RatingABC):
     def is_enabled():
         return TwitterConfig.get().search.sort.by_retweets_count.enabled
 
+    @staticmethod
+    def get_config_template():
+        template = {
+            'enabled': confuse.TypeTemplate(bool),
+        }
+        return template
+
 
 class RatingByAge(RatingABC):
-    config_name = 'by_age'
+    name = 'by_age'
 
     def get_rating(self, queue):
         rates = []
@@ -126,3 +151,10 @@ class RatingByAge(RatingABC):
     @staticmethod
     def is_enabled():
         return TwitterConfig.get().search.sort.by_age.enabled
+
+    @staticmethod
+    def get_config_template():
+        template = {
+            'enabled': confuse.TypeTemplate(bool),
+        }
+        return template

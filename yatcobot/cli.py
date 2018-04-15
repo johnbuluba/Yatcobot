@@ -5,7 +5,7 @@ import os
 from yatcobot import create_logger
 from yatcobot.bot import Yatcobot
 from yatcobot.config import TwitterConfig
-from yatcobot.notifier import MailNotifier
+from yatcobot.plugins.notifiers import MailNotifier
 
 logger = logging.getLogger(__name__)
 

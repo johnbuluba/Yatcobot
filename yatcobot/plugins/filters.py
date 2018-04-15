@@ -1,5 +1,7 @@
 from abc import abstractmethod
 
+import confuse
+
 from yatcobot.config import TwitterConfig
 from yatcobot.plugins import PluginABC
 
@@ -27,8 +29,21 @@ class FilterABC(PluginABC):
                 enabled.append(cls())
         return enabled
 
+    @staticmethod
+    def get_config_template():
+        """
+        Creates the config template for all filters
+        :return: the config template
+        """
+        template = dict()
+        for cls in FilterABC.__subclasses__():
+            template[cls.name] = cls.get_config_template()
+        return template
+
 
 class FilterMinRetweets(FilterABC):
+
+    name = 'min_retweets'
 
     def filter(self, queue):
         """
@@ -47,3 +62,11 @@ class FilterMinRetweets(FilterABC):
     @staticmethod
     def is_enabled():
         return TwitterConfig.get().search.filter.min_retweets.enabled
+
+    @staticmethod
+    def get_config_template():
+        template = {
+            'enabled': confuse.TypeTemplate(bool),
+            'number': confuse.Integer()
+        }
+        return template

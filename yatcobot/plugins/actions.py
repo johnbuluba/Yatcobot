@@ -3,7 +3,10 @@ import random
 from abc import abstractmethod
 from itertools import product
 
+import confuse
+
 from yatcobot.config import TwitterConfig
+from yatcobot.config.templates import NumberKeywordsTemplate
 from yatcobot.plugins import PluginABC
 from yatcobot.utils import create_keyword_mutations
 
@@ -33,12 +36,25 @@ class ActionABC(PluginABC):
                 enabled.append(cls(client))
         return enabled
 
+    @staticmethod
+    def get_config_template():
+        """
+        Creates the config template for all action plugins
+        :return: config template
+        """
+        template = dict()
+        for cls in ActionABC.__subclasses__():
+            template[cls.name] = cls.get_config_template()
+        return template
+
 
 class Follow(ActionABC):
     """
     Checks if a contest needs follow to enter and follows the user
 
     """
+
+    name = 'follow'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -85,11 +101,23 @@ class Follow(ActionABC):
     def is_enabled():
         return TwitterConfig.get().actions.follow.enabled
 
+    @staticmethod
+    def get_config_template():
+        template = {
+            'enabled': confuse.TypeTemplate(bool),
+            'keywords': confuse.StrSeq(),
+            'max_following': confuse.Integer(),
+            'multiple': confuse.TypeTemplate(bool)
+        }
+        return template
+
 
 class Favorite(ActionABC):
     """
     Checks if a contest needs favorite to enter, and favorites the post
     """
+
+    name = 'favorite'
 
     def process(self, post):
         text = post['full_text']
@@ -102,11 +130,21 @@ class Favorite(ActionABC):
     def is_enabled():
         return TwitterConfig.get().actions.favorite.enabled
 
+    @staticmethod
+    def get_config_template():
+        template = {
+            'enabled': confuse.TypeTemplate(bool),
+            'keywords': confuse.StrSeq()
+        }
+        return template
+
 
 class TagFriend(ActionABC):
     """
     Tag one ore more friends in the comments
     """
+
+    name = 'tag_friend'
 
     class NotEnoughFriends(Exception):
         pass
@@ -213,3 +251,15 @@ class TagFriend(ActionABC):
     @staticmethod
     def is_enabled():
         return TwitterConfig.get().actions.tag_friend.enabled
+
+    @staticmethod
+    def get_config_template():
+
+        template = {
+            'enabled': confuse.TypeTemplate(bool),
+            'friends': confuse.StrSeq(),
+            'tag_keywords': confuse.StrSeq(),
+            'friend_keywords': confuse.StrSeq(),
+            'number_keywords': NumberKeywordsTemplate()
+        }
+        return template
