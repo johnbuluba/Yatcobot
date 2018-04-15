@@ -2,7 +2,7 @@ import argparse
 import logging
 import os
 
-from yatcobot import create_logger
+from yatcobot import create_logger, __version__
 from yatcobot.bot import Yatcobot
 from yatcobot.config import TwitterConfig
 from yatcobot.plugins.notifiers import MailNotifier
@@ -41,7 +41,7 @@ def main():
         MailNotifier.from_config().test()
         exit(1)
 
-    logger.info("Starting")
+    logger.info("Starting Yatcobot ({})".format(__version__))
     print_logo()
     bot = Yatcobot(args.ignore_list)
     bot.run()

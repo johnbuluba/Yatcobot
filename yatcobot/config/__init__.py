@@ -78,6 +78,7 @@ class Config:
             config.set_file(filename)
 
         logger.info('Loading config files (From highest priority to lowest):')
+        config.resolve()
         for i, config_source in enumerate(config.sources):
             logger.info('{}: Path: {}'.format(i, config_source.filename))
 
