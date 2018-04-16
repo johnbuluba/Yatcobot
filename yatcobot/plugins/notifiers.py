@@ -1,10 +1,11 @@
 import logging
 import smtplib
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from email.mime.text import MIMEText
 
 import confuse
 from pushbullet import PushBullet
+
 from yatcobot.config import NotifiersConfig
 from yatcobot.plugins import PluginABC
 
@@ -50,7 +51,6 @@ class NotifierABC(PluginABC):
 
 
 class PushbulletNotifier(NotifierABC):
-
     name = 'pushbullet'
 
     def __init__(self):
@@ -75,7 +75,6 @@ class PushbulletNotifier(NotifierABC):
 
 
 class MailNotifier(NotifierABC):
-
     name = 'mail'
 
     def __init__(self):

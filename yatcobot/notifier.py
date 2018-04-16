@@ -21,4 +21,3 @@ class NotificationService:
         if len(self.active_notifiers) > 0:
             return True
         return False
-

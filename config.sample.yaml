@@ -28,6 +28,9 @@ twitter:
 #      min_retweets:
 #        enabled: false
 #        number: 20
+#      blacklist:
+#        enabled: false
+#        keywords: ["obama", "trump"]
 #    sort:
 #      by_keywords:
 #        enabled: true

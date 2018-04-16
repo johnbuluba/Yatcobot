@@ -3,7 +3,6 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from yatcobot.notifier import NotificationService
-from yatcobot.plugins.notifiers import NotifierABC
 
 
 class TestNotificationService(unittest.TestCase):

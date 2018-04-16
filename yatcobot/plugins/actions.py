@@ -8,7 +8,7 @@ import confuse
 from yatcobot.config import TwitterConfig
 from yatcobot.config.templates import NumberKeywordsTemplate
 from yatcobot.plugins import PluginABC
-from yatcobot.utils import create_keyword_mutations
+from yatcobot.utils import create_keyword_mutations, preprocess_text
 
 logger = logging.getLogger(__name__)
 
@@ -65,7 +65,7 @@ class Follow(ActionABC):
             logger.warning('If unwanted behavior is observed, please open an issue on github along with the post id!')
 
     def process(self, post):
-        text = post['full_text']
+        text = preprocess_text(post['full_text'])
         keywords = create_keyword_mutations(*TwitterConfig.get().actions.follow.keywords)
         if any(x in text.lower() for x in keywords):
             self.remove_oldest_follow()
@@ -120,7 +120,7 @@ class Favorite(ActionABC):
     name = 'favorite'
 
     def process(self, post):
-        text = post['full_text']
+        text = preprocess_text(post['full_text'])
         keywords = create_keyword_mutations(*TwitterConfig.get().actions.favorite.keywords)
         if any(x in text.lower() for x in keywords):
             r = self.client.favorite(post['id'])
@@ -170,7 +170,7 @@ class TagFriend(ActionABC):
                          .format(post['id'], number))
 
     def tag_needed(self, post):
-        text = post['full_text'].lower()
+        text = preprocess_text(post['full_text'])
 
         tag_keywords = create_keyword_mutations(*TwitterConfig.get().actions.tag_friend.tag_keywords)
         if not any(x in text for x in tag_keywords):
@@ -183,7 +183,7 @@ class TagFriend(ActionABC):
         return True
 
     def get_friends_required(self, post):
-        text = post['full_text'].lower().replace('\n', ' ').replace('\r', '')
+        text = preprocess_text(post['full_text'])
 
         # Create keyword mutations
         tag_keywords = create_keyword_mutations(*TwitterConfig.get().actions.tag_friend.tag_keywords)
@@ -208,7 +208,8 @@ class TagFriend(ActionABC):
 
         substring = text[closest_pair[0]: closest_pair[1]]
 
-        substring = substring.split(' ')
+        # Split substring to words and remove empty
+        substring = list(filter(None, substring.split(' ')))
 
         if len(substring) != 2:
             raise ValueError('Could not find how many tag are needed')

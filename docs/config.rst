@@ -63,6 +63,13 @@ Example config with default values:
             enabled: true
             # If a tweet has less retweets than this number, dont retweet
             number: 20
+          # Filter out tweets that contains some criteria
+          blacklist:
+            # If this filter method is enabled
+            enabled: false
+            # keywords that if a posts contains would be filtered
+            # leave it empty if you want to disable keywords
+            keywords: ["obama", "trump"]
         #Plugins to sort tweets
         sort:
           # Give priority to posts that contain some words
@@ -260,6 +267,17 @@ With this plugin we can filter out tweets below a minimum number of retweets
 **enabled** if this plugin is enabled
 
 **number** Below this number tweets will be filtered out
+
+blacklist
+^^^^^^^^^^^^
+
+Blacklist posts based on keywords
+
+
+**enabled** if this plugin is enabled
+
+**keywords** If any of these keywords is found in the post, it will be filtered
+
 
 
 sort

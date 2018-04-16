@@ -9,6 +9,7 @@ class NumberKeywordsTemplate(confuse.Template):
       2: 'keyword1'
 
     """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 

@@ -8,6 +8,7 @@ from dateutil import tz
 
 from yatcobot.config import TwitterConfig
 from yatcobot.plugins import PluginABC
+from yatcobot.utils import count_keyword_in_text
 
 Score = namedtuple('Score', ('id', 'score'))
 
@@ -85,7 +86,7 @@ class RatingByKeywords(RatingABC):
 
             for keyword in TwitterConfig.get().search.sort.by_keywords.keywords:
                 keyword = keyword.lower()
-                rate += text.count(keyword)
+                rate += count_keyword_in_text(keyword, text)
 
             rates.append(Score(post['id'], rate))
 
