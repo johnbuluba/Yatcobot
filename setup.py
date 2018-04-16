@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 from os import path
 from setuptools import setup, find_packages
-from pip.req import parse_requirements
 
 
-requirements = parse_requirements('requirements.txt', session='hack')
-requirements = [str(ir.req) for ir in requirements]
 root_path = path.abspath(path.dirname(__file__))
+
+with open(path.join(root_path, 'requirements.txt')) as f:
+    requirements = f.read().splitlines()
+
 with open(path.join(root_path, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
