@@ -1,6 +1,6 @@
 import logging
 
-__version__ = '2.3.1'
+__version__ = '2.3.2'
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
