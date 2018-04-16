@@ -99,6 +99,24 @@ class TestFilterKeywordsBlacklist(unittest.TestCase):
 
         self.assertEqual(len(queue), 2)
 
+    def test_filter_users(self):
+        TwitterConfig.get()['search']['filter']['blacklist']['enabled'] = True
+        TwitterConfig.get()['search']['filter']['blacklist']['users'] = ['bad_user']
+
+        posts = {
+            1: create_post(id=1, screen_name='good_user'),
+            2: create_post(id=2, screen_name='Bad_user'),
+        }
+
+        queue = PostQueue(posts)
+
+        self.method.filter(queue)
+
+        self.assertEqual(len(queue), 1)
+
+        for post_id, post in queue.items():
+            self.assertNotEqual('bad_user', post['user']['screen_name'])
+
     def test_enabled(self):
         TwitterConfig.get()['search']['filter']['blacklist']['enabled'] = True
         self.assertTrue(self.method.is_enabled())

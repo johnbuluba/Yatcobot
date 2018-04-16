@@ -88,9 +88,14 @@ class FilterBlacklist(FilterABC):
         ids_to_remove = list()
 
         for post_id, post in queue.items():
+            # Filter by user
+            if self.user_is_blacklisted(post):
+                ids_to_remove.append(post_id)
+                continue
             # Filter by keywords
             if self.contains_keyword(post):
                 ids_to_remove.append(post_id)
+                continue
 
         # Delete blacklisted posts
         for post_id in ids_to_remove:
@@ -106,6 +111,14 @@ class FilterBlacklist(FilterABC):
                 return True
         return False
 
+    def user_is_blacklisted(self, post):
+        user = post['user']['screen_name'].lower().strip()
+        for blacklisted_user in TwitterConfig.get().search.filter.blacklist.users:
+            if user == blacklisted_user.lower().strip():
+                logger.info('Skipping {} because user {} is blacklisted'.format(post['id'], user))
+                return True
+        return False
+
     @staticmethod
     def is_enabled():
         return TwitterConfig.get().search.filter.blacklist.enabled
@@ -117,6 +130,7 @@ class FilterBlacklist(FilterABC):
         strseq.default = []
         template = {
             'enabled': confuse.TypeTemplate(bool),
-            'keywords': strseq
+            'keywords': strseq,
+            'users': strseq,
         }
         return template

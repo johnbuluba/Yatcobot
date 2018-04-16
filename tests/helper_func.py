@@ -13,7 +13,7 @@ def get_random_string(length=10):
 
 
 def create_post(id=None, userid=None, retweets=None, favorites=None, user_followers=None,
-                full_text=None, date=None):
+                full_text=None, date=None, screen_name=None):
     id = random.randint(0, 10000000) if id is None else id
     userid = random.randint(0, 10000000) if userid is None else userid
     retweets = random.randint(0, 1000) if retweets is None else retweets
@@ -24,7 +24,7 @@ def create_post(id=None, userid=None, retweets=None, favorites=None, user_follow
 
     user = {'followers_count': user_followers,
             'id': userid,
-            'screen_name': get_random_string()
+            'screen_name': get_random_string() if screen_name is None else screen_name
             }
 
     return {'id': id, 'retweet_count': retweets, 'favorite_count': favorites, 'full_text': text,

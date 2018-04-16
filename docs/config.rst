@@ -70,6 +70,9 @@ Example config with default values:
             # keywords that if a posts contains would be filtered
             # leave it empty if you want to disable keywords
             keywords: ["obama", "trump"]
+            # Filter based on user screen name. Add here the screen names that you want to filter
+            # the screen name is the @User name without the @
+            users: ["BotSpotterBot"]
         #Plugins to sort tweets
         sort:
           # Give priority to posts that contain some words
@@ -277,6 +280,8 @@ Blacklist posts based on keywords
 **enabled** if this plugin is enabled
 
 **keywords** If any of these keywords is found in the post, it will be filtered
+
+**users** Posts from these users will be filtered. Add here the screen names of users,  for example for user @User you insert User (without the @)
 
 
 

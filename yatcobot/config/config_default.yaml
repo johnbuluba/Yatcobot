@@ -54,8 +54,12 @@ twitter:
       blacklist:
         # If this filter method is enabled
         enabled: false
-        # keywords that if a posts contains would be filtered, leave it empty if you want to disable keywords
-        keywords: ["keyword"]
+        # keywords that if a posts contains would be filtered
+        # leave it empty if you want to disable keywords
+        keywords: []
+        # Filter based on user screen name. Add here the screen names that you want to filter
+        # the screen name is the @User name without the @
+        users: ["BotSpotterBot"]
     #Plugins to sort tweets
     sort:
       # Give priority to posts that contain some words

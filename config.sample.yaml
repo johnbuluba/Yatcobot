@@ -31,6 +31,7 @@ twitter:
 #      blacklist:
 #        enabled: false
 #        keywords: ["obama", "trump"]
+#        users: ["BotSpotterBot"]
 #    sort:
 #      by_keywords:
 #        enabled: true
