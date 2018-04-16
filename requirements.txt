@@ -1,6 +1,9 @@
-certifi==2018.1.18
+-e git+https://github.com/pypa/pipenv.git@8f0af53fb571728289eb3c7ed5218a917d4a3ce4#egg=pipenv
+-e git+https://github.com/rtfd/recommonmark.git@3238b029b6e19b9cbceb9b85d81304f86b12c012#egg=recommonmark
+-e git+https://github.com/sampsyo/confuse.git#egg=confuse
+certifi==2018.4.16
 chardet==3.0.4
-confuse==0.4.0
+coverage==4.3
 idna==2.6
 oauthlib==2.0.7
 pushbullet.py==0.11.0
