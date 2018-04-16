@@ -4,13 +4,13 @@ from abc import abstractmethod
 import confuse
 
 from yatcobot.config import TwitterConfig
-from yatcobot.plugins import PluginABC
+from yatcobot.plugins import PluginABC, MergeAllSubclassesConfigsMixin, GetEnabledSubclassesMixin
 from yatcobot.utils import create_keyword_mutations, count_keyword_in_text, preprocess_text
 
 logger = logging.getLogger(__name__)
 
 
-class FilterABC(PluginABC):
+class FilterABC(MergeAllSubclassesConfigsMixin, GetEnabledSubclassesMixin, PluginABC):
     """
     Superclass of filtering methods for filtering the queue
     """
@@ -18,31 +18,6 @@ class FilterABC(PluginABC):
     @abstractmethod
     def filter(self, queue):
         """Subclasses must implement filter"""
-
-    @staticmethod
-    @abstractmethod
-    def is_enabled():
-        """Action must implement is_enabled"""
-
-    @staticmethod
-    def get_enabled():
-        """Retuns a list of instances of actions that are enabled"""
-        enabled = list()
-        for cls in FilterABC.__subclasses__():
-            if cls.is_enabled():
-                enabled.append(cls())
-        return enabled
-
-    @staticmethod
-    def get_config_template():
-        """
-        Creates the config template for all filters
-        :return: the config template
-        """
-        template = dict()
-        for cls in FilterABC.__subclasses__():
-            template[cls.name] = cls.get_config_template()
-        return template
 
 
 class FilterMinRetweets(FilterABC):

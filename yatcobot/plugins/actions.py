@@ -7,13 +7,13 @@ import confuse
 
 from yatcobot.config import TwitterConfig
 from yatcobot.config.templates import NumberKeywordsTemplate
-from yatcobot.plugins import PluginABC
+from yatcobot.plugins import PluginABC, MergeAllSubclassesConfigsMixin, GetEnabledSubclassesMixin
 from yatcobot.utils import create_keyword_mutations, preprocess_text
 
 logger = logging.getLogger(__name__)
 
 
-class ActionABC(PluginABC):
+class ActionABC(MergeAllSubclassesConfigsMixin, GetEnabledSubclassesMixin, PluginABC):
 
     def __init__(self, client):
         self.client = client
@@ -21,31 +21,6 @@ class ActionABC(PluginABC):
     @abstractmethod
     def process(self, post):
         """Action must implement process"""
-
-    @staticmethod
-    @abstractmethod
-    def is_enabled():
-        """Action must implement is_enabled"""
-
-    @staticmethod
-    def get_enabled(client):
-        """Retuns a list of instances of actions that are enabled"""
-        enabled = list()
-        for cls in ActionABC.__subclasses__():
-            if cls.is_enabled():
-                enabled.append(cls(client))
-        return enabled
-
-    @staticmethod
-    def get_config_template():
-        """
-        Creates the config template for all action plugins
-        :return: config template
-        """
-        template = dict()
-        for cls in ActionABC.__subclasses__():
-            template[cls.name] = cls.get_config_template()
-        return template
 
 
 class Follow(ActionABC):

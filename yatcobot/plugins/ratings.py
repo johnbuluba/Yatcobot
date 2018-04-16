@@ -7,13 +7,13 @@ import confuse
 from dateutil import tz
 
 from yatcobot.config import TwitterConfig
-from yatcobot.plugins import PluginABC
+from yatcobot.plugins import PluginABC, MergeAllSubclassesConfigsMixin, GetEnabledSubclassesMixin
 from yatcobot.utils import count_keyword_in_text
 
 Score = namedtuple('Score', ('id', 'score'))
 
 
-class RatingABC(PluginABC):
+class RatingABC(MergeAllSubclassesConfigsMixin, GetEnabledSubclassesMixin, PluginABC):
     """
     Superclass of rating methods that are used for sorting the queue
     """
@@ -41,31 +41,6 @@ class RatingABC(PluginABC):
             normalized_scores.append(Score(x.id, (x.score - m) / s))
 
         return normalized_scores
-
-    @staticmethod
-    @abstractmethod
-    def is_enabled():
-        """Action must implement is_enabled"""
-
-    @staticmethod
-    def get_enabled():
-        """Retuns a list of instances of actions that are enabled"""
-        enabled = list()
-        for cls in RatingABC.__subclasses__():
-            if cls.is_enabled():
-                enabled.append(cls())
-        return enabled
-
-    @staticmethod
-    def get_config_template():
-        """
-        Creates the config template for all rating plugins
-        :return: the config template
-        """
-        template = dict()
-        for cls in RatingABC.__subclasses__():
-            template[cls.name] = cls.get_config_template()
-        return template
 
 
 class RatingByKeywords(RatingABC):

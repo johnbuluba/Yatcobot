@@ -7,12 +7,12 @@ import confuse
 from pushbullet import PushBullet
 
 from yatcobot.config import NotifiersConfig
-from yatcobot.plugins import PluginABC
+from yatcobot.plugins import PluginABC, MergeAllSubclassesConfigsMixin, GetEnabledSubclassesMixin
 
 logger = logging.getLogger(__name__)
 
 
-class NotifierABC(PluginABC):
+class NotifierABC(MergeAllSubclassesConfigsMixin, GetEnabledSubclassesMixin, PluginABC):
     """
     Abstract class that all methods that want to notify the user must derive from
     """
@@ -20,34 +20,6 @@ class NotifierABC(PluginABC):
     @abstractmethod
     def notify(self, title, message):
         """Sends the message to the user"""
-
-    @staticmethod
-    @abstractmethod
-    def is_enabled():
-        """
-        Returns if its enabled or not
-        :return: Bool
-        """
-
-    @staticmethod
-    def get_enabled():
-        """Retuns a list of instances of notifiers that are enabled"""
-        enabled = list()
-        for cls in NotifierABC.__subclasses__():
-            if cls.is_enabled():
-                enabled.append(cls())
-        return enabled
-
-    @staticmethod
-    def get_config_template():
-        """
-        Creates the config template for all notifiers
-        :return: config template
-        """
-        template = dict()
-        for cls in NotifierABC.__subclasses__():
-            template[cls.name] = cls.get_config_template()
-        return template
 
 
 class PushbulletNotifier(NotifierABC):
