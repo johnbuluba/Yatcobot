@@ -8,7 +8,7 @@ from dateutil import tz
 
 from yatcobot.config import TwitterConfig
 from yatcobot.plugins import PluginABC, MergeAllSubclassesConfigsMixin, GetEnabledSubclassesMixin
-from yatcobot.utils import count_keyword_in_text
+from yatcobot.utils import count_keyword_in_text, preprocess_text
 
 Score = namedtuple('Score', ('id', 'score'))
 
@@ -57,7 +57,7 @@ class RatingByKeywords(RatingABC):
         # Find how many times each keyword appears in the text
         for post in queue.values():
             rate = 0
-            text = post['full_text'].lower()
+            text = preprocess_text(post['full_text'])
 
             for keyword in TwitterConfig.get().search.sort.by_keywords.keywords:
                 keyword = keyword.lower()
