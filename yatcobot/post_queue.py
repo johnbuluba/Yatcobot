@@ -1,10 +1,11 @@
 from collections import OrderedDict
+from queue import PriorityQueue, Queue
 
 from yatcobot.plugins.filters import FilterABC
 from yatcobot.plugins.ratings import RatingABC
 
 
-class PostQueue(OrderedDict):
+class PostQueue(Queue):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -12,8 +13,11 @@ class PostQueue(OrderedDict):
         self.rating_methods = RatingABC.get_enabled()
         self.filter_methods = FilterABC.get_enabled()
 
+    def _init(self, maxsize):
+        self.queue = OrderedDict()
+
     def filter(self):
-        """
+        """PriorityQueue
          Will filter the queue based on the options provided in config
         """
         for method in self.filter_methods:
@@ -57,3 +61,12 @@ class PostQueue(OrderedDict):
                 combined_rates[rate.id] = current_score
 
         return combined_rates
+
+    def _put(self, item):
+        if item['id'] not in self.queue:
+            self.queue[item['id']] = item
+            self.filter()
+            self.sort()
+
+    def _get(self):
+        return self.queue.popitem(last=False)

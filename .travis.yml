@@ -23,6 +23,7 @@ deploy:
     script: bash utils/git_push.sh
     on:
       all_branches: true
+      condition: $TRAVIS_BRANCH =~ ^master|dev$
       python: "3.6"
 
   - provider: script
@@ -30,6 +31,7 @@ deploy:
     script: bash utils/docker_push.sh
     on:
       all_branches: true
+      condition: $TRAVIS_BRANCH =~ ^master|dev$
       python: "3.6"
 
   - provider: pypi
