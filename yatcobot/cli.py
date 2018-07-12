@@ -5,7 +5,7 @@ import os
 from yatcobot import create_logger, __version__
 from yatcobot.bot import Yatcobot
 from yatcobot.config import TwitterConfig
-from yatcobot.plugins.notifiers import MailNotifier
+from yatcobot.plugins.notifiers import MailNotifier, NotifierABC
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +38,11 @@ def main():
 
     # Test mail settings and exit
     if args.test_mail:
-        MailNotifier.from_config().test()
+        notifier = [x for x in NotifierABC.get_enabled() if isinstance(x, MailNotifier)]
+        if len(notifier) == 0:
+            logger.error('Mail is not enabled, please enable it in the config and try again')
+        else:
+            notifier[0].test()
         exit(1)
 
     logger.info("Starting Yatcobot ({})".format(__version__))
