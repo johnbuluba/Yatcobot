@@ -3,7 +3,10 @@ import sys
 import unittest
 from unittest.mock import MagicMock
 
+from yatcobot.config import NotifiersConfig
+
 import yatcobot.cli
+from tests.helper_func import load_fixture_config
 from yatcobot.cli import main
 
 logging.disable(logging.ERROR)
@@ -15,6 +18,7 @@ class TestCli(unittest.TestCase):
     def setUp(self):
         yatcobot.cli.Yatcobot = MagicMock()
         yatcobot.cli.TwitterConfig = MagicMock()
+        load_fixture_config()
 
     def test_simple_start(self):
         sys.argv = [self.program_name]
@@ -65,10 +69,11 @@ class TestCli(unittest.TestCase):
 
     def test_email(self):
         sys.argv = [self.program_name, '--test-mail']
-        notifier_mock = MagicMock()
-        yatcobot.cli.MailNotifier = notifier_mock
+        test_function_mock = MagicMock()
+        yatcobot.cli.MailNotifier.test = test_function_mock
+        NotifiersConfig.get()['mail']['enabled'] = True
 
         with self.assertRaises(SystemExit):
             main()
 
-        self.assertEqual(notifier_mock.from_config.return_value.test.call_count, 1)
+        self.assertEqual(test_function_mock.call_count, 1)
