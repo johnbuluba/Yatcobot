@@ -32,7 +32,7 @@ sphinx-rtd-theme==0.2.4
 sphinx==1.7.2
 sphinxcontrib-websupport==1.0.1
 tornado==5.0.1
-urllib3==1.22
+urllib3==1.26.5
 virtualenv-clone==0.3.0
 virtualenv==15.2.0
 watchdog==0.8.3
